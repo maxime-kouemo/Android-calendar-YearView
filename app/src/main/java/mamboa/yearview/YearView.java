@@ -21,6 +21,9 @@ import org.joda.time.DateTimeConstants;
 
 import java.util.GregorianCalendar;
 
+/**
+ * Created by mamboa on 9/4/2018.
+ */
 public class YearView extends View{
     private int mYear = 2018;
     private int verticalSpacing = 5;

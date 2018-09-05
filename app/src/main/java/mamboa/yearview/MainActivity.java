@@ -3,6 +3,9 @@ package mamboa.yearview;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+/**
+ * Created by mamboa on 9/4/2018.
+ */
 public class MainActivity extends AppCompatActivity implements YearView.MonthGestureListener {
     private YearView yearView;
 
