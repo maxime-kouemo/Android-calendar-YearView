@@ -19,7 +19,19 @@ public class MainActivity extends AppCompatActivity implements YearView.MonthGes
     }
 
     @Override
+    protected  void onDestroy(){
+        if(yearView != null)
+            yearView.setMonthGestureListener(null);
+        super.onDestroy();
+    }
+
+    @Override
     public void onClickMonth(long timeInMillis) {
+
+    }
+
+    @Override
+    public void onLongClickMonth(long timeInMillis) {
 
     }
 }

@@ -248,7 +248,6 @@ public class YearView extends View{
                             .withYear(mYear)
                             .withMonthOfYear(index + 1)
                             .withDayOfWeek(getDayIndex(x));
-//                            .withDayOfWeek(x+1);
 
                     DateTime.Property pDoW = dateTime.dayOfWeek();
                     String dayName = pDoW.getAsShortText(Utils.getCurrentLocale(mContext)).substring(0,1);
@@ -259,7 +258,6 @@ public class YearView extends View{
 
                         if (curId == todaysId) { //if today
                             canvas.drawText(curId + "", xValue, yValue, todayTodayPaint);
-//                        canvas.drawCircle(x * dayWidth - dayWidth / dividerConstant, y * dayWidth - dayWidth / dividerConstant, dayWidth * 0.41f, todayCirclePaint)
                         }
                         else
                             canvas.drawText(curId + "", xValue, yValue, dayNumberPaint);
@@ -320,6 +318,7 @@ public class YearView extends View{
     public interface MonthGestureListener{
         //first day of the month in millis
         void onClickMonth(long timeInMillis);
+        void onLongClickMonth(long timeInMillis);
     }
 
     /**
@@ -359,7 +358,13 @@ public class YearView extends View{
         }
 
         @Override
-        public void onLongPress(MotionEvent ev) { }
+        public void onLongPress(MotionEvent ev) {
+            if(monthGestureListener != null) {
+                long timeInMillis = getClickedMonth((int)ev.getX(), (int)ev.getY());
+                monthGestureListener.onLongClickMonth(timeInMillis);
+                invalidate();
+            }
+        }
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
