@@ -6,8 +6,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
@@ -18,8 +20,7 @@ import android.view.ViewConfiguration;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-
-import java.util.GregorianCalendar;
+import org.joda.time.LocalDate;
 
 /**
  * Created by mamboa on 9/4/2018.
@@ -39,6 +40,8 @@ public class YearView extends View{
     private Context mContext;
     private final static int numDays = 7;
     private int selectionColor = Color.BLUE;
+    private int todayTextColor = Color.WHITE;
+    private int todayBackgroundColor = Color.RED;
 
     private Paint dayNumberPaint;
     private Paint todayTodayPaint;
@@ -92,6 +95,9 @@ public class YearView extends View{
             marginBelowMonthName = a.getInteger(R.styleable.YearView_margin_below_month_name,marginBelowMonthName);
             selectionColor = a.getColor(R.styleable.YearView_selection_color, selectionColor);
             firstDayOfWeek = a.getInteger(R.styleable.YearView_firstDayOfWeek,firstDayOfWeek);
+            todayTextColor = a.getColor(R.styleable.YearView_today_text_color, todayTextColor);
+            todayBackgroundColor = a.getColor(R.styleable.YearView_today_background_color, todayBackgroundColor);
+
         }
         catch (Exception e){
 
@@ -151,10 +157,24 @@ public class YearView extends View{
         drawSelection(canvas);
     }
 
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superStae = super.onSaveInstanceState();
+
+       //save here
+        return superStae;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(state);
+        //restore here
+        requestLayout();
+    }
+
     private void drawMonths(Canvas canvas){
         splitViewInBlocks();
         DateTime dateTime = new DateTime().withDate(mYear, 2, 1).withHourOfDay(12);
-        DateTime nowTime = new DateTime();
 
         for(int i = 0; i <= 11; i++){
             DateTime monthTime = dateTime.withMonthOfYear(i+1);
@@ -162,8 +182,7 @@ public class YearView extends View{
             if(firstDayOfWeek != DateTimeConstants.SUNDAY)
                 dayOfWeek -= firstDayOfWeek;
 
-            drawAMonth(canvas,i,dayOfWeek, monthTime.dayOfMonth().getMaximumValue(), nowTime.getYear() == monthTime.getYear() &&
-                    nowTime.getDayOfYear() == monthTime.getDayOfYear() ? monthTime.dayOfMonth().get() : -1, monthTime.monthOfYear().getAsText(Utils.getCurrentLocale(mContext)));
+            drawAMonth(canvas,i,dayOfWeek, monthTime.dayOfMonth().getMaximumValue(), monthTime.monthOfYear().getAsText(Utils.getCurrentLocale(mContext)));
         }
     }
 
@@ -222,19 +241,14 @@ public class YearView extends View{
      * @param index the index of the month as in the list of monthBlock
      * @param firstDay the first day of the month
      * @param daysInMonth the maximum number of days in that month
-     * @param todayID is -1 if the current month doesn't contain today, otherwise returns the id of today
-     *                in the month
      * @param monthName the string name of a month
      */
-    private void drawAMonth(Canvas canvas, int index, int firstDay, int daysInMonth,int todayID, String monthName){
+    private void drawAMonth(Canvas canvas, int index, int firstDay, int daysInMonth, String monthName){
         drawMonthName(canvas, index, monthName);
 
         int xUnit = monthBlocks[index].width()/numDays;
         int yUnit = monthBlocks[index].height()/numDays;
 
-        int todaysId = 0;
-        if(todayID > -1)
-            todaysId = todayID;
 
         int curId = 1 - firstDay;
         for (int y = 0; y <= 7; y++) {
@@ -254,10 +268,40 @@ public class YearView extends View{
                     canvas.drawText(dayName+"", xValue, yValue, dayNumberPaint);
                 }
                 else {
-                    if (curId >= 1 && curId <= daysInMonth) {
 
-                        if (curId == todaysId) { //if today
-                            canvas.drawText(curId + "", xValue, yValue, todayTodayPaint);
+                    if (curId >= 1 && curId <= daysInMonth) {
+                        DateTime dateTime = new DateTime()
+                                .withYear(mYear)
+                                .withMonthOfYear(index + 1)
+                                .withDayOfMonth(curId);
+
+                        if (dateTime.toLocalDate().equals(new LocalDate())) { //is today
+                            RectF boxRect = new RectF();
+                            Rect bounds = new Rect();
+                            float width = todayTodayPaint.measureText(curId +"");
+                            todayTodayPaint.getTextBounds(curId +"",0,1,bounds);
+                            int factor = 1;
+                            int shiftHeight = yUnit/factor;
+                            int shiftWidth = xUnit/factor;
+                            int margin = 10;
+
+                            /*boxRect.left = xValue - margin*//*bounds.width()*//*;
+                            boxRect.top = yValue - margin*//*bounds.height()*//*;
+                            boxRect.right = xValue + 2 * margin*//*bounds.width()*//*;//todayTodayPaint.measureText(curId+"")
+                            boxRect.bottom = yValue + bounds.height()/2;*/
+
+                            boxRect.left = xValue - margin;
+                            boxRect.top = yValue - bounds.height(); /*- yUnit*/;//yValue + ((yValue - bounds.height()/2) + yUnit/2) - margin;
+                            boxRect.right = boxRect.left + width + margin*2; //*2 because we remove the left margin at first and the second time we add it to the right
+                            boxRect.bottom = yValue; //yValue + margin;
+
+                            Paint backgroundTodayPaint = new Paint(todayTodayPaint);
+                            backgroundTodayPaint.setColor(todayBackgroundColor);
+                            Paint todayTextColorPaint = new Paint(todayTodayPaint);
+                            todayTextColorPaint.setColor(todayTextColor);
+
+                            canvas.drawRect(boxRect,backgroundTodayPaint);
+                            canvas.drawText(curId + "", xValue, yValue, todayTextColorPaint);
                         }
                         else
                             canvas.drawText(curId + "", xValue, yValue, dayNumberPaint);
