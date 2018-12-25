@@ -222,7 +222,7 @@ public class YearView extends View{
                 xStart = (monthBlocks[index].left + monthBlocks[index].right)/2 - width /2;
             break;
             case END: //or RIGHT
-                xStart = monthBlocks[index].right - width - horizontalSpacing/2;
+                xStart = monthBlocks[index].right - width - horizontalSpacing;
                 break;
         }
         canvas.drawText(monthName+"", xStart, yValue, paint);
@@ -249,7 +249,6 @@ public class YearView extends View{
         int xUnit = monthBlocks[index].width()/numDays;
         int yUnit = monthBlocks[index].height()/numDays;
 
-
         int curId = 1 - firstDay;
         for (int y = 0; y <= 7; y++) {
             for (int x = 0; x < 7; x++) {
@@ -266,6 +265,8 @@ public class YearView extends View{
                     DateTime.Property pDoW = dateTime.dayOfWeek();
                     String dayName = pDoW.getAsShortText(Utils.getCurrentLocale(mContext)).substring(0,1);
                     canvas.drawText(dayName+"", xValue, yValue, dayNumberPaint);
+
+                    //todo: weekend days
                 }
                 else {
 
@@ -283,17 +284,12 @@ public class YearView extends View{
                             int factor = 1;
                             int shiftHeight = yUnit/factor;
                             int shiftWidth = xUnit/factor;
-                            int margin = 10;
-
-                            /*boxRect.left = xValue - margin*//*bounds.width()*//*;
-                            boxRect.top = yValue - margin*//*bounds.height()*//*;
-                            boxRect.right = xValue + 2 * margin*//*bounds.width()*//*;//todayTodayPaint.measureText(curId+"")
-                            boxRect.bottom = yValue + bounds.height()/2;*/
+                            int margin = 5;
 
                             boxRect.left = xValue - margin;
-                            boxRect.top = yValue - bounds.height(); /*- yUnit*/;//yValue + ((yValue - bounds.height()/2) + yUnit/2) - margin;
-                            boxRect.right = boxRect.left + width + margin*2; //*2 because we remove the left margin at first and the second time we add it to the right
-                            boxRect.bottom = yValue; //yValue + margin;
+                            boxRect.top = yValue - bounds.height();
+                            boxRect.right = xValue + width + margin;
+                            boxRect.bottom = yValue + margin;
 
                             Paint backgroundTodayPaint = new Paint(todayTodayPaint);
                             backgroundTodayPaint.setColor(todayBackgroundColor);

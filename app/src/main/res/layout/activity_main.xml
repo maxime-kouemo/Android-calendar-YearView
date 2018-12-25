@@ -19,11 +19,11 @@
             app:columns="3"
             app:horizontal_spacing="25"
             app:vertical_spacing="10"
-            app:title_gravity="center"
+            app:title_gravity="right"
             app:firstDayOfWeek="monday"
             app:margin_below_month_name="20"
-            app:today_background_color="#308b26"
-            app:today_text_color="#f4d90b"/>
+            app:today_background_color="#d10606"
+            app:today_text_color="#fff"/>
     </LinearLayout>
 
 </LinearLayout>
