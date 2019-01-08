@@ -12,3 +12,7 @@ Some features:
 - Customize the week names (text color, ont type (bold, bold italic, italic, normal))
 - long click listener on a month
 - simple click listener on a month
+
+What is remaining to be done:
+- unit test
+- compiling into a library
