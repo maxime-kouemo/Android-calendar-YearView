@@ -2,8 +2,8 @@
 Attempt to reproduce the Year view of Samsung's Android Calendar.
 
 Some features:
-
 - Set the number of columns and the number of rows. (columns * rows should always = 12)
+- change the vertical and horizontal spacing between months
 - Set the first day of the week (monday, tuesday, .. sunday)
 - customize the day of today (background colors, background shapes(square, circle),  text color, font type (bold, bold italic, italic, normal))
 - Select weekend your own weekend days
