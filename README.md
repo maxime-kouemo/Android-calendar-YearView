@@ -14,5 +14,6 @@ Some features:
 - simple click listener on a month
 
 What is remaining to be done:
+- Fix the selection (visually)
 - unit test
 - compiling into a library
