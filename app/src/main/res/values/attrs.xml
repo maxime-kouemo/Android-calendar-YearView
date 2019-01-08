@@ -3,18 +3,22 @@
     <declare-styleable name="YearView">
         <attr name="text_color" format="color"/>
         <attr name="text_color_weekend" format="color"/>
+        <attr name="today_text_color" format="color"/>
+        <attr name="today_background_color" format="color"/>
+        <attr name="selection_color" format="color"/>
+        <attr name="day_name_color" format="color"/>
+        <attr name="month_name_color" format="color"/>
+
+        <attr name="name_week_transcend_weekend" format="boolean"/>
+
         <attr name="vertical_spacing" format="integer"/>
         <attr name="horizontal_spacing" format="integer"/>
+        <attr name="today_background_radius" format="integer"/>
         <attr name="current_year" format="integer"/>
         <attr name="rows" format="integer"/>
         <attr name="columns" format="integer"/>
         <attr name="margin_below_month_name" format="integer"/>
-        <attr name="today_text_color" format="color"/>
-        <attr name="today_background_color" format="color"/>
-        <attr name="today_background_geometric_style" >
-            <enum name="circle" value="1"/>
-            <enum name="square" value="2"/>
-        </attr>
+        <attr name="weekend_days" format="reference"/>
         <attr name="firstDayOfWeek">
             <enum name="monday" value="1"/>
             <enum name="tuesday" value="2"/>
@@ -24,7 +28,6 @@
             <enum name="saturday" value="6"/>
             <enum name="sunday" value="7"/>
         </attr>
-        <attr name="selection_color" format="color"/>
         <attr name="title_gravity">
             <enum name="center" value="1" />
             <enum name="left" value="2" />
@@ -32,5 +35,39 @@
             <enum name="start" value="2" />
             <enum name="end" value="3" />
         </attr>
+
+        <attr name="today_background_shape">
+            <enum name="circle" value="1" />
+            <enum name="square" value="2" />
+        </attr>
+
+        <attr name="month_name_font_type">
+            <enum name="normal" value="1" />
+            <enum name="bold" value="2"/>
+            <enum name="italic" value="3"/>
+            <enum name="bold_italic" value="4"/>
+        </attr>
+
+        <attr name="week_name_font_type">
+            <enum name="normal" value="1" />
+            <enum name="bold" value="2"/>
+            <enum name="italic" value="3"/>
+            <enum name="bold_italic" value="4"/>
+        </attr>
+
+        <attr name="today_font_type">
+            <enum name="normal" value="1" />
+            <enum name="bold" value="2"/>
+            <enum name="italic" value="3"/>
+            <enum name="bold_italic" value="4"/>
+        </attr>
+
+        <attr name="weekend_font_type">
+            <enum name="normal" value="1" />
+            <enum name="bold" value="2"/>
+            <enum name="italic" value="3"/>
+            <enum name="bold_italic" value="4"/>
+        </attr>
+
     </declare-styleable>
 </resources>
