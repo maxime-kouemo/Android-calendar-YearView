@@ -1,5 +1,5 @@
 # Android-calendar-YearView
-Attempt to reproduce the Year view of Samsung's Android Calendar.
+Attempt to reproduce the Year view of Samsung's Android Calendar. It uses Joda-Time (https://github.com/JodaOrg/joda-time)
 
 Some features:
 - Set the number of columns and the number of rows. (columns * rows should always = 12)
