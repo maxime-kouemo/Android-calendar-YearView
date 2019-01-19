@@ -5,12 +5,13 @@
         <attr name="text_color_weekend" format="color"/>
         <attr name="today_text_color" format="color"/>
         <attr name="today_background_color" format="color"/>
-        <attr name="selection_color" format="color"/>
+        <attr name="month_selection_color" format="color"/>
         <attr name="day_name_color" format="color"/>
         <attr name="month_name_color" format="color"/>
 
         <attr name="name_week_transcend_weekend" format="boolean"/>
 
+        <attr name="month_selection_margin" format="integer"/>
         <attr name="vertical_spacing" format="integer"/>
         <attr name="horizontal_spacing" format="integer"/>
         <attr name="today_background_radius" format="integer"/>
@@ -19,6 +20,10 @@
         <attr name="columns" format="integer"/>
         <attr name="margin_below_month_name" format="integer"/>
         <attr name="weekend_days" format="reference"/>
+        <attr name="month_name_font" format="reference"/>
+        <attr name="weekend_font" format="reference"/>
+        <attr name="day_name_font" format="reference"/>
+        <attr name="today_font" format="reference"/>
         <attr name="firstDayOfWeek">
             <enum name="monday" value="1"/>
             <enum name="tuesday" value="2"/>
@@ -48,7 +53,7 @@
             <enum name="bold_italic" value="4"/>
         </attr>
 
-        <attr name="week_name_font_type">
+        <attr name="day_name_font_type">
             <enum name="normal" value="1" />
             <enum name="bold" value="2"/>
             <enum name="italic" value="3"/>

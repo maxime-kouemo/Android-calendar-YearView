@@ -6,7 +6,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="0dp"
+        android:padding="10dp"
         android:layout_gravity="center"
         android:orientation="vertical">
 
@@ -18,10 +18,10 @@
             app:rows="4"
             app:columns="3"
             app:horizontal_spacing="25"
-            app:vertical_spacing="5"
-            app:title_gravity="start"
-            app:firstDayOfWeek="monday"
-            app:margin_below_month_name="10"
+            app:vertical_spacing="10"
+            app:title_gravity="end"
+            app:firstDayOfWeek="sunday"
+            app:margin_below_month_name="15"
             app:today_background_color="#d10606"
             app:text_color="@android:color/black"
             app:month_name_color="@android:color/holo_blue_dark"
@@ -29,13 +29,18 @@
             app:text_color_weekend="@android:color/holo_green_dark"
             app:weekend_days="@array/weekendDays"
             app:today_text_color="#fff"
-            app:today_background_radius="5"
+            app:today_background_radius="10"
             app:today_background_shape="circle"
             app:today_font_type="bold"
-            app:month_name_font_type="bold_italic"
-            app:weekend_font_type="italic"
-            app:week_name_font_type="bold"
-            app:name_week_transcend_weekend="true"/>
+            app:month_name_font_type="normal"
+            app:weekend_font_type="bold_italic"
+            app:day_name_font_type="bold"
+            app:name_week_transcend_weekend="false"
+            app:month_selection_color="@android:color/holo_purple"
+            app:month_selection_margin="20"
+            app:day_name_font="@font/calling_heart_custom"
+            app:month_name_font="@font/pinch_my_ride_custom"
+            app:weekend_font="@font/teddy_bears_custom"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -8,9 +8,12 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.annotation.FontRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
@@ -39,7 +42,7 @@ public class YearView extends View{
     private int firstDayOfWeek = 1; //since we are using Joda-Time, it goes from Monday: 1 to Sunday: 7
     private Context mContext;
     private final static int numDays = 7;
-    private int selectionColor = Color.BLUE;
+    private int monthSelectionColor = Color.BLUE;
     private int todayTextColor = Color.WHITE;
     private int todayBackgroundColor = Color.RED;
     private int textColor = Color.BLACK;
@@ -51,6 +54,15 @@ public class YearView extends View{
     private int dayNameFontType = DAY_NAME_FONT_NORMAL;
     private int todayFontType = TODAY_FONT_NORMAL;
     private int weekendFontType = WEEKEND_NAME_FONT_NORMAL;
+    private int monthSelectionMargin = 5;
+    private int monthNameFont = 0;
+    private int weekendFont = 0;
+    private int dayNameFont = 0;
+    private int todayFont = 0;
+    private Typeface monthNameFontTypeFace = null;
+    private Typeface weekendFontTypeFace = null;
+    private Typeface dayNameFontTypeFace = null;
+    private Typeface todayFontTypeFace = null;
 
     private int[] weekendDays = null;
 
@@ -90,6 +102,7 @@ public class YearView extends View{
 
     private Rect[] monthBlocks = null;
     private Rect[] originalMonthBlocks = null; //used for the visual click animation
+    private int[] lastRowPositionInMonth = null;
     private GestureDetector mGestureDetector;
 
     public final static int SHAPE_CIRCLE = 1;
@@ -102,7 +115,7 @@ public class YearView extends View{
     public final static int TITLE_GRAVITY_END = 3;
     private int mOnDownDelay = 0;
 
-    private final static float SELECTION_STROKE = 2.f;
+    private final static float SELECTION_STROKE = 5.f;
     private final static int SELECTION_ALPHA = 255/2;
 
     private int selectedMonthID = -1;
@@ -118,6 +131,13 @@ public class YearView extends View{
             invalidate();
         }
     };
+
+    /**
+     * todo: add edit the text size (day, month, week, weekend) and from code
+     * todo: fix today circle and square
+     * todo: add customise font type from code
+     *
+     */
 
     public YearView(Context context) {
         super(context);
@@ -136,7 +156,7 @@ public class YearView extends View{
             horizontalSpacing = a.getInteger(R.styleable.YearView_horizontal_spacing, horizontalSpacing);
             titleGravity = a.getInteger(R.styleable.YearView_title_gravity, titleGravity);
             marginBelowMonthName = a.getInteger(R.styleable.YearView_margin_below_month_name,marginBelowMonthName);
-            selectionColor = a.getColor(R.styleable.YearView_selection_color, selectionColor);
+            monthSelectionColor = a.getColor(R.styleable.YearView_month_selection_color, monthSelectionColor);
             textColor  = a.getColor(R.styleable.YearView_text_color, textColor);
             weekendColor  = a.getColor(R.styleable.YearView_text_color_weekend, weekendColor);
             firstDayOfWeek = a.getInteger(R.styleable.YearView_firstDayOfWeek,firstDayOfWeek);
@@ -147,10 +167,19 @@ public class YearView extends View{
             monthNameColor = a.getInteger(R.styleable.YearView_month_name_color, monthNameColor);
             todayBackgroundShape = a.getInteger(R.styleable.YearView_today_background_shape, todayBackgroundShape);
             monthNameFontType = a.getInteger(R.styleable.YearView_month_name_font_type, monthNameFontType);
-            dayNameFontType = a.getInteger(R.styleable.YearView_week_name_font_type, dayNameFontType);
+            dayNameFontType = a.getInteger(R.styleable.YearView_day_name_font_type, dayNameFontType);
             todayFontType = a.getInteger(R.styleable.YearView_today_font_type, todayFontType);
             weekendFontType = a.getInteger(R.styleable.YearView_weekend_font_type, weekendFontType);
             dayNameTranscendsWeekend = a.getBoolean(R.styleable.YearView_name_week_transcend_weekend, dayNameTranscendsWeekend);
+            monthSelectionMargin = a.getInteger(R.styleable.YearView_month_selection_margin, monthSelectionMargin);
+            monthNameFont = a.getResourceId(R.styleable.YearView_month_name_font, monthNameFont);
+            weekendFont = a.getResourceId(R.styleable.YearView_weekend_font, weekendFont);
+            dayNameFont = a.getResourceId(R.styleable.YearView_day_name_font, dayNameFont);
+            todayFont = a.getResourceId(R.styleable.YearView_today_font, todayFont);
+            monthNameFontTypeFace = buildFont(monthNameFont,a);
+            weekendFontTypeFace = buildFont(weekendFont,a);
+            dayNameFontTypeFace = buildFont(dayNameFont,a);
+            todayFontTypeFace = buildFont(todayFont,a);
 
             //here we get the week end days defined in the xml's "app:weekend_days=..."
             int weekendDaysID = a.getResourceId(R.styleable.YearView_weekend_days, 0);
@@ -175,6 +204,10 @@ public class YearView extends View{
         mSundayFirst = true;
 
         handler = new Handler();
+    }
+
+    private Typeface buildFont(@FontRes int fontID, TypedArray typeArray){
+        return fontID == 0  || typeArray == null? null : Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? typeArray.getResources().getFont(fontID) :  ResourcesCompat.getFont(mContext, fontID);
     }
 
     @Override
@@ -207,10 +240,10 @@ public class YearView extends View{
 
     @Override
     public Parcelable onSaveInstanceState() {
-        Parcelable superStae = super.onSaveInstanceState();
+        Parcelable superState = super.onSaveInstanceState();
 
        //save here
-        return superStae;
+        return superState;
     }
 
     @Override
@@ -229,8 +262,8 @@ public class YearView extends View{
         int k = 0;
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < columns; j++){
-                int currentHorizontalSpacing = j == 0 ? horizontalSpacing : horizontalSpacing/2;
-                int currentVerticalSpacing = i == 0 ? verticalSpacing : verticalSpacing/2;
+                int currentHorizontalSpacing =  horizontalSpacing/2;
+                int currentVerticalSpacing = verticalSpacing/2;
 
                 int left = currentHorizontalSpacing + (j * mWidth/columns);
                 int top = currentVerticalSpacing + (i * mHeight/rows);
@@ -244,6 +277,7 @@ public class YearView extends View{
     }
 
     private void drawMonths(Canvas canvas){
+        lastRowPositionInMonth = new int[12];
         DateTime dateTime = new DateTime().withDate(mYear, 2, 1).withHourOfDay(12);
 
         for(int i = 0; i <= 11; i++){
@@ -259,10 +293,10 @@ public class YearView extends View{
     private void drawSelection(Canvas canvas){
         if(selectedMonthID > -1){
             canvas.drawRect(
-                    originalMonthBlocks[selectedMonthID].left,
-                    originalMonthBlocks[selectedMonthID].top,
-                    originalMonthBlocks[selectedMonthID].right,
-                    originalMonthBlocks[selectedMonthID].bottom,
+                    originalMonthBlocks[selectedMonthID].left - monthSelectionMargin - horizontalSpacing,
+                    originalMonthBlocks[selectedMonthID].top - monthSelectionMargin ,
+                    originalMonthBlocks[selectedMonthID].right + monthSelectionMargin - horizontalSpacing,
+                    lastRowPositionInMonth[selectedMonthID] + monthSelectionMargin,
                     selectionPaint
             );
 
@@ -282,20 +316,31 @@ public class YearView extends View{
     private void drawMonthName(Canvas canvas,int index, String monthName){
         Paint paint = new Paint(monthNamePaint);
         Rect textBounds = new Rect();
-        paint.getTextBounds(monthName, 0, 1, textBounds);
+        paint.getTextBounds(monthName, 0, monthName.length(), textBounds);
 
-        int xStart = monthBlocks[index].left; //TITLE_GRAVITY_START or TITLE_GRAVITY_LEFT
+        int xStart = 0; //TITLE_GRAVITY_START or TITLE_GRAVITY_LEFT
         int yValue = monthBlocks[index].top + textBounds.height();
-        int width = (int)paint.measureText(monthName);
+        int width = textBounds.width();
         switch (titleGravity){
             case TITLE_GRAVITY_CENTER:
-                xStart = (monthBlocks[index].left + monthBlocks[index].right)/2 - width /2;
+                xStart = (monthBlocks[index].left + monthBlocks[index].right)/2 - width /2 - horizontalSpacing/2;
             break;
+            case TITLE_GRAVITY_START:
+                xStart = monthBlocks[index].left - horizontalSpacing/3;
+                break;
             case TITLE_GRAVITY_END: //or TITLE_GRAVITY_RIGHT
-                xStart = monthBlocks[index].right - width - horizontalSpacing;
+                xStart = monthBlocks[index].right - width - horizontalSpacing*3/2;
                 break;
         }
+
         canvas.drawText(monthName+"", xStart, yValue, paint);
+
+        //background for test
+        /*Paint selectionPaintTest = new Paint(selectionPaint);
+        selectionPaintTest.setTextAlign(Paint.Align.CENTER);
+        canvas.drawRect(xStart, yValue - textBounds.height(), xStart + textBounds.width(), yValue ,selectionPaintTest); //background for tests
+
+        canvas.drawRect(monthBlocks[index].left- horizontalSpacing/2, yValue, monthBlocks[index].right- horizontalSpacing/2, yValue + textBounds.height() ,weekendDayPaint); //background for tests*/
 
         //shift the rest below
         int left =  monthBlocks[index].left;
@@ -347,21 +392,18 @@ public class YearView extends View{
 
                 //draw day numbers
                 else {
-
                     if (dayOfMonth >= 1 && dayOfMonth <= daysInMonth) {
                         if (isToday(month, dayOfMonth)) {
                             switch (todayBackgroundShape){
                                 case SHAPE_CIRCLE:
-                                    drawTodayCircle(canvas, dayOfMonth, xValue, yValue, todayBackgroundRadius);
+                                    drawTodayCircle(canvas, dayOfMonth, xValue, yValue,xUnit, yUnit, todayBackgroundRadius);
                                     break;
                                 case SHAPE_SQUARE:
-                                    drawTodaySquare(canvas, dayOfMonth, xValue, yValue, todayBackgroundRadius);
+                                    drawTodaySquare(canvas, dayOfMonth, xValue, yValue,xUnit, yUnit, todayBackgroundRadius);
                                     break;
                                 default:
-                                    drawTodaySquare(canvas, dayOfMonth, xValue, yValue, todayBackgroundRadius);
+                                    drawTodaySquare(canvas, dayOfMonth, xValue, yValue,xUnit, yUnit, todayBackgroundRadius);
                             }
-
-
                         }
                         else {
                             if(isWeekend(month,dayOfMonth)) {
@@ -373,6 +415,7 @@ public class YearView extends View{
                                 canvas.drawText(dayOfMonth + "", xValue, yValue, dayNumberPaint);
                             }
                         }
+                        lastRowPositionInMonth[month] = yValue; //we save the last line for the selection
                     }
                     dayOfMonth++;
                 }
@@ -386,20 +429,28 @@ public class YearView extends View{
      * @param dayOfMonth the day of the month
      * @param xValue the x of where to draw the day of the month's value
      * @param yValue the y of where to draw the day of the month's value
+     * @param width
+     * @param height
      * @param margin around the month value
      */
-    private void drawTodaySquare(Canvas canvas, int dayOfMonth, int xValue, int yValue, int margin) {
-            RectF boxRect = new RectF();
-            Rect bounds = new Rect();
-            todayTodayTextPaint.getTextBounds(dayOfMonth + "", 0, (dayOfMonth + "").length(), bounds);
+    private void drawTodaySquare(Canvas canvas, int dayOfMonth, int xValue, int yValue, int width, int height, int margin) {
+        RectF boxRect = new RectF();
+        Rect bounds = new Rect();
+        todayTodayTextPaint.getTextBounds(dayOfMonth + "", 0, (dayOfMonth + "").length(), bounds);
 
-            boxRect.left = xValue - margin;
-            boxRect.top = yValue - bounds.height()*2/3 - margin;
+        int xPos = xValue + width /2;
+        int yPos = (int)((yValue -  height / 2) - ((todayTodayTextPaint.descent() + todayTodayTextPaint.ascent()) / 2));
+        boxRect.left = xValue - margin;
+        boxRect.top = yValue - bounds.height() * 2/3 - margin;
+        boxRect.right = xValue + bounds.width() + margin;
+        boxRect.bottom = yValue + margin;
+            /*boxRect.left = xValue - margin;
+            boxRect.top = yValue - bounds.height() * 2/3 - margin;
             boxRect.right = xValue + bounds.width() + margin;
-            boxRect.bottom = yValue + margin;
+            boxRect.bottom = yValue + margin;*/
 
-            canvas.drawRect(boxRect, todayTodayBackgroundPaint);
-            canvas.drawText(dayOfMonth + "", xValue, yValue, todayTodayTextPaint);
+        canvas.drawRect(boxRect, todayTodayBackgroundPaint);
+        canvas.drawText(dayOfMonth + "", xValue, yValue, todayTodayTextPaint);
     }
 
     /**
@@ -408,17 +459,22 @@ public class YearView extends View{
      * @param dayOfMonth the day of the month
      * @param xValue the x of where to draw the day of the month's value
      * @param yValue the y of where to draw the day of the month's value
+     * @param width
+     * @param height
      * @param margin radius the month value
      */
-    private void drawTodayCircle(Canvas canvas, int dayOfMonth, int xValue, int yValue, int margin){
+    private void drawTodayCircle(Canvas canvas, int dayOfMonth, int xValue, int yValue, int width, int height, int margin){
         Rect bounds = new Rect();
         todayTodayTextPaint.getTextBounds(dayOfMonth + "", 0, (dayOfMonth + "").length(), bounds);
 
-        int centerX = xValue + bounds.width()/2;
-        int centerY = (int) ((yValue - bounds.height()/2) - ((todayTodayTextPaint.descent() + todayTodayTextPaint.ascent())/3));
+        /*int centerX = xValue + bounds.width()/2;
+        int centerY = (int) ((yValue - bounds.height()/2) - ((todayTodayTextPaint.descent() + todayTodayTextPaint.ascent())/3));*/
+
+        int centerX = xValue;
+        int centerY = (int)((yValue -  height/3) - ((todayTodayTextPaint.descent() + todayTodayTextPaint.ascent()) / 2));
 
         //we make sure the circle will always surround the value of the digits
-        int radius = (bounds.width() > bounds.height() ? bounds.width() : bounds.height() + margin) /2;
+        int radius = (bounds.width() > bounds.height() ? bounds.width() : bounds.height()/2 + margin);
 
         canvas.drawCircle(centerX, centerY , radius, todayTodayBackgroundPaint);
         canvas.drawText(dayOfMonth + "", xValue, yValue, todayTodayTextPaint);
@@ -436,7 +492,6 @@ public class YearView extends View{
                 .withYear(mYear)
                 .withMonthOfYear(month + 1) //the variable monthBlocks goes from 0 to 11 while Joda Time's months go from 1 to 12
                 .withDayOfMonth(dayOfMonth);
-
         return dateTime.toLocalDate().equals(new LocalDate());
     }
 
@@ -452,7 +507,6 @@ public class YearView extends View{
                 .withYear(mYear)
                 .withMonthOfYear(month + 1) //the variable monthBlocks goes from 0 to 11 while Joda Time's months go from 1 to 12
                 .withDayOfMonth(dayOfMonth);
-
         return isDayPresentInWeekendDays(dateTime.getDayOfWeek());
     }
 
@@ -469,7 +523,6 @@ public class YearView extends View{
             if(weekendDays[i] == dayIndex)
                 return true;
         }
-
         return false;
     }
 
@@ -521,8 +574,8 @@ public class YearView extends View{
         invalidate();
     }
 
-    public void setSelectionColor(int selectionColor) {
-        this.selectionColor = selectionColor;
+    public void setMonthSelectionColor(int monthSelectionColor) {
+        this.monthSelectionColor = monthSelectionColor;
         setupSelectionPaint();
         invalidate();
     }
@@ -566,6 +619,12 @@ public class YearView extends View{
     public void setMonthNameColor(int monthNameColor) {
         this.monthNameColor = monthNameColor;
         setupMonthNamePaint();
+        invalidate();
+    }
+
+    public void setMonthSelectionMargin(int monthSelectionMargin){
+        this.monthSelectionMargin = monthSelectionMargin;
+        setupSelectionPaint();
         invalidate();
     }
 
@@ -663,16 +722,18 @@ public class YearView extends View{
         monthNamePaint.setColor(monthNameColor);
         monthNamePaint.setTextSize(mContext.getResources().getDimensionPixelSize(R.dimen.year_view_month_text_size));
         monthNamePaint.setTextAlign(Paint.Align.LEFT);
-        switch (monthNameFontType){
+        switch (monthNameFontType) {
             case MONTH_NAME_FONT_BOLD:
-                monthNamePaint.setTypeface(Typeface.DEFAULT_BOLD);
+                monthNamePaint.setTypeface(monthNameFontTypeFace != null ? Typeface.create(monthNameFontTypeFace, Typeface.BOLD) : monthNamePaint.setTypeface(Typeface.DEFAULT_BOLD));
                 break;
             case MONTH_NAME_FONT_ITALIC:
-                monthNamePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC));
+                monthNamePaint.setTypeface(monthNameFontTypeFace != null ? Typeface.create(monthNameFontTypeFace, Typeface.ITALIC) : monthNamePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)));
                 break;
             case MONTH_NAME_FONT_BOLD_ITALIC:
-                monthNamePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC));
+                monthNamePaint.setTypeface(monthNameFontTypeFace != null ? Typeface.create(monthNameFontTypeFace, Typeface.BOLD_ITALIC) : monthNamePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC)));
                 break;
+            default:
+                monthNamePaint.setTypeface(monthNameFontTypeFace != null ? monthNameFontTypeFace : monthNamePaint.setTypeface(Typeface.DEFAULT));
         }
     }
 
@@ -680,24 +741,28 @@ public class YearView extends View{
         dayNumberPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         dayNumberPaint.setColor(textColor);
         dayNumberPaint.setTextSize(mContext.getResources().getDimensionPixelSize(R.dimen.year_view_day_text_size));
-        dayNumberPaint.setTextAlign(Paint.Align.LEFT);
+        dayNumberPaint.setTextAlign(Paint.Align.CENTER);
+        if(dayNameFontTypeFace != null)
+            dayNumberPaint.setTypeface(dayNameFontTypeFace);
     }
 
     private void setupTodayTextPaint(){
         todayTodayTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         todayTodayTextPaint.setColor(todayTextColor);
         todayTodayTextPaint.setTextSize(mContext.getResources().getDimensionPixelSize(R.dimen.year_view_day_text_size));
-        todayTodayTextPaint.setTextAlign(Paint.Align.LEFT);
-        switch (todayFontType){
+        todayTodayTextPaint.setTextAlign(Paint.Align.CENTER);
+        switch (todayFontType) {
             case TODAY_FONT_BOLD:
-                todayTodayTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
+                todayTodayTextPaint.setTypeface(todayFontTypeFace != null ? Typeface.create(todayFontTypeFace, Typeface.BOLD) : todayTodayTextPaint.setTypeface(Typeface.DEFAULT_BOLD));
                 break;
             case TODAY_FONT_ITALIC:
-                todayTodayTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC));
+                todayTodayTextPaint.setTypeface(todayFontTypeFace != null ? Typeface.create(todayFontTypeFace, Typeface.ITALIC) : todayTodayTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)));
                 break;
             case TODAY_FONT_BOLD_ITALIC:
-                todayTodayTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC));
+                todayTodayTextPaint.setTypeface(todayFontTypeFace != null ? Typeface.create(todayFontTypeFace, Typeface.BOLD_ITALIC) : todayTodayTextPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC)));
                 break;
+            default:
+                todayTodayTextPaint.setTypeface(todayFontTypeFace != null ? todayFontTypeFace : todayTodayTextPaint.setTypeface(Typeface.DEFAULT));
         }
     }
 
@@ -705,24 +770,26 @@ public class YearView extends View{
         todayTodayBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         todayTodayBackgroundPaint.setColor(todayBackgroundColor);
         todayTodayBackgroundPaint.setTextSize(mContext.getResources().getDimensionPixelSize(R.dimen.year_view_day_text_size));
-        todayTodayBackgroundPaint.setTextAlign(Paint.Align.LEFT);
+        todayTodayBackgroundPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     private void setupDayNamePaint(){
         dayNamePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         dayNamePaint.setColor(dayNameColor);
         dayNamePaint.setTextSize(mContext.getResources().getDimensionPixelSize(R.dimen.year_view_day_text_size));
-        dayNamePaint.setTextAlign(Paint.Align.LEFT);
-        switch (dayNameFontType){
+        dayNamePaint.setTextAlign(Paint.Align.CENTER);
+        switch (dayNameFontType) {
             case DAY_NAME_FONT_BOLD:
-                dayNamePaint.setTypeface(Typeface.DEFAULT_BOLD);
+                dayNamePaint.setTypeface(dayNameFontTypeFace != null ? Typeface.create(dayNameFontTypeFace, Typeface.BOLD) : dayNamePaint.setTypeface(Typeface.DEFAULT_BOLD));
                 break;
             case DAY_NAME_FONT_ITALIC:
-                dayNamePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC));
+                dayNamePaint.setTypeface(dayNameFontTypeFace != null ? Typeface.create(dayNameFontTypeFace, Typeface.ITALIC) : dayNamePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)));
                 break;
             case DAY_NAME_FONT_BOLD_ITALIC:
-                dayNamePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC));
+                dayNamePaint.setTypeface(dayNameFontTypeFace != null ? Typeface.create(dayNameFontTypeFace, Typeface.BOLD_ITALIC) : dayNamePaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC)));
                 break;
+            default:
+                dayNamePaint.setTypeface(dayNameFontTypeFace != null ? dayNameFontTypeFace : dayNamePaint.setTypeface(Typeface.DEFAULT));
         }
     }
 
@@ -730,26 +797,29 @@ public class YearView extends View{
         weekendDayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         weekendDayPaint.setColor(weekendColor);
         weekendDayPaint.setTextSize(mContext.getResources().getDimensionPixelSize(R.dimen.year_view_day_text_size));
-        weekendDayPaint.setTextAlign(Paint.Align.LEFT);
-        switch (weekendFontType){
+        weekendDayPaint.setTextAlign(Paint.Align.CENTER);
+        switch (weekendFontType) {
             case WEEKEND_NAME_FONT_BOLD:
-                weekendDayPaint.setTypeface(Typeface.DEFAULT_BOLD);
+                weekendDayPaint.setTypeface(weekendFontTypeFace != null ? Typeface.create(weekendFontTypeFace, Typeface.BOLD) : weekendDayPaint.setTypeface(Typeface.DEFAULT_BOLD));
                 break;
             case WEEKEND_NAME_FONT_ITALIC:
-                weekendDayPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC));
+                weekendDayPaint.setTypeface(weekendFontTypeFace != null ? Typeface.create(weekendFontTypeFace, Typeface.ITALIC) : weekendDayPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)));
                 break;
             case WEEKEND_NAME_FONT_BOLD_ITALIC:
-                weekendDayPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC));
+                weekendDayPaint.setTypeface(weekendFontTypeFace != null ? Typeface.create(weekendFontTypeFace, Typeface.BOLD_ITALIC) : weekendDayPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD_ITALIC)));
                 break;
+            default:
+                weekendDayPaint.setTypeface(weekendFontTypeFace != null ? weekendFontTypeFace : weekendDayPaint.setTypeface(Typeface.DEFAULT));
         }
     }
 
     private void setupSelectionPaint(){
         selectionPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        selectionPaint.setColor(ColorUtils.setAlphaComponent(selectionColor, SELECTION_ALPHA));
+        selectionPaint.setColor(ColorUtils.setAlphaComponent(monthSelectionColor, SELECTION_ALPHA));
         selectionPaint.setStrokeJoin(Paint.Join.ROUND);
         selectionPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         selectionPaint.setStrokeWidth(SELECTION_STROKE);
+        selectionPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     private MonthGestureListener monthGestureListener;
