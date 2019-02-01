@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="YearView">
-        <attr name="text_color" format="color"/>
-        <attr name="text_color_weekend" format="color"/>
+        <attr name="simple_day_text_color" format="color"/>
+        <attr name="weekend_text_color" format="color"/>
         <attr name="today_text_color" format="color"/>
         <attr name="today_background_color" format="color"/>
         <attr name="month_selection_color" format="color"/>
-        <attr name="day_name_color" format="color"/>
-        <attr name="month_name_color" format="color"/>
+        <attr name="day_name_text_color" format="color"/>
+        <attr name="month_name_text_color" format="color"/>
+        <attr name="today_month_name_text_color" format="color"/>
+
+        <attr name="simple_day_text_size" format="dimension"/>
+        <attr name="weekend_text_size" format="dimension"/>
+        <attr name="today_text_size" format="dimension"/>
+        <attr name="day_name_text_size" format="dimension"/>
+        <attr name="month_name_text_size" format="dimension"/>
+        <attr name="today_month_name_text_size" format="dimension"/>
 
         <attr name="name_week_transcend_weekend" format="boolean"/>
 
@@ -24,6 +32,10 @@
         <attr name="weekend_font" format="reference"/>
         <attr name="day_name_font" format="reference"/>
         <attr name="today_font" format="reference"/>
+        <attr name="simple_day_font" format="reference"/>
+        <attr name="today_month_name_font" format="reference"/>
+
+
         <attr name="firstDayOfWeek">
             <enum name="monday" value="1"/>
             <enum name="tuesday" value="2"/>
@@ -33,7 +45,7 @@
             <enum name="saturday" value="6"/>
             <enum name="sunday" value="7"/>
         </attr>
-        <attr name="title_gravity">
+        <attr name="month_title_gravity">
             <enum name="center" value="1" />
             <enum name="left" value="2" />
             <enum name="right" value="3" />
@@ -68,6 +80,20 @@
         </attr>
 
         <attr name="weekend_font_type">
+            <enum name="normal" value="1" />
+            <enum name="bold" value="2"/>
+            <enum name="italic" value="3"/>
+            <enum name="bold_italic" value="4"/>
+        </attr>
+
+        <attr name="simple_day_font_type">
+            <enum name="normal" value="1" />
+            <enum name="bold" value="2"/>
+            <enum name="italic" value="3"/>
+            <enum name="bold_italic" value="4"/>
+        </attr>
+
+        <attr name="today_month_name_font_type">
             <enum name="normal" value="1" />
             <enum name="bold" value="2"/>
             <enum name="italic" value="3"/>
