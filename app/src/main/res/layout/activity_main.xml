@@ -1,58 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <mamboa.yearview.YearView
-            android:id="@+id/yearView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:current_year="2019"
-            app:rows="4"
-            app:columns="3"
-            app:horizontal_spacing="20"
-            app:vertical_spacing="10"
-            app:month_title_gravity="center"
-            app:firstDayOfWeek="sunday"
-            app:margin_below_month_name="15"
-            app:today_text_color="#fff"
-            app:today_font="@null"
-            app:today_font_type="bold"
-            app:today_text_size="10sp"
-            app:today_background_color="#d10606"
-            app:today_background_radius="5"
-            app:today_background_shape="circle"
-            app:simple_day_text_color="@android:color/black"
-            app:simple_day_font="@null"
-            app:simple_day_font_type="bold_italic"
-            app:simple_day_text_size="10sp"
-            app:month_name_text_color="@android:color/holo_blue_dark"
-            app:month_name_font="@font/teddy_bears"
-            app:month_name_font_type="bold_italic"
-            app:month_name_text_size="14sp"
-            app:month_selection_color="@android:color/holo_purple"
-            app:month_selection_margin="20"
-            app:day_name_text_color="@android:color/holo_orange_dark"
-            app:day_name_font="@font/calling_heart_custom"
-            app:day_name_font_type="italic"
-            app:day_name_text_size="10sp"
-            app:today_month_name_text_color="#d1b606"
-            app:today_month_name_font="@font/teddy_bears"
-            app:today_month_name_font_type="italic"
-            app:today_month_name_text_size="14sp"
-            app:weekend_days="@array/weekendDays"
-            app:weekend_text_color="@android:color/holo_green_dark"
-            app:weekend_font="@font/pinch_my_ride_custom"
-            app:weekend_font_type="normal"
-            app:weekend_text_size="10sp"
-            app:name_week_transcend_weekend="false"/>
-    </LinearLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

@@ -303,13 +303,18 @@ public class YearView extends View{
     private void splitViewInBlocks(){
         monthBlocks = new Rect[12];
         originalMonthBlocks = new Rect[12];
+
+        // allows us to compensate a right side padding
+        //that happens because when we draw text we use Align.Center
+        int horizontalCompensationPadding = (columns % 2 != 0) ?(horizontalSpacing * columns/2) : (horizontalSpacing * columns/rows);
+
         int k = 0;
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < columns; j++){
                 int currentHorizontalSpacing = horizontalSpacing/2;
                 int currentVerticalSpacing = verticalSpacing/2;
 
-                int left = (j == 0 ? currentHorizontalSpacing * 2 : currentHorizontalSpacing) + (j * mWidth/columns); //+ horizontal spacing to compensate for the align center
+                int left = horizontalCompensationPadding + (j == 0 ? currentHorizontalSpacing * 2 : currentHorizontalSpacing) + (j * mWidth/columns); //+ horizontal spacing to compensate for the align center
                 int top = currentVerticalSpacing + (i * mHeight/rows);
                 int right = (j + 1) * mWidth/columns - (j == columns-1 ? currentHorizontalSpacing * 2 : currentHorizontalSpacing);
                 int bottom = (i + 1) * mHeight/rows - currentVerticalSpacing;
@@ -359,7 +364,8 @@ public class YearView extends View{
      */
     private void drawMonthName(Canvas canvas,int index, String monthName){
         Paint paint = null;
-        if(isToday(index,1))
+        int today = new DateTime().getDayOfMonth();
+        if(isToday(index,today))
              paint = new Paint(todayMonthNamePaint);
         else
             paint = new Paint(monthNamePaint);
@@ -370,15 +376,16 @@ public class YearView extends View{
         int xStart = 0;
         int yValue = monthBlocks[index].top + textBounds.height();
         int width = textBounds.width();
+        //
         switch (monthTitleGravity){
-            case TITLE_GRAVITY_CENTER:
-                xStart = (monthBlocks[index].left + monthBlocks[index].right)/2 - width /2;
-            break;
             case TITLE_GRAVITY_START: //TITLE_GRAVITY_LEFT
-                xStart = monthBlocks[index].left + horizontalSpacing/2;
+                xStart = monthBlocks[index].left + width/2 - horizontalSpacing/2; //if ALIGN.LEFT monthBlocks[index].left + horizontalSpacing/2;
+                break;
+            case TITLE_GRAVITY_CENTER:
+                xStart = (monthBlocks[index].left + monthBlocks[index].right)/2 - horizontalSpacing;  //if ALIGN.LEFT (monthBlocks[index].left + monthBlocks[index].right)/2 - width /2;
                 break;
             case TITLE_GRAVITY_END: //or TITLE_GRAVITY_RIGHT
-                xStart = monthBlocks[index].right - width - horizontalSpacing/2;
+                xStart = monthBlocks[index].right - width/2 - horizontalSpacing*2;  //if ALIGN.LEFT  monthBlocks[index].right - width - horizontalSpacing/2;
                 break;
         }
 
@@ -390,6 +397,10 @@ public class YearView extends View{
         int right = monthBlocks[index].right;
         int bottom = monthBlocks[index].bottom;
         monthBlocks[index] = new Rect(left, top, right, bottom);
+
+        //test
+        /*Paint selectionPaintTest = new Paint(selectionPaint);
+        canvas.drawRect(monthBlocks[index],selectionPaintTest);*/
     }
 
     /**
@@ -405,10 +416,6 @@ public class YearView extends View{
 
         int xUnit = monthBlocks[month].width()/numDays;
         int yUnit = monthBlocks[month].height()/numDays;
-
-        //background month test
-        Paint selectionPaintTest = new Paint(selectionPaint);
-        selectionPaintTest.setTextAlign(Paint.Align.CENTER);
 
         int dayOfMonth = 1 - firstDay;
         for (int y = 0; y <= 7; y++) {
@@ -429,8 +436,6 @@ public class YearView extends View{
                     Paint paint = new Paint();
                     Rect textBounds = new Rect();
                     paint.getTextBounds(dayName, 0, dayName.length(), textBounds);
-                    xValue = xValue + (xUnit - textBounds.width());
-                    yValue = yValue - (yUnit - textBounds.height());
 
                     //weekend days
                     if(isDayPresentInWeekendDays(dateTime.getDayOfWeek())  && !dayNameTranscendsWeekend){
@@ -461,8 +466,6 @@ public class YearView extends View{
                             Paint paint = new Paint();
                             Rect textBounds = new Rect();
                             paint.getTextBounds(dayOfMonth + "", 0, (dayOfMonth + "").length(), textBounds);
-                            xValue = xValue + (xUnit - textBounds.width())*(dayOfMonth + "").length();
-                            yValue = yValue - (yUnit - textBounds.height());
 
                             if(isWeekend(month,dayOfMonth)) {
                                 //todo: draw a color to the background ?
@@ -497,7 +500,7 @@ public class YearView extends View{
         todayTodayTextPaint.getTextBounds(dayOfMonth + "", 0, (dayOfMonth + "").length(), bounds);
 
         Paint paint = new Paint();
-        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextAlign(Paint.Align.LEFT);
         Rect textBounds = new Rect();
         paint.getTextBounds(dayOfMonth + "", 0, (dayOfMonth + "").length(), textBounds);
 
@@ -508,14 +511,20 @@ public class YearView extends View{
         float diffBottom = fm.bottom - fm.descent;
 
         //position of the text
-        xValue = xValue + (width - textBounds.width())*(dayOfMonth + "").length();
-        yValue = yValue - (height - textBounds.height());
+        /*xValue = xValue + (width - textBounds.width())*(dayOfMonth + "").length();
+        yValue = yValue - (height - textBounds.height());*/
 
-        //background square
+        //background square ALIGN.CENTER
         boxRect.left = xValue - bounds.width()/2 - margin;
         boxRect.top = yValue - diffAscDesc - diffTop - margin;
         boxRect.right = xValue + bounds.width()/2 + margin;
         boxRect.bottom = yValue  + diffBottom + margin;
+
+        //background square ALIGN.LEFT
+        /*boxRect.left = xValue - margin;
+        boxRect.top = yValue - diffAscDesc - diffTop - margin;
+        boxRect.right = xValue + bounds.width() + margin;
+        boxRect.bottom = yValue  + diffBottom + margin;*/
 
         canvas.drawRect(boxRect, todayTodayBackgroundPaint);
         canvas.drawText(dayOfMonth + "", xValue, yValue, todayTodayTextPaint);
@@ -537,15 +546,19 @@ public class YearView extends View{
 
         Paint.FontMetrics fm = todayTodayTextPaint.getFontMetrics();
 
-        Paint paint = new Paint();
-        Rect textBounds = new Rect();
-        paint.getTextBounds(dayOfMonth + "", 0, (dayOfMonth + "").length(), textBounds);
-        xValue = xValue + (width - textBounds.width())*(dayOfMonth + "").length();
-        yValue = yValue - (height - textBounds.height());
+        /*xValue = xValue + (width - textBounds.width())*(dayOfMonth + "").length();
+        yValue = yValue - (height - textBounds.height());*/
+
 
         int diffAscDesc = (int) (Math.abs(fm.ascent + fm.descent));
+
+        //background square ALIGN.CENTER
         int centerX = xValue;
         int centerY = yValue - diffAscDesc/2;
+
+        //background square ALIGN.LEFT
+       /* int centerX = xValue + bounds.width()/2;
+        int centerY = yValue - diffAscDesc/2;*/
 
         //we make sure that the circle will always surround the value of the digits
         int radius = (bounds.width() > bounds.height() ? bounds.width() : bounds.height())/2 + margin;
@@ -945,7 +958,7 @@ public class YearView extends View{
         monthNamePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         monthNamePaint.setColor(monthNameColor);
         monthNamePaint.setTextSize(monthNameTextSize);
-        monthNamePaint.setTextAlign(Paint.Align.LEFT);
+        monthNamePaint.setTextAlign(Paint.Align.CENTER);
         switch (monthNameFontType) {
             case MONTH_NAME_FONT_BOLD:
                 monthNamePaint.setTypeface(monthNameFontTypeFace != null ? Typeface.create(monthNameFontTypeFace, Typeface.BOLD) : monthNamePaint.setTypeface(Typeface.DEFAULT_BOLD));
@@ -965,7 +978,7 @@ public class YearView extends View{
         todayMonthNamePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         todayMonthNamePaint.setColor(todayMonthNameColor);
         todayMonthNamePaint.setTextSize(todayMonthNameTextSize);
-        todayMonthNamePaint.setTextAlign(Paint.Align.LEFT);
+        todayMonthNamePaint.setTextAlign(Paint.Align.CENTER);
         switch (todayMonthNameFontType) {
             case TODAY_MONTH_NAME_FONT_BOLD:
                 todayMonthNamePaint.setTypeface(todayMonthNameFontTypeFace != null ? Typeface.create(todayMonthNameFontTypeFace, Typeface.BOLD) : todayMonthNamePaint.setTypeface(Typeface.DEFAULT_BOLD));
