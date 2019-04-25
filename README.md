@@ -20,6 +20,7 @@ Some implemented features:
 - Allow the typefaces to be changed at runtime with accessors
 
 Almost everything is customizable. The code below can be seen in the *year_fragment.xml* .
+
 ```
 <mamboa.yearview.YearView
         android:id="@+id/yearView"
@@ -75,8 +76,6 @@ Almost everything is customizable. The code below can be seen in the *year_fragm
         app:weekend_text_color="@android:color/holo_green_dark"
         app:weekend_text_size="10sp" />
 ```
-
-
 
 What is remaining to be done:
 - unit test
