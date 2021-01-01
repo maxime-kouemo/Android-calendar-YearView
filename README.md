@@ -2,7 +2,7 @@
 Attempt to reproduce the Year view of Samsung's Android Calendar. It uses Joda-Time (https://github.com/JodaOrg/joda-time).
 Now you can reproduce the Samsung's Calendar yearView just by adjusting the parameters of this view.
 
-![Click here to view the demo](https://github.com/maxime-kouemo/Android-calendar-YearView/tree/master/demo_files/demo_year_view.gif)
+![Click here to view the demo](/demo_files/demo_year_view.gif)
 
 Some implemented features:
 - Set the number of columns and the number of rows. (columns * rows should always = 12)
@@ -20,6 +20,7 @@ Some implemented features:
 - Allow the typefaces to be changed at runtime with accessors
 
 Almost everything is customizable. The code below can be seen in the *year_fragment.xml* .
+
 ```
 <mamboa.yearview.YearView
         android:id="@+id/yearView"
@@ -75,8 +76,6 @@ Almost everything is customizable. The code below can be seen in the *year_fragm
         app:weekend_text_color="@android:color/holo_green_dark"
         app:weekend_text_size="10sp" />
 ```
-
-
 
 What is remaining to be done:
 - unit test
