@@ -9,6 +9,8 @@
         <attr name="day_name_text_color" format="color"/>
         <attr name="month_name_text_color" format="color"/>
         <attr name="today_month_name_text_color" format="color"/>
+        <attr name="selected_day_text_color" format="color"/>
+        <attr name="selected_day_background_color" format="color"/>
 
         <attr name="simple_day_text_size" format="dimension"/>
         <attr name="weekend_text_size" format="dimension"/>
@@ -16,13 +18,17 @@
         <attr name="day_name_text_size" format="dimension"/>
         <attr name="month_name_text_size" format="dimension"/>
         <attr name="today_month_name_text_size" format="dimension"/>
+        <attr name="selected_day_text_size" format="dimension"/>
+        <attr name="selected_day_text" format="string"/>
 
         <attr name="name_week_transcend_weekend" format="boolean"/>
+        <attr name="is_day_selection_visually_sticky" format="boolean"/>
 
         <attr name="month_selection_margin" format="integer"/>
         <attr name="vertical_spacing" format="integer"/>
         <attr name="horizontal_spacing" format="integer"/>
         <attr name="today_background_radius" format="integer"/>
+        <attr name="selected_day_background_radius" format="integer"/>
         <attr name="current_year" format="integer"/>
         <attr name="rows" format="integer"/>
         <attr name="columns" format="integer"/>
@@ -34,6 +40,7 @@
         <attr name="today_font" format="reference"/>
         <attr name="simple_day_font" format="reference"/>
         <attr name="today_month_name_font" format="reference"/>
+        <attr name="selected_day_font" format="reference"/>
 
 
         <attr name="firstDayOfWeek">
@@ -54,50 +61,62 @@
         </attr>
 
         <attr name="today_background_shape">
-            <enum name="circle" value="1" />
-            <enum name="square" value="2" />
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+        </attr>
+
+        <attr name="selected_day_background_shape">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
         </attr>
 
         <attr name="month_name_font_type">
-            <enum name="normal" value="1" />
-            <enum name="bold" value="2"/>
-            <enum name="italic" value="3"/>
-            <enum name="bold_italic" value="4"/>
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
         </attr>
 
         <attr name="day_name_font_type">
-            <enum name="normal" value="1" />
-            <enum name="bold" value="2"/>
-            <enum name="italic" value="3"/>
-            <enum name="bold_italic" value="4"/>
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
         </attr>
 
         <attr name="today_font_type">
-            <enum name="normal" value="1" />
-            <enum name="bold" value="2"/>
-            <enum name="italic" value="3"/>
-            <enum name="bold_italic" value="4"/>
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <attr name="selected_day_font_type">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
         </attr>
 
         <attr name="weekend_font_type">
-            <enum name="normal" value="1" />
-            <enum name="bold" value="2"/>
-            <enum name="italic" value="3"/>
-            <enum name="bold_italic" value="4"/>
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
         </attr>
 
         <attr name="simple_day_font_type">
-            <enum name="normal" value="1" />
-            <enum name="bold" value="2"/>
-            <enum name="italic" value="3"/>
-            <enum name="bold_italic" value="4"/>
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
         </attr>
 
         <attr name="today_month_name_font_type">
-            <enum name="normal" value="1" />
-            <enum name="bold" value="2"/>
-            <enum name="italic" value="3"/>
-            <enum name="bold_italic" value="4"/>
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
         </attr>
 
     </declare-styleable>

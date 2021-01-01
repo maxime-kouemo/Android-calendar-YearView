@@ -50,9 +50,9 @@ public class YearFragment extends Fragment implements YearView.MonthGestureListe
         txtYear.setText("" + this.year);
         txtYear.setTextColor(Utils.getRandomColor());
         yearView.setYear(this.year);
-        yearView.setDayNameColor(Utils.getRandomColor());
-        yearView.setMonthNameColor(txtYear.getTextColors().getDefaultColor());
-        yearView.setWeekendColor(Utils.getRandomColor());
+        yearView.setDayNameTextColor(Utils.getRandomColor());
+        yearView.setMonthNameTextColor(txtYear.getTextColors().getDefaultColor());
+        yearView.setWeekendTextColor(Utils.getRandomColor());
 
         if(this.year % 2 == 0)
             yearView.setMonthTitleGravity(YearView.TITLE_GRAVITY_CENTER);
@@ -61,17 +61,31 @@ public class YearFragment extends Fragment implements YearView.MonthGestureListe
     }
 
     @Override
-    public void onClickMonth(long timeInMillis) {
+    public void onMonthClick(long timeInMillis) {
         DateTime dateTime = new DateTime(timeInMillis);
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM");
         Toast.makeText(getContext(), formatter.print(dateTime), Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onLongClickMonth(long timeInMillis) {
+    public void onMonthLongClick(long timeInMillis) {
         DateTime dateTime = new DateTime(timeInMillis);
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM");
         Toast.makeText(getContext(), formatter.print(dateTime), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDayClick(long timeInMillis) {
+        DateTime dateTime = new DateTime(timeInMillis);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        Toast.makeText(getContext(), "Clicked day: " + formatter.print(dateTime), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onDayLongClick(long timeInMillis) {
+        DateTime dateTime = new DateTime(timeInMillis);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        Toast.makeText(getContext(), "Long clicked day: " + formatter.print(dateTime), Toast.LENGTH_LONG).show();
     }
 
     @Override
