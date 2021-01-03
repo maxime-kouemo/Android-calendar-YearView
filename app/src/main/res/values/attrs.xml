@@ -42,7 +42,6 @@
         <attr name="today_month_name_font" format="reference"/>
         <attr name="selected_day_font" format="reference"/>
 
-
         <attr name="firstDayOfWeek">
             <enum name="monday" value="1"/>
             <enum name="tuesday" value="2"/>
@@ -53,11 +52,11 @@
             <enum name="sunday" value="7"/>
         </attr>
         <attr name="month_title_gravity">
-            <enum name="center" value="1" />
-            <enum name="left" value="2" />
-            <enum name="right" value="3" />
+            <enum name="center" value="0" />
+            <enum name="left" value="1" />
             <enum name="start" value="2" />
-            <enum name="end" value="3" />
+            <enum name="right" value="3" />
+            <enum name="end" value="4" />
         </attr>
 
         <attr name="today_background_shape">

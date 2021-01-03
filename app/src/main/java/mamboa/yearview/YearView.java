@@ -45,8 +45,7 @@ public class YearView extends View {
     private int mWidth = 10;
     private int mHeight = 10;
     private int marginBelowMonthName = 5;
-    private boolean mSundayFirst = false;
-    private int monthTitleGravity = 1;
+    private TitleGravity monthTitleGravity = TitleGravity.CENTER;
     private int firstDayOfWeek = 1; //since we are using Joda-Time, it goes from Monday: 1 to Sunday: 7
     private Context mContext;
     private final static int numDays = 7;
@@ -102,6 +101,14 @@ public class YearView extends View {
         BOLD_ITALIC
     }
 
+    enum TitleGravity {
+        CENTER,
+        START,
+        LEFT,
+        RIGHT,
+        END
+    }
+
     private Paint simpleDayNumberPaint;
     private Paint todayTextPaint;
     private Paint todayBackgroundPaint;
@@ -128,11 +135,6 @@ public class YearView extends View {
         SQUARE
     }
 
-    public final static int TITLE_GRAVITY_CENTER = 1;
-    public final static int TITLE_GRAVITY_LEFT = 2;
-    public final static int TITLE_GRAVITY_RIGHT = 3;
-    public final static int TITLE_GRAVITY_START = 2;
-    public final static int TITLE_GRAVITY_END = 3;
     private int mOnDownDelay = 0;
 
     private final static float SELECTION_STROKE = 5.f;
@@ -168,7 +170,7 @@ public class YearView extends View {
             columns = a.getInteger(R.styleable.YearView_columns, columns);
             verticalSpacing = a.getInteger(R.styleable.YearView_vertical_spacing, verticalSpacing);
             horizontalSpacing = a.getInteger(R.styleable.YearView_horizontal_spacing, horizontalSpacing);
-            monthTitleGravity = a.getInteger(R.styleable.YearView_month_title_gravity, monthTitleGravity);
+            monthTitleGravity = TitleGravity.values()[a.getInteger(R.styleable.YearView_month_title_gravity, TitleGravity.CENTER.ordinal())];
             marginBelowMonthName = a.getInteger(R.styleable.YearView_margin_below_month_name, marginBelowMonthName);
             monthSelectionColor = a.getColor(R.styleable.YearView_month_selection_color, monthSelectionColor);
             simpleDayTextColor = a.getColor(R.styleable.YearView_simple_day_text_color, simpleDayTextColor);
@@ -246,7 +248,6 @@ public class YearView extends View {
         setupSelectedDayBackgroundPaint();
 
         mGestureDetector = new GestureDetector(context, new CalendarGestureListener());
-        mSundayFirst = true;
 
         handler = new Handler();
     }
@@ -385,15 +386,17 @@ public class YearView extends View {
         int xStart = 0;
         int yValue = monthBlocks[index].top + textBounds.height();
         int width = textBounds.width();
-        //
+
         switch (monthTitleGravity) {
-            case TITLE_GRAVITY_START: //TITLE_GRAVITY_LEFT
+            case START:
+            case LEFT:
                 xStart = monthBlocks[index].left + width / 2 - horizontalSpacing / 2; //if ALIGN.LEFT monthBlocks[index].left + horizontalSpacing/2;
                 break;
-            case TITLE_GRAVITY_CENTER:
+            case CENTER:
                 xStart = (monthBlocks[index].left + monthBlocks[index].right) / 2 - horizontalSpacing;  //if ALIGN.LEFT (monthBlocks[index].left + monthBlocks[index].right)/2 - width /2;
                 break;
-            case TITLE_GRAVITY_END: //or TITLE_GRAVITY_RIGHT
+            case END:
+            case RIGHT:
                 xStart = monthBlocks[index].right - width / 2 - horizontalSpacing * 2;  //if ALIGN.LEFT  monthBlocks[index].right - width - horizontalSpacing/2;
                 break;
         }
@@ -465,7 +468,7 @@ public class YearView extends View {
                                     drawCircleAroundText(canvas, dayOfMonth, selectedDayTextPaint, selectedDayBackgroundPaint, xValue, yValue, selectedDayBackgroundRadius);
                                     break;
                                 default:
-                                    drawSquareAroundText(canvas, selectedDayTextPaint , selectedDayBackgroundPaint, dayOfMonth, xValue, yValue, selectedDayBackgroundRadius);
+                                    drawSquareAroundText(canvas, selectedDayTextPaint, selectedDayBackgroundPaint, dayOfMonth, xValue, yValue, selectedDayBackgroundRadius);
                             }
                         } else if (isToday(month, dayOfMonth)) {
                             switch (todayBackgroundShape) {
@@ -495,13 +498,14 @@ public class YearView extends View {
 
     /**
      * Save the coordinates areas that, when pressed upon, will trigger the selection
-     * @param canvas the reference to the canvas we are drawing on
-     * @param xValue the x start value of the area of the selection
-     * @param yValue the  y start value of the area of the selection
+     *
+     * @param canvas     the reference to the canvas we are drawing on
+     * @param xValue     the x start value of the area of the selection
+     * @param yValue     the  y start value of the area of the selection
      * @param dayOfMonth the day of the month (this is use at debug time, when we need to see the available area for that the user can click on)
-     * @param isWeekend is this a weekend day (this is use at debug time, when we need to see the available area for that the user can click on)
-     * @param year the year of the view (this is use at debug time, when we need to see the available area for that the user can click on)
-     * @param month the month of the view (this is use at debug time, when we need to see the available area for that the user can click on)
+     * @param isWeekend  is this a weekend day (this is use at debug time, when we need to see the available area for that the user can click on)
+     * @param year       the year of the view (this is use at debug time, when we need to see the available area for that the user can click on)
+     * @param month      the month of the view (this is use at debug time, when we need to see the available area for that the user can click on)
      */
     private void savePositionForSelection(Canvas canvas, int xValue, int yValue, int dayOfMonth, boolean isWeekend, int year, int month) {
         String date = year + "-" + month + "-" + dayOfMonth;
@@ -528,13 +532,14 @@ public class YearView extends View {
 
     /**
      * Draws a square around a given day
-     * @param canvas     the canvas
-     * @param textPaint  the text paint
-     * @param backgroundPaint  the background paint
-     * @param dayOfMonth the day of the month
-     * @param xValue     the x of where to draw the day of the month's value
-     * @param yValue     the y of where to draw the day of the month's value
-     * @param margin     around the month value
+     *
+     * @param canvas          the canvas
+     * @param textPaint       the text paint
+     * @param backgroundPaint the background paint
+     * @param dayOfMonth      the day of the month
+     * @param xValue          the x of where to draw the day of the month's value
+     * @param yValue          the y of where to draw the day of the month's value
+     * @param margin          around the month value
      */
     private void drawSquareAroundText(Canvas canvas, Paint textPaint, Paint backgroundPaint, int dayOfMonth, int xValue, int yValue, int margin) {
         RectF boxRect = new RectF();
@@ -559,13 +564,14 @@ public class YearView extends View {
 
     /**
      * Draws a circle around a given day
-     * @param canvas     the canvas
-     * @param dayOfMonth the day of the month
-     * @param textPaint  the text paint
-     * @param backgroundPaint  the background paint
-     * @param xValue     the x of where to draw the day of the month's value
-     * @param yValue     the y of where to draw the day of the month's value
-     * @param margin     radius the month value
+     *
+     * @param canvas          the canvas
+     * @param dayOfMonth      the day of the month
+     * @param textPaint       the text paint
+     * @param backgroundPaint the background paint
+     * @param xValue          the x of where to draw the day of the month's value
+     * @param yValue          the y of where to draw the day of the month's value
+     * @param margin          radius the month value
      */
     private void drawCircleAroundText(Canvas canvas, int dayOfMonth, Paint textPaint, Paint backgroundPaint, int xValue, int yValue, int margin) {
         Rect bounds = new Rect();
@@ -660,7 +666,7 @@ public class YearView extends View {
      * wants as first day of the week
      *
      * @param position of the day ([0;7[)
-     * @return
+     * @return the day's index
      */
     private int getDayIndex(int position) {
         return firstDayOfWeek == DateTimeConstants.MONDAY || position + firstDayOfWeek <= 7 ?
@@ -673,7 +679,7 @@ public class YearView extends View {
      * Example: newWeekendDays = {DateTimeConstants.SATURDAY, DateTimeConstants.SUNDAY}
      * The order of the days doesn't count
      *
-     * @param newWeekendDays
+     * @param newWeekendDays the list of weekend days
      */
     public void setWeekendDays(int[] newWeekendDays) {
         weekendDays = newWeekendDays;
@@ -886,15 +892,14 @@ public class YearView extends View {
     }
 
     /**
-     * Should be between {@link YearView#TITLE_GRAVITY_CENTER}, {@link YearView#TITLE_GRAVITY_START} or {@link YearView#TITLE_GRAVITY_LEFT},
-     * {@link YearView#TITLE_GRAVITY_END} or {@link YearView#TITLE_GRAVITY_RIGHT}. Will be set
-     * to TITLE_GRAVITY_CENTER if undefined
+     * Should be between CENTER, START, LEFT, END, RIGHT. Will be set
+     * to CENTER if undefined
      *
      * @param monthTitleGravity the new title gravity
      */
-    public void setMonthTitleGravity(int monthTitleGravity) {
-        if (monthTitleGravity != TITLE_GRAVITY_CENTER && monthTitleGravity != TITLE_GRAVITY_END && monthTitleGravity != TITLE_GRAVITY_LEFT)
-            monthTitleGravity = TITLE_GRAVITY_CENTER;
+    public void setMonthTitleGravity(TitleGravity monthTitleGravity) {
+        if (monthTitleGravity != TitleGravity.CENTER && monthTitleGravity != TitleGravity.END && monthTitleGravity != TitleGravity.LEFT)
+            this.monthTitleGravity = TitleGravity.CENTER;
         else
             this.monthTitleGravity = monthTitleGravity;
         invalidate();
@@ -1035,6 +1040,7 @@ public class YearView extends View {
 
     /**
      * Returns the timestamp of the currently selected day. Will return 0 if there is no selected date
+     *
      * @return timestamp of the selected day
      */
     public long getSelectedDay() {
@@ -1069,11 +1075,11 @@ public class YearView extends View {
     }
 
     private void setupMonthNamePaint() {
-        monthNamePaint  = setupTextPaint(monthNameTextColor, monthNameTextSize, monthNameFontType, DEFAULT_ALIGN, monthNameFontTypeFace);
+        monthNamePaint = setupTextPaint(monthNameTextColor, monthNameTextSize, monthNameFontType, DEFAULT_ALIGN, monthNameFontTypeFace);
     }
 
     private void setupTodayMonthNamePaint() {
-        todayMonthNamePaint  = setupTextPaint(todayMonthNameTextColor, todayMonthNameTextSize, todayMonthNameFontType, DEFAULT_ALIGN, todayMonthNameFontTypeFace);
+        todayMonthNamePaint = setupTextPaint(todayMonthNameTextColor, todayMonthNameTextSize, todayMonthNameFontType, DEFAULT_ALIGN, todayMonthNameFontTypeFace);
     }
 
     private void setupSimpleDayNumberPaint() {

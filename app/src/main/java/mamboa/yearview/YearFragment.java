@@ -55,7 +55,7 @@ public class YearFragment extends Fragment implements YearView.MonthGestureListe
         yearView.setWeekendTextColor(Utils.getRandomColor());
 
         if(this.year % 2 == 0)
-            yearView.setMonthTitleGravity(YearView.TITLE_GRAVITY_CENTER);
+            yearView.setMonthTitleGravity(YearView.TitleGravity.CENTER);
 
         return v;
     }
