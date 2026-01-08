@@ -1,8 +1,0 @@
-You can:
-- change the vertical and horizontal spacing
-- select the week start day
-- change the month name's gravity (left/start, center, right/end)
-- change the margin below the month name
-- change the number of columns and the number of rows. (Make sure that columns * rows = 12 or some months won't display)
-- implement the MonthGestureListener to receive click and long click on months.
-- change the selection color
