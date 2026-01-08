@@ -1,27 +1,12 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+//@file:Suppress("suppressKotlinVersionCompatibilityCheck")
 
-buildscript {
-    
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
-        
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+/*
+plugins {
+    alias(libs.plugins.com.android.library) apply false
+    alias(libs.plugins.com.android.application) apply false
+    alias(libs.plugins.org.jetbrains.kotlin.android) apply false
+    alias(libs.plugins.com.google.dagger.hilt.android) apply false
+    alias(libs.plugins.com.google.devtools.ksp) apply false
+    alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
+}*/

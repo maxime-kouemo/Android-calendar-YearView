@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="YearView">
+        <attr name="simple_day_text_color" format="color"/>
+        <attr name="weekend_text_color" format="color"/>
+        <attr name="today_text_color" format="color"/>
+        <attr name="today_background_color" format="color"/>
+        <attr name="month_selection_color" format="color"/>
+        <attr name="day_name_text_color" format="color"/>
+        <attr name="month_name_text_color" format="color"/>
+        <attr name="month_background_image" format="reference"/>
+        <attr name="month_background_color" format="color"/>
+        <attr name="today_month_name_text_color" format="color"/>
+        <attr name="selected_day_text_color" format="color"/>
+        <attr name="selected_day_background_color" format="color"/>
+        <attr name="month_background_color_density" format="integer"/>
+
+        <attr name="month_background_rounded_radius" format="float"/>
+        <attr name="month_background_selected_rounded_radius" format="float"/>
+        <attr name="selected_day_rounded_radius" format="float"/>
+        <attr name="today_rounded_radius" format="float"/>
+
+        <attr name="simple_day_text_size" format="dimension"/>
+        <attr name="weekend_text_size" format="dimension"/>
+        <attr name="today_text_size" format="dimension"/>
+        <attr name="day_name_text_size" format="dimension"/>
+        <attr name="month_name_text_size" format="dimension"/>
+        <attr name="today_month_name_text_size" format="dimension"/>
+        <attr name="selected_day_text_size" format="dimension"/>
+        <attr name="selected_day_text" format="string"/>
+
+        <attr name="name_week_transcend_weekend" format="boolean"/>
+        <attr name="is_day_selection_visually_sticky" format="boolean"/>
+
+        <attr name="month_selection_margin" format="integer"/>
+        <attr name="vertical_spacing" format="integer"/>
+        <attr name="horizontal_spacing" format="integer"/>
+        <attr name="today_background_radius" format="integer"/>
+        <attr name="selected_day_background_radius" format="integer"/>
+        <attr name="current_year" format="integer"/>
+        <attr name="rows" format="integer"/>
+        <attr name="columns" format="integer"/>
+        <attr name="margin_below_month_name" format="integer"/>
+        <attr name="weekend_days" format="reference"/>
+        <attr name="month_name_font" format="reference"/>
+        <attr name="weekend_font" format="reference"/>
+        <attr name="day_name_font" format="reference"/>
+        <attr name="today_font" format="reference"/>
+        <attr name="simple_day_font" format="reference"/>
+        <attr name="today_month_name_font" format="reference"/>
+        <attr name="selected_day_font" format="reference"/>
+
+        <attr name="firstDayOfWeek">
+            <enum name="monday" value="1"/>
+            <enum name="tuesday" value="2"/>
+            <enum name="wednesday" value="3"/>
+            <enum name="thursday" value="4"/>
+            <enum name="friday" value="5"/>
+            <enum name="saturday" value="6"/>
+            <enum name="sunday" value="7"/>
+        </attr>
+        <attr name="month_title_gravity">
+            <enum name="center" value="0" />
+            <enum name="left" value="1" />
+            <enum name="start" value="2" />
+            <enum name="right" value="3" />
+            <enum name="end" value="4" />
+        </attr>
+
+        <attr name="today_background_shape">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+            <enum name="rounded_square" value="2" />
+            <enum name="star" value="3"/>
+            <enum name="custom" value="4"/>
+        </attr>
+
+        <attr name="selected_day_background_shape">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+            <enum name="rounded_square" value="2" />
+            <enum name="star" value="3"/>
+            <enum name="custom" value="4"/>
+        </attr>
+
+        <attr name="month_background_shape">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+            <enum name="rounded_square" value="2" />
+            <enum name="star" value="3"/>
+            <enum name="custom" value="4"/>
+        </attr>
+
+        <attr name="month_background_merge_type">
+            <enum name="overlay" value="0" />
+            <enum name="clip" value="1" />
+        </attr>
+
+        <attr name="month_name_font_type">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <attr name="day_name_font_type">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <attr name="today_font_type">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <attr name="selected_day_font_type">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <attr name="weekend_font_type">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <attr name="simple_day_font_type">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <attr name="today_month_name_font_type">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+    </declare-styleable>
+</resources>
