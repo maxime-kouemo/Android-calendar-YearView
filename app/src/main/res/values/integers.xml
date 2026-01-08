@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="weekendDays">
+        <!--WARNING: THESE DAYS SHOULD FOLLOW JODA TIME'S DATETIMECONSTANTS (http://joda-time.sourceforge.net/apidocs/org/joda/time/DateTimeConstants.html
+        {@link org.joda.time.DateTimeConstants}) DAYS INDEX OR THE RESULT WON'T BE CORRECT.-->
+        <item>7</item> <!--Sunday-->
+        <!--<item>1</item> &lt;!&ndash;Monday&ndash;&gt;-->
+        <!--<item>2</item> &lt;!&ndash;Tuesday&ndash;&gt;-->
+        <!--<item>3</item> &lt;!&ndash;Wednesday&ndash;&gt;-->
+        <!--<item>4</item> &lt;!&ndash;Thursday&ndash;&gt;-->
+        <!--<item>5</item> &lt;!&ndash;Friday&ndash;&gt;-->
+        <item>6</item> <!--Saturday-->
+    </array>
+</resources>
