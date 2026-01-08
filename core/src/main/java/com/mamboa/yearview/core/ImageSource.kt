@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
+// TODO separate so that Compose has its own and legacy has its own
 /**
  * Describes the source of an image.
  */
