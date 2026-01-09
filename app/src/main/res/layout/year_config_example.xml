@@ -15,16 +15,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        
-        <!-- Layout Configuration -->
         app:columns="3"
         app:rows="4"
         app:current_year="2025"
         app:vertical_spacing="10"
         app:horizontal_spacing="20"
         app:firstDayOfWeek="sunday"
-        
-        <!-- Month Configuration (will be grouped in MonthConfig at runtime) -->
         app:month_title_gravity="center"
         app:margin_below_month_name="10"
         app:month_name_text_color="@android:color/holo_blue_dark"
@@ -41,16 +37,12 @@
         app:month_background_image="@drawable/shopping"
         app:month_selection_color="@android:color/holo_purple"
         app:month_selection_margin="20"
-        
-        <!-- Today Day Configuration (will be grouped in DayConfig at runtime) -->
         app:today_text_color="#fff"
         app:today_text_size="14sp"
         app:today_font_type="bold"
         app:today_background_color="#d10606"
         app:today_background_shape="circle"
         app:today_background_radius="2"
-        
-        <!-- Selected Day Configuration (will be grouped in DayConfig at runtime) -->
         app:is_day_selection_visually_sticky="true"
         app:selected_day_text="2026-01-22"
         app:selected_day_text_color="@android:color/white"
@@ -58,24 +50,17 @@
         app:selected_day_background_color="@android:color/holo_green_light"
         app:selected_day_background_shape="circle"
         app:selected_day_background_radius="5"
-        
-        <!-- Simple Day Configuration (will be grouped in DayConfig at runtime) -->
         app:simple_day_text_color="@android:color/black"
         app:simple_day_text_size="10sp"
         app:simple_day_font_type="bold_italic"
-        
-        <!-- Weekend Day Configuration (will be grouped in DayConfig at runtime) -->
         app:weekend_text_color="@android:color/holo_green_dark"
         app:weekend_text_size="10sp"
         app:weekend_font_type="normal"
         app:weekend_font="@font/pinch_my_ride_custom"
         app:weekend_days="@array/weekendDays"
-        
-        <!-- Day Name Configuration -->
         app:day_name_text_color="@android:color/holo_orange_dark"
         app:day_name_text_size="10sp"
         app:day_name_font_type="italic"
-        app:name_week_transcend_weekend="false"
-        />
+        app:name_week_transcend_weekend="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

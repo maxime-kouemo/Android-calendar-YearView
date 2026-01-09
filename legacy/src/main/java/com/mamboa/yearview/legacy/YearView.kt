@@ -26,7 +26,11 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
 import androidx.annotation.FontRes
+import androidx.annotation.IntRange
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import com.mamboa.yearview.core.BackgroundItemStyle
 import com.mamboa.yearview.core.BackgroundShape
@@ -59,19 +63,6 @@ import kotlin.text.substring
  * Created by mamboa on 9/4/2018.
  */
 class YearView : View {
-    // Classes for background image support
-
-    /*class BackgroundItemStyle.AndroidXMLStyle @JvmOverloads constructor(
-        val color: Int,
-        val shape: BackgroundShape,
-        selectionMargin: Float = 2.0f,
-        val image: ImageSource = ImageSource.None(),
-        density: Int = 100
-    ) {
-        val selectionMargin: Float = 2.0f
-        val density: Int = max(0.0, min(100.0, density.toDouble()))
-            .toInt() // Value between 0 and 100, controls color opacity over image
-    }*/
 
     // Configuration objects for grouped properties
     private var monthConfig: MonthConfig = MonthConfig()
@@ -85,8 +76,8 @@ class YearView : View {
     private var mYear = 2018
     private var verticalSpacing = 5
     private var horizontalSpacing = 5
-    private var columns = 2
-    private var rows = 6
+    @IntRange(from = 1, to = 12) private var columns = 2
+    @IntRange(from = 1, to = 12) private var rows = 6
     private var mWidth = 10
     private var mHeight = 10
     private var marginBelowMonthName = 5
@@ -145,7 +136,7 @@ class YearView : View {
 
     private var monthBackgroundImage: Drawable? = null
 
-    private var monthBackgroundColorDensity = 0
+    @IntRange(from = 0, to = 100) private var monthBackgroundColorDensity = 0
     private var monthBackgroundMergeType: MergeType = MergeType.OVERLAY
 
     private var weekendDays: IntArray? = IntArray(366)
@@ -511,7 +502,7 @@ class YearView : View {
      * @param monthName the String name of the month
      */
     private fun drawMonthName(canvas: Canvas, index: Int, monthName: String) {
-        var paint: Paint? = null
+        var paint: Paint?
         val today = DateTime().dayOfMonth
         try {
             paint = if (isToday(index, today)) Paint(todayMonthNamePaint)
@@ -525,7 +516,7 @@ class YearView : View {
         val textBounds = Rect()
         paint.getTextBounds(monthName, 0, monthName.length, textBounds)
 
-        var xStart = 0
+        var xStart: Int
         val yValue = monthBlocks[index]!!.top + textBounds.height()
         val width = textBounds.width()
 
@@ -635,10 +626,9 @@ class YearView : View {
                         )
                     }
                 } else {
-                    if (dayOfMonth >= 1 && dayOfMonth <= daysInMonth) {
+                    if (dayOfMonth in 1..daysInMonth) {
                         val isWeekEnd = isWeekend(month, dayOfMonth)
                         savePositionForSelection(
-                            canvas,
                             xValue,
                             yValue,
                             dayOfMonth,
@@ -671,7 +661,6 @@ class YearView : View {
                                 )
 
                                 is BackgroundShape.Star -> {
-                                    val numPoints = Math.max(3, Math.min(7, 5))
                                     drawStarAroundText(
                                         canvas,
                                         dayOfMonth,
@@ -680,7 +669,7 @@ class YearView : View {
                                         xValue,
                                         yValue,
                                         selectedDayBackgroundRadius,
-                                        numPoints
+                                        selectedDayBackgroundShape as BackgroundShape.Star
                                     )
                                 }
 
@@ -721,7 +710,7 @@ class YearView : View {
                                     xValue,
                                     yValue,
                                     todayBackgroundRadius,
-                                    5
+                                    todayBackgroundShape as BackgroundShape.Star
                                 )
 
                                 else -> drawSquareAroundText(
@@ -761,7 +750,6 @@ class YearView : View {
     /**
      * Save the coordinates areas that, when pressed upon, will trigger the selection
      *
-     * @param canvas     the reference to the canvas we are drawing on
      * @param xValue     the x start value of the area of the selection
      * @param yValue     the  y start value of the area of the selection
      * @param dayOfMonth the day of the month (this is use at debug time, when we need to see the available area for that the user can click on)
@@ -770,7 +758,6 @@ class YearView : View {
      * @param month      the month of the view (this is use at debug time, when we need to see the available area for that the user can click on)
      */
     private fun savePositionForSelection(
-        canvas: Canvas,
         xValue: Int,
         yValue: Int,
         dayOfMonth: Int,
@@ -941,11 +928,11 @@ class YearView : View {
      * @param xValue          the x of where to draw the day of the month's value
      * @param yValue          the y of where to draw the day of the month's value
      * @param radius          radius of the star points
-     * @param numPoints       number of star points (3-7)
+     * @param starShape       the star shape configuration with numberOfLegs and innerRadiusRatio
      */
     private fun drawStarAroundText(
         canvas: Canvas, dayOfMonth: Int, textPaint: Paint,
-        backgroundPaint: Paint, xValue: Int, yValue: Int, radius: Int, numPoints: Int
+        backgroundPaint: Paint, xValue: Int, yValue: Int, radius: Int, starShape: BackgroundShape.Star
     ) {
 
         // Calculate text bounds for centering
@@ -972,10 +959,10 @@ class YearView : View {
             (centerY + radius).toFloat()
         )
 
-        // Create background style for today
+        // Create background style for today using the configured star shape
         val todayStyle = BackgroundItemStyle.AndroidXMLStyle(
             backgroundPaint.color,
-            BackgroundShape.Star(),
+            starShape,
             0f,
             ImageSource.None,
             100 // Full opacity for today indicator
@@ -1170,7 +1157,6 @@ class YearView : View {
      * @param canvas The canvas to draw on.
      * @param bounds The bounds within which the background should be drawn.
      * @param style The style configuration for the background item.
-     * @param roundedRadius The radius for rounded corners (if applicable).
      */
     private fun drawStyledBackgroundInnerClip(
         canvas: Canvas,
@@ -1374,7 +1360,7 @@ class YearView : View {
      * @return if a day is present in the list of weekend days
      */
     private fun isDayPresentInWeekendDays(dayIndex: Int): Boolean {
-        if (weekendDays == null || weekendDays!!.size == 0) return false
+        if (weekendDays == null || weekendDays?.isEmpty() == true) return false
         for (i in weekendDays!!.indices) {
             if (weekendDays!![i] == dayIndex) return true
         }
@@ -1404,82 +1390,82 @@ class YearView : View {
         invalidate()
     }
 
-    fun setVerticalSpacing(verticalSpacing: Int) {
-        this.verticalSpacing = verticalSpacing
+    fun setVerticalSpacing(@DimenRes verticalSpacingRes: Int) {
+        this.verticalSpacing = resources.getDimensionPixelSize(verticalSpacingRes)
         invalidate()
     }
 
-    fun setHorizontalSpacing(horizontalSpacing: Int) {
-        this.horizontalSpacing = horizontalSpacing
+    fun setHorizontalSpacing(@DimenRes horizontalSpacingRes: Int) {
+        this.horizontalSpacing = resources.getDimensionPixelSize(horizontalSpacingRes)
         invalidate()
     }
 
-    fun setColumns(columns: Int) {
+    fun setColumns(@IntRange(from = 1, to = 12) columns: Int) {
         this.columns = columns
         invalidate()
     }
 
-    fun setRows(rows: Int) {
+    fun setRows(@IntRange(from = 1, to = 12) rows: Int) {
         this.rows = rows
         invalidate()
     }
 
-    fun setMonthSelectionColor(monthSelectionColor: Int) {
-        this.monthSelectionColor = monthSelectionColor
+    fun setMonthSelectionColor(@ColorRes monthSelectionColorRes: Int) {
+        this.monthSelectionColor = ContextCompat.getColor(context, monthSelectionColorRes)
         setupMonthSelectionPaint()
         invalidate()
     }
 
-    fun setTodayTextColor(todayTextColor: Int) {
-        this.todayTextColor = todayTextColor
+    fun setTodayTextColor(@ColorRes todayTextColorRes: Int) {
+        this.todayTextColor = ContextCompat.getColor(context, todayTextColorRes)
         setupTodayTextPaint()
         invalidate()
     }
 
-    fun setTodayBackgroundColor(todayBackgroundColor: Int) {
-        this.todayBackgroundColor = todayBackgroundColor
+    fun setTodayBackgroundColor(@ColorRes todayBackgroundColorRes: Int) {
+        this.todayBackgroundColor = ContextCompat.getColor(context, todayBackgroundColorRes)
         setupTodayBackgroundPaint()
         invalidate()
     }
 
-    fun setSimpleDayTextColor(simpleDayTextColor: Int) {
-        this.simpleDayTextColor = simpleDayTextColor
+    fun setSimpleDayTextColor(@ColorRes simpleDayTextColorRes: Int) {
+        this.simpleDayTextColor = ContextCompat.getColor(context, simpleDayTextColorRes)
         setupSimpleDayNumberPaint()
         invalidate()
     }
 
-    fun setWeekendTextColor(weekendTextColor: Int) {
-        this.weekendTextColor = weekendTextColor
+    fun setWeekendTextColor(@ColorRes weekendTextColorRes: Int) {
+        this.weekendTextColor = ContextCompat.getColor(context, weekendTextColorRes)
         setupWeekendPaint()
         invalidate()
     }
 
-    fun setTodayBackgroundRadius(todayBackgroundRadius: Int) {
-        this.todayBackgroundRadius = todayBackgroundRadius
+    fun setTodayBackgroundRadius(@DimenRes todayBackgroundRadiusRes: Int) {
+        this.todayBackgroundRadius = resources.getDimensionPixelSize(todayBackgroundRadiusRes)
         setupTodayBackgroundPaint()
         invalidate()
     }
 
-    fun setDayNameTextColor(dayNameTextColor: Int) {
-        this.dayNameTextColor = dayNameTextColor
+    fun setDayNameTextColor(@ColorRes dayNameTextColorRes: Int) {
+        this.dayNameTextColor = ContextCompat.getColor(context, dayNameTextColorRes)
         setupDayNamePaint()
         invalidate()
     }
 
-    fun setMonthNameTextColor(monthNameTextColor: Int) {
-        this.monthNameTextColor = monthNameTextColor
+    fun setMonthNameTextColor(@ColorRes monthNameTextColorRes: Int) {
+        this.monthNameTextColor = ContextCompat.getColor(context, monthNameTextColorRes)
         setupMonthNamePaint()
         invalidate()
     }
 
-    fun setTodayMonthNameTextColor(todayMonthNameTextColor: Int) {
-        this.todayMonthNameTextColor = todayMonthNameTextColor
+    fun setTodayMonthNameTextColor(@ColorRes todayMonthNameTextColorRes: Int) {
+        this.todayMonthNameTextColor = ContextCompat.getColor(context, todayMonthNameTextColorRes)
         setupTodayMonthNamePaint()
         invalidate()
     }
 
-    fun setMonthSelectionMargin(monthSelectionMargin: Int) {
-        this.monthSelectionMargin = monthSelectionMargin
+    fun setMonthSelectionMargin(@DimenRes monthSelectionMarginRes: Int) {
+        this.monthSelectionMargin = resources.getDimensionPixelSize(monthSelectionMarginRes)
         setupMonthSelectionPaint()
         invalidate()
     }
@@ -1521,95 +1507,67 @@ class YearView : View {
     }
 
     /**
-     * Updates the text size. If below 0 it will take the default text size[YearView.DEFAULT_TEXT_SIZE]
+     * Updates the text size using a dimension resource from dimens.xml
      *
-     * @param simpleDayTextSize
+     * @param simpleDayTextSizeRes Resource ID for text size (e.g., R.dimen.simple_day_text_size)
      */
-    fun setSimpleDayTextSize(simpleDayTextSize: Int) {
-        if (simpleDayTextSize < 0) this.simpleDayTextSize = (TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP,
-            DEFAULT_TEXT_SIZE.toFloat(),
-            resources.displayMetrics
-        ) + 0.5).toInt()
-        else this.simpleDayTextSize = simpleDayTextSize
+    fun setSimpleDayTextSize(@DimenRes simpleDayTextSizeRes: Int) {
+        this.simpleDayTextSize = resources.getDimensionPixelSize(simpleDayTextSizeRes)
         setupSimpleDayNumberPaint()
         invalidate()
     }
 
     /**
-     * Updates the text size. If below 0 it will take the default text size[YearView.DEFAULT_TEXT_SIZE]
+     * Updates the text size using a dimension resource from dimens.xml
      *
-     * @param weekendTextSize
+     * @param weekendTextSizeRes Resource ID for text size (e.g., R.dimen.weekend_text_size)
      */
-    fun setWeekendTextSize(weekendTextSize: Int) {
-        if (weekendTextSize < 0) this.weekendTextSize = (TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP,
-            DEFAULT_TEXT_SIZE.toFloat(),
-            resources.displayMetrics
-        ) + 0.5).toInt()
-        else this.weekendTextSize = weekendTextSize
+    fun setWeekendTextSize(@DimenRes weekendTextSizeRes: Int) {
+        this.weekendTextSize = resources.getDimensionPixelSize(weekendTextSizeRes)
         setupWeekendPaint()
         invalidate()
     }
 
     /**
-     * Updates the text size. If below 0 it will take the default text size[YearView.DEFAULT_TEXT_SIZE]
+     * Updates the text size using a dimension resource from dimens.xml
      *
-     * @param todayTextSize
+     * @param todayTextSizeRes Resource ID for text size (e.g., R.dimen.today_text_size)
      */
-    fun setTodayTextSize(todayTextSize: Int) {
-        if (todayTextSize < 0) this.todayTextSize = (TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP,
-            DEFAULT_TEXT_SIZE.toFloat(),
-            resources.displayMetrics
-        ) + 0.5).toInt()
-        else this.todayTextSize = todayTextSize
+    fun setTodayTextSize(@DimenRes todayTextSizeRes: Int) {
+        this.todayTextSize = resources.getDimensionPixelSize(todayTextSizeRes)
         setupTodayTextPaint()
         invalidate()
     }
 
     /**
-     * Updates the text size. If below 0 it will take the default text size[YearView.DEFAULT_TEXT_SIZE]
+     * Updates the text size using a dimension resource from dimens.xml
      *
-     * @param dayNameTextSize
+     * @param dayNameTextSizeRes Resource ID for text size (e.g., R.dimen.day_name_text_size)
      */
-    fun setDayNameTextSize(dayNameTextSize: Int) {
-        if (dayNameTextSize < 0) this.dayNameTextSize = (TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP,
-            DEFAULT_TEXT_SIZE.toFloat(),
-            resources.displayMetrics
-        ) + 0.5).toInt()
-        else this.dayNameTextSize = dayNameTextSize
+    fun setDayNameTextSize(@DimenRes dayNameTextSizeRes: Int) {
+        this.dayNameTextSize = resources.getDimensionPixelSize(dayNameTextSizeRes)
         setupDayNamePaint()
         invalidate()
     }
 
     /**
-     * Updates the text size. If below 0 it will take the default text size[YearView.DEFAULT_TEXT_SIZE]
+     * Updates the text size using a dimension resource from dimens.xml
      *
-     * @param monthNameTextSize
+     * @param monthNameTextSizeRes Resource ID for text size (e.g., R.dimen.month_name_text_size)
      */
-    fun setMonthNameTextSize(monthNameTextSize: Int) {
-        if (monthNameTextSize < 0) this.monthNameTextSize = (TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP,
-            DEFAULT_TEXT_SIZE.toFloat(),
-            resources.displayMetrics
-        ) + 0.5).toInt()
-        else this.monthNameTextSize = monthNameTextSize
+    fun setMonthNameTextSize(@DimenRes monthNameTextSizeRes: Int) {
+        this.monthNameTextSize = resources.getDimensionPixelSize(monthNameTextSizeRes)
         setupMonthNamePaint()
         invalidate()
     }
 
     /**
-     * Updates the text size. If below 0 it will take the default text size[YearView.DEFAULT_TEXT_SIZE]
+     * Updates the text size using a dimension resource from dimens.xml
      *
-     * @param todayMonthNameTextSize
+     * @param todayMonthNameTextSizeRes Resource ID for text size (e.g., R.dimen.today_month_name_text_size)
      */
-    fun setTodayMonthNameTextSize(todayMonthNameTextSize: Int) {
-        if (todayMonthNameTextSize < 0) this.todayMonthNameTextSize = (TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE.toFloat(), resources.displayMetrics
-        ) + 0.5).toInt()
-        else this.todayMonthNameTextSize = todayMonthNameTextSize
+    fun setTodayMonthNameTextSize(@DimenRes todayMonthNameTextSizeRes: Int) {
+        this.todayMonthNameTextSize = resources.getDimensionPixelSize(todayMonthNameTextSizeRes)
         setupTodayMonthNamePaint()
         invalidate()
     }

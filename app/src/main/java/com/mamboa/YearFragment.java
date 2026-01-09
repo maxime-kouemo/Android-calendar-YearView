@@ -49,9 +49,42 @@ public class YearFragment extends Fragment implements YearView.MonthGestureListe
         yearView = v.findViewById(R.id.yearView);
         yearView.setMonthGestureListener(this);
         yearView.setYear(this.year);
-        yearView.setDayNameTextColor(Utils.getRandomColor());
-        yearView.setMonthNameTextColor(Utils.getRandomColor());
-        yearView.setWeekendTextColor(Utils.getRandomColor());
+        
+        // Use colors from colors.xml based on year for variety
+        int colorVariant = (this.year % 6) + 1;
+        
+        switch (colorVariant) {
+            case 1:
+                yearView.setDayNameTextColor(R.color.demo_day_name_1);
+                yearView.setMonthNameTextColor(R.color.demo_month_name_1);
+                yearView.setWeekendTextColor(R.color.demo_weekend_1);
+                break;
+            case 2:
+                yearView.setDayNameTextColor(R.color.demo_day_name_2);
+                yearView.setMonthNameTextColor(R.color.demo_month_name_2);
+                yearView.setWeekendTextColor(R.color.demo_weekend_2);
+                break;
+            case 3:
+                yearView.setDayNameTextColor(R.color.demo_day_name_3);
+                yearView.setMonthNameTextColor(R.color.demo_month_name_3);
+                yearView.setWeekendTextColor(R.color.demo_weekend_3);
+                break;
+            case 4:
+                yearView.setDayNameTextColor(R.color.demo_day_name_4);
+                yearView.setMonthNameTextColor(R.color.demo_month_name_4);
+                yearView.setWeekendTextColor(R.color.demo_weekend_4);
+                break;
+            case 5:
+                yearView.setDayNameTextColor(R.color.demo_day_name_5);
+                yearView.setMonthNameTextColor(R.color.demo_month_name_5);
+                yearView.setWeekendTextColor(R.color.demo_weekend_5);
+                break;
+            case 6:
+                yearView.setDayNameTextColor(R.color.demo_day_name_6);
+                yearView.setMonthNameTextColor(R.color.demo_month_name_6);
+                yearView.setWeekendTextColor(R.color.demo_weekend_6);
+                break;
+        }
 
         if (this.year % 2 == 0)
             yearView.setMonthTitleGravity(Utils.getRandomTitleGravity());

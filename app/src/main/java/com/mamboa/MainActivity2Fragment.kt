@@ -1,7 +1,7 @@
 package com.mamboa
 
 import android.os.Bundle
-import android.util.Log // For performance logging
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +20,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -205,7 +203,7 @@ fun YearViewPage(
                     innerPadding = 32.dp
                 ),
                 opacity = 30,
-                image = ImageSource.DrawableRes(com.mamboa.yearview.R.drawable.shopping),
+                image = ImageSource.DrawableRes(com.mamboa.yearview.legacy.R.drawable.shopping),
                 mergeType = MergeType.CLIP
             ),
             nameStyle = TextStyle(

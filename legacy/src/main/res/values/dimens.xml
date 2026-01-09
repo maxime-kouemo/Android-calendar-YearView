@@ -1,3 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- YearView Text Sizes -->
+    <dimen name="yearview_simple_day_text_size">12sp</dimen>
+    <dimen name="yearview_weekend_text_size">12sp</dimen>
+    <dimen name="yearview_today_text_size">14sp</dimen>
+    <dimen name="yearview_selected_text_size">14sp</dimen>
+    <dimen name="yearview_day_name_text_size">10sp</dimen>
+    <dimen name="yearview_month_name_text_size">16sp</dimen>
+    <dimen name="yearview_today_month_name_text_size">16sp</dimen>
+
+    <!-- YearView Spacing & Margins -->
+    <dimen name="yearview_vertical_spacing">8dp</dimen>
+    <dimen name="yearview_horizontal_spacing">8dp</dimen>
+    <dimen name="yearview_margin_below_month_name">8dp</dimen>
+    <dimen name="yearview_month_selection_margin">4dp</dimen>
+
+    <!-- YearView Background Radius -->
+    <dimen name="yearview_today_background_radius">16dp</dimen>
+    <dimen name="yearview_selected_background_radius">16dp</dimen>
+    <dimen name="yearview_today_rounded_radius">8dp</dimen>
+    <dimen name="yearview_selected_rounded_radius">8dp</dimen>
+    <dimen name="yearview_month_background_rounded_radius">12dp</dimen>
 </resources>

@@ -5,7 +5,7 @@ import androidx.annotation.ColorInt
 import androidx.compose.ui.graphics.Color
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
-
+// TODO we will split this
 @Parcelize
 sealed class BackgroundItemStyle(
     /**

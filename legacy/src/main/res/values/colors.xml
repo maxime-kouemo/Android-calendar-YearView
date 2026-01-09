@@ -10,4 +10,38 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- YearView Example Colors -->
+    <color name="yearview_today_text">#FFFFFFFF</color>
+    <color name="yearview_today_background">#FFFF0000</color>
+    <color name="yearview_selected_text">#FFFFFFFF</color>
+    <color name="yearview_selected_background">#FF2196F3</color>
+    <color name="yearview_simple_day_text">#FF000000</color>
+    <color name="yearview_weekend_text">#FFFF5722</color>
+    <color name="yearview_day_name_text">#FF757575</color>
+    <color name="yearview_month_name_text">#FF212121</color>
+    <color name="yearview_month_selection">#4D2196F3</color>
+    <color name="yearview_month_background">#00000000</color>
+
+    <!-- Color variants for demo variety -->
+    <color name="demo_day_name_1">#FF4CAF50</color><!-- Green -->
+    <color name="demo_day_name_2">#FF2196F3</color><!-- Blue -->
+    <color name="demo_day_name_3">#FFFF9800</color><!-- Orange -->
+    <color name="demo_day_name_4">#FF9C27B0</color><!-- Purple -->
+    <color name="demo_day_name_5">#FFF44336</color><!-- Red -->
+    <color name="demo_day_name_6">#FF009688</color><!-- Teal -->
+    
+    <color name="demo_month_name_1">#FF673AB7</color><!-- Deep Purple -->
+    <color name="demo_month_name_2">#FF3F51B5</color><!-- Indigo -->
+    <color name="demo_month_name_3">#FFFF5722</color><!-- Deep Orange -->
+    <color name="demo_month_name_4">#FF795548</color><!-- Brown -->
+    <color name="demo_month_name_5">#FF607D8B</color><!-- Blue Grey -->
+    <color name="demo_month_name_6">#FFE91E63</color><!-- Pink -->
+    
+    <color name="demo_weekend_1">#FFFFEB3B</color><!-- Yellow -->
+    <color name="demo_weekend_2">#FFCDDC39</color><!-- Lime -->
+    <color name="demo_weekend_3">#FF8BC34A</color><!-- Light Green -->
+    <color name="demo_weekend_4">#FF00BCD4</color><!-- Cyan -->
+    <color name="demo_weekend_5">#FF03A9F4</color><!-- Light Blue -->
+    <color name="demo_weekend_6">#FFFF4081</color><!-- Pink Accent -->
 </resources>
