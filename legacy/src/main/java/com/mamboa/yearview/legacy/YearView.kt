@@ -64,15 +64,14 @@ import kotlin.text.substring
  */
 class YearView : View {
 
-    // Configuration objects for grouped properties
+    // ========== PRIMARY: Configuration Objects (Source of Truth) ==========
     private var monthConfig: MonthConfig = MonthConfig()
     private var todayConfig: DayConfig = DayConfig()
     private var selectedDayConfig: DayConfig = DayConfig()
     private var simpleDayConfig: DayConfig = DayConfig()
     private var weekendDayConfig: DayConfig = DayConfig()
 
-    // Individual properties maintained for backward compatibility and XML parsing
-    private var monthBackgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle()
+    // ========== View-Level Properties (Not in configs) ==========
     private var mYear = 2018
     private var verticalSpacing = 5
     private var horizontalSpacing = 5
@@ -80,69 +79,20 @@ class YearView : View {
     @IntRange(from = 1, to = 12) private var rows = 6
     private var mWidth = 10
     private var mHeight = 10
-    private var marginBelowMonthName = 5
-    private var monthTitleGravity = TitleGravity.CENTER
-    private var firstDayOfWeek =
-        1 //since we are using Joda-Time, it goes from Monday: 1 to Sunday: 7
+    private var firstDayOfWeek = 1 //Monday: 1 to Sunday: 7
     private var mContext: Context?
-    private var monthSelectionColor = Color.BLUE
-    private var todayTextColor = Color.WHITE
-    private var todayBackgroundColor = Color.RED
-    private var selectedDayBackgroundColor = Color.BLUE
-
-    private var monthBackgroundColor = Color.TRANSPARENT
-    private var simpleDayTextColor = Color.BLACK
-    private var weekendTextColor = Color.BLACK
+    private var weekendDays: IntArray? = IntArray(366)
+    
+    // Day name row properties (header: M, T, W, T, F, S, S - not in any config)
     private var dayNameTextColor = Color.BLACK
-    private var monthNameTextColor = Color.BLACK
-    private var todayMonthNameTextColor = Color.BLACK
-
-    private var selectedDayTextColor = Color.WHITE
-    private var selectedDayBackgroundShape: BackgroundShape = BackgroundShape.Square
-    private var todayBackgroundShape: BackgroundShape = BackgroundShape.Square
-    private var monthBackgroundShape: BackgroundShape = BackgroundShape.Square
-    private var monthNameFontType = FontType.NORMAL
-    private var dayNameFontType = FontType.NORMAL
-    private var todayFontType = FontType.NORMAL
-    private var weekendFontType = FontType.NORMAL
-    private var simpleDayFontType = FontType.NORMAL
-    private var todayMonthNameFontType = FontType.NORMAL
-    private var selectedDayFontType = FontType.NORMAL
-    private var monthSelectionMargin = 5
-
-    private var monthBackgroundSelectedRoundedRadius = 0f
-
-    private var monthBackgroundRoundedRadius = 0f
-    private var selectedDayRoundedRadius = 0f
-    private var todayRoundedRadius = 0f
-    private var monthNameFontTypeFace: Typeface? = null
-    private var weekendFontTypeFace: Typeface? = null
-    private var dayNameFontTypeFace: Typeface? = null
-    private var todayFontTypeFace: Typeface? = null
-    private var simpleDayFontTypeFace: Typeface? = null
-    private var todayMonthNameFontTypeFace: Typeface? = null
-    private var selectedDayTypeFace: Typeface? = null
-    private var simpleDayTextSize = 0
-    private var weekendTextSize = 0
-    private var todayTextSize = 0
     private var dayNameTextSize = 0
-    private var monthNameTextSize = 0
-    private var todayMonthNameTextSize = 0
-    private var selectedDayTextSize = 0
+    private var dayNameFontType = FontType.NORMAL
+    private var dayNameFontTypeFace: Typeface? = null
+    private var dayNameTranscendsWeekend = false
     private val DEFAULT_ALIGN = Paint.Align.CENTER
     private var monthGestureListener: MonthGestureListener? = null
     var isDaySelectionVisuallySticky: Boolean = false
         private set
-
-    private var monthBackgroundImage: Drawable? = null
-
-    @IntRange(from = 0, to = 100) private var monthBackgroundColorDensity = 0
-    private var monthBackgroundMergeType: MergeType = MergeType.OVERLAY
-
-    private var weekendDays: IntArray? = IntArray(366)
-
-    private var todayBackgroundRadius = 5
-    private var selectedDayBackgroundRadius = 5
 
     private var simpleDayNumberPaint: Paint? = null
     private var todayTextPaint: Paint? = null
@@ -154,10 +104,6 @@ class YearView : View {
     private var dayNamePaint: Paint? = null
     private var selectedDayTextPaint: Paint? = null
     private var selectedDayBackgroundPaint: Paint? = null
-
-    //if true: a font type ( and a text color)  applied to the name of the days in the week,
-    // will also be applied to the name of the days representing the weekend
-    private var dayNameTranscendsWeekend = false
 
     private lateinit var monthBlocks: Array<Rect?>
     private lateinit var originalMonthBlocks: Array<Rect?>
@@ -192,172 +138,147 @@ class YearView : View {
             rows = a.getInteger(R.styleable.YearView_rows, rows)
             columns = a.getInteger(R.styleable.YearView_columns, columns)
             verticalSpacing = a.getInteger(R.styleable.YearView_vertical_spacing, verticalSpacing)
-            horizontalSpacing =
-                a.getInteger(R.styleable.YearView_horizontal_spacing, horizontalSpacing)
-            monthTitleGravity = TitleGravity.entries[a.getInteger(
-                R.styleable.YearView_month_title_gravity,
-                TitleGravity.CENTER.ordinal
-            )]
-            marginBelowMonthName =
-                a.getInteger(R.styleable.YearView_margin_below_month_name, marginBelowMonthName)
-            monthSelectionColor =
-                a.getColor(R.styleable.YearView_month_selection_color, monthSelectionColor)
-            simpleDayTextColor =
-                a.getColor(R.styleable.YearView_simple_day_text_color, simpleDayTextColor)
-            weekendTextColor = a.getColor(R.styleable.YearView_weekend_text_color, weekendTextColor)
+            horizontalSpacing = a.getInteger(R.styleable.YearView_horizontal_spacing, horizontalSpacing)
             firstDayOfWeek = a.getInteger(R.styleable.YearView_firstDayOfWeek, firstDayOfWeek)
-            todayTextColor = a.getColor(R.styleable.YearView_today_text_color, todayTextColor)
-            todayBackgroundColor =
-                a.getColor(R.styleable.YearView_today_background_color, todayBackgroundColor)
-            todayBackgroundRadius =
-                a.getInteger(R.styleable.YearView_today_background_radius, todayBackgroundRadius)
-            selectedDayBackgroundRadius = a.getInteger(
-                R.styleable.YearView_selected_day_background_radius,
-                selectedDayBackgroundRadius
-            )
-            dayNameTextColor =
-                a.getInteger(R.styleable.YearView_day_name_text_color, dayNameTextColor)
-            monthNameTextColor =
-                a.getInteger(R.styleable.YearView_month_name_text_color, monthNameTextColor)
-            todayMonthNameTextColor = a.getInteger(
-                R.styleable.YearView_today_month_name_text_color,
-                todayMonthNameTextColor
-            )
-            selectedDayTextColor =
-                a.getInteger(R.styleable.YearView_selected_day_text_color, selectedDayTextColor)
-            selectedDayBackgroundColor = a.getColor(
-                R.styleable.YearView_selected_day_background_color,
-                selectedDayBackgroundColor
-            )
-
-            todayBackgroundShape = a.getInteger(R.styleable.YearView_today_background_shape, 0)
-                .toBackgroundShape()
-            selectedDayBackgroundShape =
-                a.getInteger(R.styleable.YearView_selected_day_background_shape, 0)
-                    .toBackgroundShape()
-            monthBackgroundShape = a.getInteger(R.styleable.YearView_month_background_shape, 0)
-                .toBackgroundShape()
-
-            monthBackgroundColor =
-                a.getColor(R.styleable.YearView_month_background_color, monthBackgroundColor)
-            monthBackgroundImage = a.getDrawable(R.styleable.YearView_month_background_image)
-
-            monthBackgroundColorDensity = a.getColor(
-                R.styleable.YearView_month_background_color_density,
-                monthBackgroundColorDensity
-            )
-
-            val monthBackgroundMergeTypeValue =
-                a.getInteger(R.styleable.YearView_month_background_merge_type, 0)
-            monthBackgroundMergeType = if (monthBackgroundMergeTypeValue == 1)
-                MergeType.CLIP else MergeType.OVERLAY
-
-            monthBackgroundRoundedRadius = a.getFloat(
-                R.styleable.YearView_month_background_rounded_radius,
-                monthBackgroundRoundedRadius
-            )
-            monthBackgroundSelectedRoundedRadius = a.getFloat(
-                R.styleable.YearView_month_background_selected_rounded_radius,
-                monthBackgroundSelectedRoundedRadius
-            )
-            selectedDayRoundedRadius = a.getFloat(
-                R.styleable.YearView_selected_day_rounded_radius,
-                selectedDayRoundedRadius
-            )
-            todayRoundedRadius =
-                a.getFloat(R.styleable.YearView_today_rounded_radius, todayRoundedRadius)
-
-            monthNameFontType = FontType.entries[a.getInteger(
-                R.styleable.YearView_month_name_font_type,
-                FontType.NORMAL.ordinal
-            )]
-            dayNameFontType =
-                FontType.entries[a.getInteger(
-                    R.styleable.YearView_day_name_font_type,
-                    FontType.NORMAL.ordinal
-                )]
-            todayFontType =
-                FontType.entries[a.getInteger(
-                    R.styleable.YearView_today_font_type,
-                    FontType.NORMAL.ordinal
-                )]
-
-            weekendFontType =
-                FontType.entries[a.getInteger(
-                    R.styleable.YearView_weekend_font_type,
-                    FontType.NORMAL.ordinal
-                )]
-            simpleDayFontType = FontType.entries[a.getInteger(
-                R.styleable.YearView_simple_day_font_type,
-                FontType.NORMAL.ordinal
-            )]
-            todayMonthNameFontType = FontType.entries[a.getInteger(
-                R.styleable.YearView_today_month_name_font_type,
-                FontType.NORMAL.ordinal
-            )]
-            selectedDayFontType = FontType.entries[a.getInteger(
-                R.styleable.YearView_selected_day_font_type,
-                FontType.NORMAL.ordinal
-            )]
-
-            dayNameTranscendsWeekend = a.getBoolean(
-                R.styleable.YearView_name_week_transcend_weekend,
-                dayNameTranscendsWeekend
-            )
-            isDaySelectionVisuallySticky = a.getBoolean(
-                R.styleable.YearView_is_day_selection_visually_sticky,
-                isDaySelectionVisuallySticky
-            )
-            monthSelectionMargin =
-                a.getInteger(R.styleable.YearView_month_selection_margin, monthSelectionMargin)
-
-            monthNameFontTypeFace =
-                buildFont(a.getResourceId(R.styleable.YearView_month_name_font, 0), a)
-            weekendFontTypeFace =
-                buildFont(a.getResourceId(R.styleable.YearView_weekend_font, 0), a)
-            dayNameFontTypeFace =
-                buildFont(a.getResourceId(R.styleable.YearView_day_name_font, 0), a)
-            todayFontTypeFace = buildFont(a.getResourceId(R.styleable.YearView_today_font, 0), a)
-            simpleDayFontTypeFace =
-                buildFont(a.getResourceId(R.styleable.YearView_simple_day_font, 0), a)
-            todayMonthNameFontTypeFace =
-                buildFont(a.getResourceId(R.styleable.YearView_today_month_name_font, 0), a)
-            selectedDayTypeFace =
-                buildFont(a.getResourceId(R.styleable.YearView_selected_day_font, 0), a)
-
-            val defaultTextSize = (TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP,
-                DEFAULT_TEXT_SIZE.toFloat(),
-                resources.displayMetrics
-            ) + 0.5).toInt()
-
-            simpleDayTextSize =
-                a.getDimensionPixelSize(R.styleable.YearView_simple_day_text_size, defaultTextSize)
-            weekendTextSize =
-                a.getDimensionPixelSize(R.styleable.YearView_weekend_text_size, defaultTextSize)
-            todayTextSize =
-                a.getDimensionPixelSize(R.styleable.YearView_today_text_size, defaultTextSize)
-            dayNameTextSize =
-                a.getDimensionPixelSize(R.styleable.YearView_day_name_text_size, defaultTextSize)
-            monthNameTextSize =
-                a.getDimensionPixelSize(R.styleable.YearView_month_name_text_size, defaultTextSize)
-            todayMonthNameTextSize = a.getDimensionPixelSize(
-                R.styleable.YearView_today_month_name_text_size,
-                defaultTextSize
-            )
-            selectedDayTextSize = a.getDimensionPixelSize(
-                R.styleable.YearView_selected_day_text_size,
-                defaultTextSize
-            )
-
+            
+            dayNameTextColor = a.getInteger(R.styleable.YearView_day_name_text_color, dayNameTextColor)
+            dayNameTextSize = a.getDimensionPixelSize(R.styleable.YearView_day_name_text_size, (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE.toFloat(), resources.displayMetrics) + 0.5).toInt())
+            dayNameFontType = FontType.entries[a.getInteger(R.styleable.YearView_day_name_font_type, FontType.NORMAL.ordinal)]
+            dayNameFontTypeFace = buildFont(a.getResourceId(R.styleable.YearView_day_name_font, 0), a)
+            dayNameTranscendsWeekend = a.getBoolean(R.styleable.YearView_name_week_transcend_weekend, dayNameTranscendsWeekend)
+            
+            isDaySelectionVisuallySticky = a.getBoolean(R.styleable.YearView_is_day_selection_visually_sticky, isDaySelectionVisuallySticky)
+            
             selectedDay = a.getString(R.styleable.YearView_selected_day_text)
             if (!isDaySelectionVisuallySticky) {
                 selectedDay = ""
             }
 
-            //here we get the week end days defined in the xml's "app:weekend_days=..."
             val weekendDaysID = a.getResourceId(R.styleable.YearView_weekend_days, 0)
             if (weekendDaysID > 0) weekendDays = a.resources.getIntArray(weekendDaysID)
+            
+            val xmlMonthTitleGravity = TitleGravity.entries[a.getInteger(R.styleable.YearView_month_title_gravity, TitleGravity.CENTER.ordinal)]
+            val xmlMarginBelowMonthName = a.getInteger(R.styleable.YearView_margin_below_month_name, 5)
+            val xmlMonthSelectionColor = a.getColor(R.styleable.YearView_month_selection_color, Color.BLUE)
+            val xmlMonthBackgroundColor = a.getColor(R.styleable.YearView_month_background_color, Color.TRANSPARENT)
+            val xmlMonthBackgroundShape = a.getInteger(R.styleable.YearView_month_background_shape, 0).toBackgroundShape()
+            val xmlMonthNameTextColor = a.getInteger(R.styleable.YearView_month_name_text_color, Color.BLACK)
+            val xmlMonthNameTextSize = a.getDimensionPixelSize(R.styleable.YearView_month_name_text_size, (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE.toFloat(), resources.displayMetrics) + 0.5).toInt())
+            val xmlMonthNameFontType = FontType.entries[a.getInteger(R.styleable.YearView_month_name_font_type, FontType.NORMAL.ordinal)]
+            val xmlMonthNameFontTypeFace = buildFont(a.getResourceId(R.styleable.YearView_month_name_font, 0), a)
+            val xmlTodayMonthNameTextColor = a.getInteger(R.styleable.YearView_today_month_name_text_color, Color.BLACK)
+            val xmlTodayMonthNameTextSize = a.getDimensionPixelSize(R.styleable.YearView_today_month_name_text_size, (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE.toFloat(), resources.displayMetrics) + 0.5).toInt())
+            val xmlTodayMonthNameFontType = FontType.entries[a.getInteger(R.styleable.YearView_today_month_name_font_type, FontType.NORMAL.ordinal)]
+            val xmlTodayMonthNameFontTypeFace = buildFont(a.getResourceId(R.styleable.YearView_today_month_name_font, 0), a)
+            val xmlMonthSelectionMargin = a.getInteger(R.styleable.YearView_month_selection_margin, 5)
+            val xmlMonthBackgroundColorDensity = a.getInteger(R.styleable.YearView_month_background_color_density, 100)
+            val xmlMonthBackgroundMergeType = MergeType.entries[a.getInteger(R.styleable.YearView_month_background_merge_type, MergeType.OVERLAY.ordinal)]
+            val xmlMonthBackgroundImage = a.getDrawable(R.styleable.YearView_month_background_image)
+            
+            val xmlTodayTextColor = a.getColor(R.styleable.YearView_today_text_color, Color.WHITE)
+            val xmlTodayTextSize = a.getDimensionPixelSize(R.styleable.YearView_today_text_size, (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE.toFloat(), resources.displayMetrics) + 0.5).toInt())
+            val xmlTodayFontType = FontType.entries[a.getInteger(R.styleable.YearView_today_font_type, FontType.NORMAL.ordinal)]
+            val xmlTodayFontTypeFace = buildFont(a.getResourceId(R.styleable.YearView_today_font, 0), a)
+            val xmlTodayBackgroundColor = a.getColor(R.styleable.YearView_today_background_color, Color.RED)
+            val xmlTodayBackgroundShape = a.getInteger(R.styleable.YearView_today_background_shape, 0).toBackgroundShape()
+            val xmlTodayBackgroundRadius = a.getInteger(R.styleable.YearView_today_background_radius, 5)
+            
+            val xmlSelectedDayTextColor = a.getInteger(R.styleable.YearView_selected_day_text_color, Color.WHITE)
+            val xmlSelectedDayTextSize = a.getDimensionPixelSize(R.styleable.YearView_selected_day_text_size, (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE.toFloat(), resources.displayMetrics) + 0.5).toInt())
+            val xmlSelectedDayFontType = FontType.entries[a.getInteger(R.styleable.YearView_selected_day_font_type, FontType.NORMAL.ordinal)]
+            val xmlSelectedDayTypeFace = buildFont(a.getResourceId(R.styleable.YearView_selected_day_font, 0), a)
+            val xmlSelectedDayBackgroundColor = a.getColor(R.styleable.YearView_selected_day_background_color, Color.BLUE)
+            val xmlSelectedDayBackgroundShape = a.getInteger(R.styleable.YearView_selected_day_background_shape, 0).toBackgroundShape()
+            val xmlSelectedDayBackgroundRadius = a.getInteger(R.styleable.YearView_selected_day_background_radius, 5)
+            
+            val xmlSimpleDayTextColor = a.getColor(R.styleable.YearView_simple_day_text_color, Color.BLACK)
+            val xmlSimpleDayTextSize = a.getDimensionPixelSize(R.styleable.YearView_simple_day_text_size, (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE.toFloat(), resources.displayMetrics) + 0.5).toInt())
+            val xmlSimpleDayFontType = FontType.entries[a.getInteger(R.styleable.YearView_simple_day_font_type, FontType.NORMAL.ordinal)]
+            val xmlSimpleDayFontTypeFace = buildFont(a.getResourceId(R.styleable.YearView_simple_day_font, 0), a)
+            
+            val xmlWeekendTextColor = a.getColor(R.styleable.YearView_weekend_text_color, Color.BLACK)
+            val xmlWeekendTextSize = a.getDimensionPixelSize(R.styleable.YearView_weekend_text_size, (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DEFAULT_TEXT_SIZE.toFloat(), resources.displayMetrics) + 0.5).toInt())
+            val xmlWeekendFontType = FontType.entries[a.getInteger(R.styleable.YearView_weekend_font_type, FontType.NORMAL.ordinal)]
+            val xmlWeekendFontTypeFace = buildFont(a.getResourceId(R.styleable.YearView_weekend_font, 0), a)
+            
+            // Build MonthConfig
+            monthConfig = MonthConfig(
+                titleGravity = xmlMonthTitleGravity,
+                marginBelowMonthName = xmlMarginBelowMonthName,
+                selectionBackgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
+                    color = xmlMonthSelectionColor,
+                    shape = xmlMonthBackgroundShape,
+                    selectionMargin = xmlMonthSelectionMargin.toFloat()
+                ),
+                backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
+                    color = xmlMonthBackgroundColor,
+                    shape = xmlMonthBackgroundShape,
+                    image = ImageSource.ReceivedDrawable(xmlMonthBackgroundImage),
+                    opacity = xmlMonthBackgroundColorDensity,
+                    mergeType = xmlMonthBackgroundMergeType
+                ),
+                nameTextColor = xmlMonthNameTextColor,
+                nameTextSize = xmlMonthNameTextSize,
+                nameFontType = xmlMonthNameFontType,
+                nameFontTypeFace = xmlMonthNameFontTypeFace,
+                todayNameTextColor = xmlTodayMonthNameTextColor,
+                todayNameTextSize = xmlTodayMonthNameTextSize,
+                todayNameFontType = xmlTodayMonthNameFontType,
+                todayNameFontTypeFace = xmlTodayMonthNameFontTypeFace
+            )
+            
+            // Build TodayConfig
+            todayConfig = DayConfig(
+                backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
+                    color = xmlTodayBackgroundColor,
+                    shape = xmlTodayBackgroundShape
+                ),
+                textColor = xmlTodayTextColor,
+                textSize = xmlTodayTextSize,
+                fontType = xmlTodayFontType,
+                fontTypeFace = xmlTodayFontTypeFace,
+                backgroundRadius = xmlTodayBackgroundRadius
+            )
+            
+            // Build SelectedDayConfig
+            selectedDayConfig = DayConfig(
+                backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
+                    color = xmlSelectedDayBackgroundColor,
+                    shape = xmlSelectedDayBackgroundShape
+                ),
+                textColor = xmlSelectedDayTextColor,
+                textSize = xmlSelectedDayTextSize,
+                fontType = xmlSelectedDayFontType,
+                fontTypeFace = xmlSelectedDayTypeFace,
+                backgroundRadius = xmlSelectedDayBackgroundRadius
+            )
+            
+            // Build SimpleDayConfig
+            simpleDayConfig = DayConfig(
+                backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
+                    color = Color.TRANSPARENT,
+                    shape = BackgroundShape.Square
+                ),
+                textColor = xmlSimpleDayTextColor,
+                textSize = xmlSimpleDayTextSize,
+                fontType = xmlSimpleDayFontType,
+                fontTypeFace = xmlSimpleDayFontTypeFace,
+                backgroundRadius = 0
+            )
+            
+            // Build WeekendDayConfig
+            weekendDayConfig = DayConfig(
+                backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
+                    color = Color.TRANSPARENT,
+                    shape = BackgroundShape.Square
+                ),
+                textColor = xmlWeekendTextColor,
+                textSize = xmlWeekendTextSize,
+                fontType = xmlWeekendFontType,
+                fontTypeFace = xmlWeekendFontTypeFace,
+                backgroundRadius = 0
+            )
+            
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -479,11 +400,12 @@ class YearView : View {
 
     private fun drawSelection(canvas: Canvas) {
         if (selectedMonthID > -1) {
+            val selectionMargin = monthConfig.selectionBackgroundItemStyle.selectionMargin
             canvas.drawRect(
-                (originalMonthBlocks[selectedMonthID]!!.left - monthSelectionMargin - horizontalSpacing).toFloat(),
-                (originalMonthBlocks[selectedMonthID]!!.top - monthSelectionMargin).toFloat(),
-                (originalMonthBlocks[selectedMonthID]!!.right + monthSelectionMargin - horizontalSpacing).toFloat(),
-                (lastRowPositionInMonth!![selectedMonthID] + monthSelectionMargin).toFloat(),
+                (originalMonthBlocks[selectedMonthID]!!.left - selectionMargin - horizontalSpacing).toFloat(),
+                (originalMonthBlocks[selectedMonthID]!!.top - selectionMargin).toFloat(),
+                (originalMonthBlocks[selectedMonthID]!!.right + selectionMargin - horizontalSpacing).toFloat(),
+                (lastRowPositionInMonth!![selectedMonthID] + selectionMargin).toFloat(),
                 selectionPaint!!
             )
 
@@ -520,7 +442,7 @@ class YearView : View {
         val yValue = monthBlocks[index]!!.top + textBounds.height()
         val width = textBounds.width()
 
-        xStart = when (monthTitleGravity) {
+        xStart = when (monthConfig.titleGravity) {
             TitleGravity.START, TitleGravity.LEFT -> monthBlocks[index]!!.left + width / 2 - horizontalSpacing / 2 //if ALIGN.LEFT monthBlocks[index].left + horizontalSpacing/2;
             TitleGravity.CENTER -> (monthBlocks[index]!!.left + monthBlocks[index]!!.right) / 2 - horizontalSpacing //if ALIGN.LEFT (monthBlocks[index].left + monthBlocks[index].right)/2 - width /2;
             TitleGravity.END, TitleGravity.RIGHT -> monthBlocks[index]!!.right - width / 2 - horizontalSpacing * 2 //if ALIGN.LEFT  monthBlocks[index].right - width - horizontalSpacing/2;
@@ -530,29 +452,23 @@ class YearView : View {
 
         //shift the rest below so that clicking the name won't trigger the month animation
         val left = monthBlocks[index]!!.left
-        val top = monthBlocks[index]!!.top + textBounds.height() * 2 + marginBelowMonthName
+        val top = monthBlocks[index]!!.top + textBounds.height() * 2 + monthConfig.marginBelowMonthName
         val right = monthBlocks[index]!!.right
         val bottom = monthBlocks[index]!!.bottom
         monthBlocks[index] = Rect(left, top, right, bottom)
-
-        //test
-        /*Paint selectionPaintTest = new Paint(selectionPaint);
-        canvas.drawRect(monthBlocks[index],selectionPaintTest);*/
     }
 
     private fun prepareMonthBackground(): BackgroundItemStyle.AndroidXMLStyle {
-        val backgroundShape = if (monthBackgroundShape is BackgroundShape.RoundedSquare && monthBackgroundRoundedRadius > 0) {
-            BackgroundShape.RoundedSquare(monthBackgroundRoundedRadius)
-        } else {
-            monthBackgroundShape
+        val baseStyle = monthConfig.backgroundItemStyle
+        val backgroundShape = when (val shape = baseStyle.shape) {
+            is BackgroundShape.RoundedSquare -> {
+                val radius = shape.cornerRadius
+                if (radius > 0) BackgroundShape.RoundedSquare(radius) else shape
+            }
+            else -> shape
         }
-        return BackgroundItemStyle.AndroidXMLStyle(
-            monthBackgroundColor,
-            backgroundShape,
-            0f, // TODO add as parameter in xml
-            ImageSource.ReceivedDrawable(monthBackgroundImage),
-            monthBackgroundColorDensity,
-            monthBackgroundMergeType
+        return baseStyle.copy(
+            shape = backgroundShape
         )
     }
 
@@ -574,21 +490,21 @@ class YearView : View {
     ) {
         drawMonthName(canvas, month, monthName)
 
-        monthBackgroundItemStyle = prepareMonthBackground()
+        // val preparedBackgroundStyle = prepareMonthBackground()
 
         // Draw month background if provided
-        if (monthBackgroundItemStyle.color != Color.TRANSPARENT || monthBackgroundItemStyle.image !is ImageSource.None
+        if (monthConfig.backgroundItemStyle.color != Color.TRANSPARENT || monthConfig.backgroundItemStyle.image !is ImageSource.None
         ) {
             val bounds = RectF(
-                monthBlocks[month]!!.left - monthBackgroundItemStyle.selectionMargin,
-                monthBlocks[month]!!.top - monthBackgroundItemStyle.selectionMargin,
-                monthBlocks[month]!!.right + monthBackgroundItemStyle.selectionMargin,
-                monthBlocks[month]!!.bottom + monthBackgroundItemStyle.selectionMargin
+                monthBlocks[month]!!.left - monthConfig.backgroundItemStyle.selectionMargin,
+                monthBlocks[month]!!.top - monthConfig.backgroundItemStyle.selectionMargin,
+                monthBlocks[month]!!.right + monthConfig.backgroundItemStyle.selectionMargin,
+                monthBlocks[month]!!.bottom + monthConfig.backgroundItemStyle.selectionMargin
             )
             drawStyledBackground(
                 canvas,
                 bounds,
-                monthBackgroundItemStyle,
+                monthConfig.backgroundItemStyle,
             )
         }
 
@@ -610,7 +526,7 @@ class YearView : View {
                 if (y == 0) {
                     val pDoW = dateTime.dayOfWeek()
                     val dayName =
-                        pDoW.getAsShortText(Utils.getCurrentLocale(mContext)).substring(0, 1)
+                        pDoW.getAsShortText(Utils.getCurrentLocale(mContext))[0]
 
                     //weekend days
                     if (isDayPresentInWeekendDays(dateTime.dayOfWeek) && !dayNameTranscendsWeekend) {
@@ -638,7 +554,8 @@ class YearView : View {
                         )
 
                         if (isSelectedDay(month, dayOfMonth)) {
-                            when (selectedDayBackgroundShape) {
+                            val selectedShape = selectedDayConfig.backgroundItemStyle.shape
+                            when (selectedShape) {
                                 is BackgroundShape.Circle -> drawCircleAroundText(
                                     canvas,
                                     dayOfMonth,
@@ -646,7 +563,7 @@ class YearView : View {
                                     selectedDayBackgroundPaint!!,
                                     xValue,
                                     yValue,
-                                    selectedDayBackgroundRadius
+                                    selectedDayConfig.backgroundRadius
                                 )
 
                                 is BackgroundShape.RoundedSquare -> drawRoundedSquareAroundText(
@@ -656,8 +573,11 @@ class YearView : View {
                                     selectedDayBackgroundPaint!!,
                                     xValue,
                                     yValue,
-                                    selectedDayBackgroundRadius,
-                                    selectedDayRoundedRadius
+                                    selectedDayConfig.backgroundRadius,
+                                    when (val shape = selectedDayConfig.backgroundItemStyle.shape) {
+                                        is BackgroundShape.RoundedSquare -> shape.cornerRadius
+                                        else -> 0f
+                                    }
                                 )
 
                                 is BackgroundShape.Star -> {
@@ -668,8 +588,8 @@ class YearView : View {
                                         selectedDayBackgroundPaint!!,
                                         xValue,
                                         yValue,
-                                        selectedDayBackgroundRadius,
-                                        selectedDayBackgroundShape as BackgroundShape.Star
+                                        selectedDayConfig.backgroundRadius,
+                                        selectedDayConfig.backgroundItemStyle.shape as BackgroundShape.Star
                                     )
                                 }
 
@@ -680,15 +600,16 @@ class YearView : View {
                                     dayOfMonth,
                                     xValue,
                                     yValue,
-                                    selectedDayBackgroundRadius
+                                    selectedDayConfig.backgroundRadius
                                 )
                             }
                         } else if (isToday(month, dayOfMonth)) {
-                            when (todayBackgroundShape) {
+                            val todayShape = todayConfig.backgroundItemStyle.shape
+                            when (todayShape) {
                                 is BackgroundShape.Circle -> drawCircleAroundText(
                                     canvas, dayOfMonth,
                                     todayTextPaint!!,
-                                    todayBackgroundPaint!!, xValue, yValue, todayBackgroundRadius
+                                    todayBackgroundPaint!!, xValue, yValue, todayConfig.backgroundRadius
                                 )
 
                                 is BackgroundShape.RoundedSquare -> drawRoundedSquareAroundText(
@@ -698,8 +619,11 @@ class YearView : View {
                                     todayBackgroundPaint!!,
                                     xValue,
                                     yValue,
-                                    todayBackgroundRadius,
-                                    todayRoundedRadius
+                                    todayConfig.backgroundRadius,
+                                    when (val shape = (todayConfig.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).shape) {
+                                        is BackgroundShape.RoundedSquare -> shape.cornerRadius
+                                        else -> 0f
+                                    }
                                 )
 
                                 is BackgroundShape.Star -> drawStarAroundText(
@@ -709,8 +633,8 @@ class YearView : View {
                                     todayBackgroundPaint!!,
                                     xValue,
                                     yValue,
-                                    todayBackgroundRadius,
-                                    todayBackgroundShape as BackgroundShape.Star
+                                    todayConfig.backgroundRadius,
+                                    todayShape
                                 )
 
                                 else -> drawSquareAroundText(
@@ -720,7 +644,7 @@ class YearView : View {
                                     dayOfMonth,
                                     xValue,
                                     yValue,
-                                    todayBackgroundRadius
+                                    todayConfig.backgroundRadius
                                 )
                             }
                         } else {
@@ -1411,37 +1335,43 @@ class YearView : View {
     }
 
     fun setMonthSelectionColor(@ColorRes monthSelectionColorRes: Int) {
-        this.monthSelectionColor = ContextCompat.getColor(context, monthSelectionColorRes)
+        val color = ContextCompat.getColor(context, monthSelectionColorRes)
+        monthConfig = monthConfig.copy(
+            selectionBackgroundItemStyle = (monthConfig.selectionBackgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).copy(color = color)
+        )
         setupMonthSelectionPaint()
         invalidate()
     }
 
     fun setTodayTextColor(@ColorRes todayTextColorRes: Int) {
-        this.todayTextColor = ContextCompat.getColor(context, todayTextColorRes)
+        todayConfig = todayConfig.copy(textColor = ContextCompat.getColor(context, todayTextColorRes))
         setupTodayTextPaint()
         invalidate()
     }
 
     fun setTodayBackgroundColor(@ColorRes todayBackgroundColorRes: Int) {
-        this.todayBackgroundColor = ContextCompat.getColor(context, todayBackgroundColorRes)
+        val color = ContextCompat.getColor(context, todayBackgroundColorRes)
+        todayConfig = todayConfig.copy(
+            backgroundItemStyle = (todayConfig.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).copy(color = color)
+        )
         setupTodayBackgroundPaint()
         invalidate()
     }
 
     fun setSimpleDayTextColor(@ColorRes simpleDayTextColorRes: Int) {
-        this.simpleDayTextColor = ContextCompat.getColor(context, simpleDayTextColorRes)
+        simpleDayConfig = simpleDayConfig.copy(textColor = ContextCompat.getColor(context, simpleDayTextColorRes))
         setupSimpleDayNumberPaint()
         invalidate()
     }
 
     fun setWeekendTextColor(@ColorRes weekendTextColorRes: Int) {
-        this.weekendTextColor = ContextCompat.getColor(context, weekendTextColorRes)
+        weekendDayConfig = weekendDayConfig.copy(textColor = ContextCompat.getColor(context, weekendTextColorRes))
         setupWeekendPaint()
         invalidate()
     }
 
     fun setTodayBackgroundRadius(@DimenRes todayBackgroundRadiusRes: Int) {
-        this.todayBackgroundRadius = resources.getDimensionPixelSize(todayBackgroundRadiusRes)
+        todayConfig = todayConfig.copy(backgroundRadius = resources.getDimensionPixelSize(todayBackgroundRadiusRes))
         setupTodayBackgroundPaint()
         invalidate()
     }
@@ -1453,31 +1383,34 @@ class YearView : View {
     }
 
     fun setMonthNameTextColor(@ColorRes monthNameTextColorRes: Int) {
-        this.monthNameTextColor = ContextCompat.getColor(context, monthNameTextColorRes)
+        monthConfig = monthConfig.copy(nameTextColor = ContextCompat.getColor(context, monthNameTextColorRes))
         setupMonthNamePaint()
         invalidate()
     }
 
     fun setTodayMonthNameTextColor(@ColorRes todayMonthNameTextColorRes: Int) {
-        this.todayMonthNameTextColor = ContextCompat.getColor(context, todayMonthNameTextColorRes)
+        monthConfig = monthConfig.copy(todayNameTextColor = ContextCompat.getColor(context, todayMonthNameTextColorRes))
         setupTodayMonthNamePaint()
         invalidate()
     }
 
     fun setMonthSelectionMargin(@DimenRes monthSelectionMarginRes: Int) {
-        this.monthSelectionMargin = resources.getDimensionPixelSize(monthSelectionMarginRes)
+        val margin = resources.getDimensionPixelSize(monthSelectionMarginRes).toFloat()
+        monthConfig = monthConfig.copy(
+            selectionBackgroundItemStyle = (monthConfig.selectionBackgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).copy(selectionMargin = margin)
+        )
         setupMonthSelectionPaint()
         invalidate()
     }
 
     fun setMonthNameFontTypeFace(monthNameFontTypeFace: Typeface?) {
-        this.monthNameFontTypeFace = monthNameFontTypeFace
+        monthConfig = monthConfig.copy(nameFontTypeFace = monthNameFontTypeFace)
         setupMonthNamePaint()
         invalidate()
     }
 
     fun setWeekendFontTypeFace(weekendFontTypeFace: Typeface?) {
-        this.weekendFontTypeFace = weekendFontTypeFace
+        weekendDayConfig = weekendDayConfig.copy(fontTypeFace = weekendFontTypeFace)
         setupWeekendPaint()
         invalidate()
     }
@@ -1489,19 +1422,19 @@ class YearView : View {
     }
 
     fun setTodayFontTypeFace(todayFontTypeFace: Typeface?) {
-        this.todayFontTypeFace = todayFontTypeFace
+        todayConfig = todayConfig.copy(fontTypeFace = todayFontTypeFace)
         setupTodayTextPaint()
         invalidate()
     }
 
     fun setSimpleDayFontTypeFace(simpleDayFontTypeFace: Typeface?) {
-        this.simpleDayFontTypeFace = simpleDayFontTypeFace
+        simpleDayConfig = simpleDayConfig.copy(fontTypeFace = simpleDayFontTypeFace)
         setupSimpleDayNumberPaint()
         invalidate()
     }
 
     fun setTodayMonthNameFontTypeFace(todayMonthNameFontTypeFace: Typeface?) {
-        this.todayMonthNameFontTypeFace = todayMonthNameFontTypeFace
+        monthConfig = monthConfig.copy(todayNameFontTypeFace = todayMonthNameFontTypeFace)
         setupTodayMonthNamePaint()
         invalidate()
     }
@@ -1512,7 +1445,7 @@ class YearView : View {
      * @param simpleDayTextSizeRes Resource ID for text size (e.g., R.dimen.simple_day_text_size)
      */
     fun setSimpleDayTextSize(@DimenRes simpleDayTextSizeRes: Int) {
-        this.simpleDayTextSize = resources.getDimensionPixelSize(simpleDayTextSizeRes)
+        simpleDayConfig = simpleDayConfig.copy(textSize = resources.getDimensionPixelSize(simpleDayTextSizeRes))
         setupSimpleDayNumberPaint()
         invalidate()
     }
@@ -1523,7 +1456,7 @@ class YearView : View {
      * @param weekendTextSizeRes Resource ID for text size (e.g., R.dimen.weekend_text_size)
      */
     fun setWeekendTextSize(@DimenRes weekendTextSizeRes: Int) {
-        this.weekendTextSize = resources.getDimensionPixelSize(weekendTextSizeRes)
+        weekendDayConfig = weekendDayConfig.copy(textSize = resources.getDimensionPixelSize(weekendTextSizeRes))
         setupWeekendPaint()
         invalidate()
     }
@@ -1534,7 +1467,7 @@ class YearView : View {
      * @param todayTextSizeRes Resource ID for text size (e.g., R.dimen.today_text_size)
      */
     fun setTodayTextSize(@DimenRes todayTextSizeRes: Int) {
-        this.todayTextSize = resources.getDimensionPixelSize(todayTextSizeRes)
+        todayConfig = todayConfig.copy(textSize = resources.getDimensionPixelSize(todayTextSizeRes))
         setupTodayTextPaint()
         invalidate()
     }
@@ -1556,7 +1489,7 @@ class YearView : View {
      * @param monthNameTextSizeRes Resource ID for text size (e.g., R.dimen.month_name_text_size)
      */
     fun setMonthNameTextSize(@DimenRes monthNameTextSizeRes: Int) {
-        this.monthNameTextSize = resources.getDimensionPixelSize(monthNameTextSizeRes)
+        monthConfig = monthConfig.copy(nameTextSize = resources.getDimensionPixelSize(monthNameTextSizeRes))
         setupMonthNamePaint()
         invalidate()
     }
@@ -1567,7 +1500,7 @@ class YearView : View {
      * @param todayMonthNameTextSizeRes Resource ID for text size (e.g., R.dimen.today_month_name_text_size)
      */
     fun setTodayMonthNameTextSize(@DimenRes todayMonthNameTextSizeRes: Int) {
-        this.todayMonthNameTextSize = resources.getDimensionPixelSize(todayMonthNameTextSizeRes)
+        monthConfig = monthConfig.copy(todayNameTextSize = resources.getDimensionPixelSize(todayMonthNameTextSizeRes))
         setupTodayMonthNamePaint()
         invalidate()
     }
@@ -1579,9 +1512,11 @@ class YearView : View {
      * @param monthTitleGravity the new title gravity
      */
     fun setMonthTitleGravity(monthTitleGravity: TitleGravity) {
-        if (monthTitleGravity != TitleGravity.CENTER && monthTitleGravity != TitleGravity.END && monthTitleGravity != TitleGravity.LEFT) this.monthTitleGravity =
-            TitleGravity.CENTER
-        else this.monthTitleGravity = monthTitleGravity
+        val gravity = if (monthTitleGravity != TitleGravity.CENTER && monthTitleGravity != TitleGravity.END && monthTitleGravity != TitleGravity.LEFT) 
+            TitleGravity.CENTER 
+        else 
+            monthTitleGravity
+        monthConfig = monthConfig.copy(titleGravity = gravity)
         invalidate()
     }
 
@@ -1591,7 +1526,9 @@ class YearView : View {
      * @param todayBackgroundShape the new background shape. Will be set to circle if undefined
      */
     fun setTodayBackgroundShape(todayBackgroundShape: BackgroundShape) {
-        this.todayBackgroundShape = todayBackgroundShape
+        todayConfig = todayConfig.copy(
+            backgroundItemStyle = (todayConfig.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).copy(shape = todayBackgroundShape)
+        )
         invalidate()
     }
 
@@ -1601,7 +1538,9 @@ class YearView : View {
      * @param selectedDayBackgroundShape the new background shape. Will be set to square if undefined
      */
     fun setSelectedDayBackgroundShape(selectedDayBackgroundShape: BackgroundShape) {
-         this.selectedDayBackgroundShape = selectedDayBackgroundShape
+        selectedDayConfig = selectedDayConfig.copy(
+            backgroundItemStyle = (selectedDayConfig.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).copy(shape = selectedDayBackgroundShape)
+        )
         invalidate()
     }
 
@@ -1612,7 +1551,7 @@ class YearView : View {
      * @param todayFontType the new font type for today
      */
     fun setTodayFontType(todayFontType: FontType) {
-        this.todayFontType = todayFontType
+        todayConfig = todayConfig.copy(fontType = todayFontType)
         setupTodayTextPaint()
         invalidate()
     }
@@ -1624,7 +1563,7 @@ class YearView : View {
      * @param monthNameFontType the new font type for the month
      */
     fun setMonthNameFontType(monthNameFontType: FontType) {
-        this.monthNameFontType = monthNameFontType
+        monthConfig = monthConfig.copy(nameFontType = monthNameFontType)
         setupMonthNamePaint()
         invalidate()
     }
@@ -1636,7 +1575,7 @@ class YearView : View {
      * @param todayMonthNameFontType the new font type for the month
      */
     fun setTodayMonthNameFontType(todayMonthNameFontType: FontType) {
-        this.todayMonthNameFontType = todayMonthNameFontType
+        monthConfig = monthConfig.copy(todayNameFontType = todayMonthNameFontType)
         setupTodayMonthNamePaint()
         invalidate()
     }
@@ -1660,7 +1599,7 @@ class YearView : View {
      * @param weekendFontType the new font type for the month
      */
     fun setWeekendNameFontType(weekendFontType: FontType) {
-        this.weekendFontType = weekendFontType
+        weekendDayConfig = weekendDayConfig.copy(fontType = weekendFontType)
         setupWeekendPaint()
         invalidate()
     }
@@ -1672,7 +1611,7 @@ class YearView : View {
      * @param simpleDayFontType the new font type for the month
      */
     fun setSimpleDayFontType(simpleDayFontType: FontType) {
-        this.simpleDayFontType = simpleDayFontType
+        simpleDayConfig = simpleDayConfig.copy(fontType = simpleDayFontType)
         setupSimpleDayNumberPaint()
         invalidate()
     }
@@ -1684,8 +1623,8 @@ class YearView : View {
      * @param selectedDayFontType the new font type for the month
      */
     fun setSelectedDayFontType(selectedDayFontType: FontType) {
-        this.selectedDayFontType = selectedDayFontType
-        setupSimpleDayNumberPaint()
+        selectedDayConfig = selectedDayConfig.copy(fontType = selectedDayFontType)
+        setupSelectedDayTextPaint()
         invalidate()
     }
 
@@ -1748,65 +1687,65 @@ class YearView : View {
 
     private fun setupMonthNamePaint() {
         monthNamePaint = setupTextPaint(
-            monthNameTextColor,
-            monthNameTextSize,
-            monthNameFontType,
+            monthConfig.nameTextColor,
+            monthConfig.nameTextSize,
+            monthConfig.nameFontType,
             DEFAULT_ALIGN,
-            monthNameFontTypeFace
+            monthConfig.nameFontTypeFace
         )
     }
 
     private fun setupTodayMonthNamePaint() {
         todayMonthNamePaint = setupTextPaint(
-            todayMonthNameTextColor,
-            todayMonthNameTextSize,
-            todayMonthNameFontType,
+            monthConfig.todayNameTextColor,
+            monthConfig.todayNameTextSize,
+            monthConfig.todayNameFontType,
             DEFAULT_ALIGN,
-            todayMonthNameFontTypeFace
+            monthConfig.todayNameFontTypeFace
         )
     }
 
     private fun setupSimpleDayNumberPaint() {
         simpleDayNumberPaint = setupTextPaint(
-            simpleDayTextColor,
-            simpleDayTextSize,
-            simpleDayFontType,
+            simpleDayConfig.textColor,
+            simpleDayConfig.textSize,
+            simpleDayConfig.fontType,
             DEFAULT_ALIGN,
-            simpleDayFontTypeFace
+            simpleDayConfig.fontTypeFace
         )
     }
 
     private fun setupTodayTextPaint() {
         todayTextPaint = setupTextPaint(
-            todayTextColor,
-            todayTextSize,
-            todayFontType,
+            todayConfig.textColor,
+            todayConfig.textSize,
+            todayConfig.fontType,
             DEFAULT_ALIGN,
-            todayFontTypeFace
+            todayConfig.fontTypeFace
         )
     }
 
     private fun setupTodayBackgroundPaint() {
         todayBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        todayBackgroundPaint!!.color = todayBackgroundColor
-        todayBackgroundPaint!!.textSize = todayTextSize.toFloat()
+        todayBackgroundPaint!!.color = (todayConfig.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).color
+        todayBackgroundPaint!!.textSize = todayConfig.textSize.toFloat()
         todayBackgroundPaint!!.textAlign = DEFAULT_ALIGN
     }
 
     private fun setupSelectedDayTextPaint() {
         selectedDayTextPaint = setupTextPaint(
-            selectedDayTextColor,
-            selectedDayTextSize,
-            selectedDayFontType,
+            selectedDayConfig.textColor,
+            selectedDayConfig.textSize,
+            selectedDayConfig.fontType,
             DEFAULT_ALIGN,
-            selectedDayTypeFace
+            selectedDayConfig.fontTypeFace
         )
     }
 
     private fun setupSelectedDayBackgroundPaint() {
         selectedDayBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        selectedDayBackgroundPaint!!.color = selectedDayBackgroundColor
-        selectedDayBackgroundPaint!!.textSize = selectedDayTextSize.toFloat()
+        selectedDayBackgroundPaint!!.color = (selectedDayConfig.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).color
+        selectedDayBackgroundPaint!!.textSize = selectedDayConfig.textSize.toFloat()
         selectedDayBackgroundPaint!!.textAlign = DEFAULT_ALIGN
     }
 
@@ -1822,18 +1761,18 @@ class YearView : View {
 
     private fun setupWeekendPaint() {
         weekendDayPaint = setupTextPaint(
-            weekendTextColor,
-            weekendTextSize,
-            weekendFontType,
+            weekendDayConfig.textColor,
+            weekendDayConfig.textSize,
+            weekendDayConfig.fontType,
             DEFAULT_ALIGN,
-            weekendFontTypeFace
+            weekendDayConfig.fontTypeFace
         )
     }
 
     private fun setupMonthSelectionPaint() {
         selectionPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         selectionPaint?.color = ColorUtils.setAlphaComponent(
-            monthSelectionColor,
+            monthConfig.selectionBackgroundItemStyle.color,
             SELECTION_ALPHA
         )
         selectionPaint?.strokeJoin = Paint.Join.ROUND
@@ -1890,33 +1829,17 @@ class YearView : View {
     }
 
     fun setMonthBackgroundItemStyle(style: BackgroundItemStyle.AndroidXMLStyle) {
-        this.monthBackgroundItemStyle = style
+        monthConfig = monthConfig.copy(backgroundItemStyle = style)
         invalidate()
     }
 
     /**
-     * Set the month configuration object. This will merge with existing properties from XML.
-     * Properties set here will override the corresponding XML values.
+     * Set the month configuration object.
      *
      * @param config The month configuration to apply
      */
     fun setMonthConfig(config: MonthConfig) {
-        // Merge: Update individual properties from config
-        this.monthTitleGravity = config.titleGravity
-        this.marginBelowMonthName = config.marginBelowMonthName
-        this.monthSelectionColor = (config.selectionBackgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).color
-        this.monthBackgroundColor = (config.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle).color
-        this.monthBackgroundShape = config.backgroundItemStyle.shape
-        this.monthNameTextColor = config.nameTextColor
-        this.monthNameTextSize = config.nameTextSize
-        this.monthNameFontType = config.nameFontType
-        this.monthNameFontTypeFace = config.nameFontTypeFace
-        this.todayMonthNameTextColor = config.todayNameTextColor
-        this.todayMonthNameTextSize = config.todayNameTextSize
-        this.todayMonthNameFontType = config.todayNameFontType
-        this.todayMonthNameFontTypeFace = config.todayNameFontTypeFace
         this.monthConfig = config
-
         // Rebuild paints
         setupMonthNamePaint()
         setupTodayMonthNamePaint()
@@ -1925,55 +1848,21 @@ class YearView : View {
     }
 
     /**
-     * Get the current month configuration built from current properties.
+     * Get the current month configuration.
      *
      * @return The current month configuration
      */
     fun getMonthConfig(): MonthConfig {
-        return MonthConfig(
-            titleGravity = monthTitleGravity,
-            marginBelowMonthName = marginBelowMonthName,
-            selectionBackgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
-                color = monthSelectionColor,
-                shape = monthBackgroundShape,
-                selectionMargin = monthSelectionMargin.toFloat()
-            ),
-            backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
-                color = monthBackgroundColor,
-                shape = monthBackgroundShape,
-                selectionMargin = 2.0f,
-                image = ImageSource.ReceivedDrawable(monthBackgroundImage),
-                opacity = monthBackgroundColorDensity,
-                mergeType = monthBackgroundMergeType
-            ),
-            nameTextColor = monthNameTextColor,
-            nameTextSize = monthNameTextSize,
-            nameFontType = monthNameFontType,
-            nameFontTypeFace = monthNameFontTypeFace,
-            todayNameTextColor = todayMonthNameTextColor,
-            todayNameTextSize = todayMonthNameTextSize,
-            todayNameFontType = todayMonthNameFontType,
-            todayNameFontTypeFace = todayMonthNameFontTypeFace
-        )
+        return monthConfig
     }
 
     /**
-     * Set the today day configuration object. This will merge with existing properties from XML.
+     * Set the today day configuration object.
      *
      * @param config The today day configuration to apply
      */
     fun setTodayConfig(config: DayConfig) {
-        // Merge: Update individual properties from config
-        val style = config.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle
-        this.todayBackgroundColor = style.color
-        this.todayBackgroundShape = style.shape
-        this.todayTextColor = config.textColor
-        this.todayTextSize = config.textSize
-        this.todayFontType = config.fontType
-        this.todayFontTypeFace = config.fontTypeFace
-        this.todayBackgroundRadius = config.backgroundRadius
         this.todayConfig = config
-
         // Rebuild paints
         setupTodayTextPaint()
         setupTodayBackgroundPaint()
@@ -1981,41 +1870,21 @@ class YearView : View {
     }
 
     /**
-     * Get the current today day configuration built from current properties.
+     * Get the current today day configuration.
      *
      * @return The current today day configuration
      */
     fun getTodayConfig(): DayConfig {
-        return DayConfig(
-            backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
-                color = todayBackgroundColor,
-                shape = todayBackgroundShape
-            ),
-            textColor = todayTextColor,
-            textSize = todayTextSize,
-            fontType = todayFontType,
-            fontTypeFace = todayFontTypeFace,
-            backgroundRadius = todayBackgroundRadius
-        )
+        return todayConfig
     }
 
     /**
-     * Set the selected day configuration object. This will merge with existing properties from XML.
+     * Set the selected day configuration object.
      *
      * @param config The selected day configuration to apply
      */
     fun setSelectedDayConfig(config: DayConfig) {
-        // Merge: Update individual properties from config
-        val style = config.backgroundItemStyle as BackgroundItemStyle.AndroidXMLStyle
-        this.selectedDayBackgroundColor = style.color
-        this.selectedDayBackgroundShape = style.shape
-        this.selectedDayTextColor = config.textColor
-        this.selectedDayTextSize = config.textSize
-        this.selectedDayFontType = config.fontType
-        this.selectedDayTypeFace = config.fontTypeFace
-        this.selectedDayBackgroundRadius = config.backgroundRadius
         this.selectedDayConfig = config
-
         // Rebuild paints
         setupSelectedDayTextPaint()
         setupSelectedDayBackgroundPaint()
@@ -2023,96 +1892,53 @@ class YearView : View {
     }
 
     /**
-     * Get the current selected day configuration built from current properties.
+     * Get the current selected day configuration.
      *
      * @return The current selected day configuration
      */
     fun getSelectedDayConfig(): DayConfig {
-        return DayConfig(
-            backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
-                color = selectedDayBackgroundColor,
-                shape = selectedDayBackgroundShape
-            ),
-            textColor = selectedDayTextColor,
-            textSize = selectedDayTextSize,
-            fontType = selectedDayFontType,
-            fontTypeFace = selectedDayTypeFace,
-            backgroundRadius = selectedDayBackgroundRadius
-        )
+        return selectedDayConfig
     }
 
     /**
-     * Set the simple day configuration object. This will merge with existing properties from XML.
+     * Set the simple day configuration object.
      *
      * @param config The simple day configuration to apply
      */
     fun setSimpleDayConfig(config: DayConfig) {
-        // Merge: Update individual properties from config
-        this.simpleDayTextColor = config.textColor
-        this.simpleDayTextSize = config.textSize
-        this.simpleDayFontType = config.fontType
-        this.simpleDayFontTypeFace = config.fontTypeFace
         this.simpleDayConfig = config
-
         // Rebuild paints
         setupSimpleDayNumberPaint()
         invalidate()
     }
 
     /**
-     * Get the current simple day configuration built from current properties.
+     * Get the current simple day configuration.
      *
      * @return The current simple day configuration
      */
     fun getSimpleDayConfig(): DayConfig {
-        return DayConfig(
-            backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
-                color = Color.TRANSPARENT,
-                shape = BackgroundShape.Square
-            ),
-            textColor = simpleDayTextColor,
-            textSize = simpleDayTextSize,
-            fontType = simpleDayFontType,
-            fontTypeFace = simpleDayFontTypeFace,
-            backgroundRadius = 0
-        )
+        return simpleDayConfig
     }
 
     /**
-     * Set the weekend day configuration object. This will merge with existing properties from XML.
+     * Set the weekend day configuration object.
      *
      * @param config The weekend day configuration to apply
      */
     fun setWeekendDayConfig(config: DayConfig) {
-        // Merge: Update individual properties from config
-        this.weekendTextColor = config.textColor
-        this.weekendTextSize = config.textSize
-        this.weekendFontType = config.fontType
-        this.weekendFontTypeFace = config.fontTypeFace
         this.weekendDayConfig = config
-
-        // Rebuild paints
         setupWeekendPaint()
         invalidate()
     }
 
     /**
-     * Get the current weekend day configuration built from current properties.
+     * Get the current weekend day configuration.
      *
      * @return The current weekend day configuration
      */
     fun getWeekendDayConfig(): DayConfig {
-        return DayConfig(
-            backgroundItemStyle = BackgroundItemStyle.AndroidXMLStyle(
-                color = Color.TRANSPARENT,
-                shape = BackgroundShape.Square
-            ),
-            textColor = weekendTextColor,
-            textSize = weekendTextSize,
-            fontType = weekendFontType,
-            fontTypeFace = weekendFontTypeFace,
-            backgroundRadius = 0
-        )
+        return weekendDayConfig
     }
 
     fun setMonthGestureListener(monthGestureListener: MonthGestureListener?) {
