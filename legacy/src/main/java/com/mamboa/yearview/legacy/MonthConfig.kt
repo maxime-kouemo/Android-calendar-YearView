@@ -8,12 +8,11 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.Px
 import androidx.core.content.ContextCompat
-import com.mamboa.yearview.core.BackgroundItemStyle
 import com.mamboa.yearview.core.BackgroundShape
 import com.mamboa.yearview.core.FontType
 import com.mamboa.yearview.core.TitleGravity
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.RawValue
 
 /**
  * Configuration class for month-related styling and formatting in Legacy YearView.
@@ -37,7 +36,7 @@ data class MonthConfig(
     /**
      * Style for the background of a selected month.
      */
-    val selectionBackgroundItemStyle: BackgroundItemStyle.AndroidXMLStyle = BackgroundItemStyle.AndroidXMLStyle(
+    val selectionBackgroundItemStyle: LegacyBackgroundStyle = LegacyBackgroundStyle(
         color = android.graphics.Color.BLUE,
         shape = BackgroundShape.RoundedSquare(cornerRadius = 5.0f),
         selectionMargin = 5.0f
@@ -46,7 +45,7 @@ data class MonthConfig(
     /**
      * Style for the background of a month.
      */
-    val backgroundItemStyle: BackgroundItemStyle.AndroidXMLStyle = BackgroundItemStyle.AndroidXMLStyle(
+    val backgroundItemStyle: LegacyBackgroundStyle = LegacyBackgroundStyle(
         color = android.graphics.Color.TRANSPARENT,
         shape = BackgroundShape.RoundedSquare(cornerRadius = 5.0f),
         selectionMargin = 2.0f
@@ -71,8 +70,11 @@ data class MonthConfig(
 
     /**
      * Custom typeface for month name.
+     * Not included in parceling — [Typeface] is not [Parcelable].
+     * After configuration change, callers must re-set custom typefaces.
      */
-    val nameFontTypeFace: @RawValue Typeface? = null,
+    @IgnoredOnParcel
+    val nameFontTypeFace: Typeface? = null,
 
     /**
      * Text color for the current month name (resolved color value).
@@ -93,8 +95,11 @@ data class MonthConfig(
 
     /**
      * Custom typeface for today's month name.
+     * Not included in parceling — [Typeface] is not [Parcelable].
+     * After configuration change, callers must re-set custom typefaces.
      */
-    val todayNameFontTypeFace: @RawValue Typeface? = null,
+    @IgnoredOnParcel
+    val todayNameFontTypeFace: Typeface? = null,
 
     /**
      * Format for displaying the month name (e.g., "MMMM" for full name, "MMM" for abbreviated).
@@ -122,19 +127,19 @@ data class MonthConfig(
          * @param todayNameTextSizeRes Dimension resource ID for today's month name size
          * @param todayNameFontType Font type for today's month name
          * @param todayNameFontTypeFace Custom typeface for today's month name
-         * @param nameFormat Format pattern for month name display
+         * @param nameFormat Format pattern for month name display (e.g., "MMMM" for full, "MMM" for abbreviated)
          * @return MonthConfig with resolved resource values
          */
         fun fromResources(
             context: Context,
             titleGravity: TitleGravity = TitleGravity.CENTER,
             @DimenRes marginBelowMonthNameRes: Int,
-            selectionBackgroundItemStyle: BackgroundItemStyle.AndroidXMLStyle = BackgroundItemStyle.AndroidXMLStyle(
+            selectionBackgroundItemStyle: LegacyBackgroundStyle = LegacyBackgroundStyle(
                 color = android.graphics.Color.BLUE,
                 shape = BackgroundShape.RoundedSquare(cornerRadius = 5.0f),
                 selectionMargin = 5.0f
             ),
-            backgroundItemStyle: BackgroundItemStyle.AndroidXMLStyle = BackgroundItemStyle.AndroidXMLStyle(
+            backgroundItemStyle: LegacyBackgroundStyle = LegacyBackgroundStyle(
                 color = android.graphics.Color.TRANSPARENT,
                 shape = BackgroundShape.RoundedSquare(cornerRadius = 5.0f),
                 selectionMargin = 2.0f

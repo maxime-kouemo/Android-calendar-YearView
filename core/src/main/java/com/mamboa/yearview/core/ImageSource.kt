@@ -1,40 +1,37 @@
 package com.mamboa.yearview.core
 
-import android.graphics.drawable.Drawable
 import android.os.Parcelable
-import androidx.compose.ui.graphics.ImageBitmap
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 
-// TODO separate so that Compose has its own and legacy has its own
+/**
+ * Marker interface for image providers.
+ *
+ * Each module supplies its own implementations:
+ * - **core**: [com.mamboa.yearview.core.imageprovider.ResourceImageProvider] (drawable resource ID)
+ * - **legacy**: `DrawableImageProvider` (Android Drawable), `BitmapImageProvider` (Android Bitmap)
+ * - **compose**: `ImageBitmapImageProvider` (Compose ImageBitmap)
+ */
+interface ImageProvider
+
 /**
  * Describes the source of an image.
+ *
+ * Uses the provider pattern so each module can supply framework-specific
+ * image sources while the sealed class stays in core.
  */
 @Parcelize
-sealed class ImageSource: Parcelable {
+sealed class ImageSource : Parcelable {
 
     /**
-     * Loads an image from a drawable resource.
+     * An image supplied by an [ImageProvider].
+     *
+     * @param provider The module-specific image provider.
      */
-    data class DrawableRes(@androidx.annotation.DrawableRes val resId: Int) : ImageSource(), Parcelable
-
-    /**
-     * Loads an image from a [ImageBitmap].
-     */
-    data class BitmapCompose(val bitmapCompose: @RawValue ImageBitmap) : ImageSource(), Parcelable
-
-    /**
-     * Loads an image from a [android.graphics.Bitmap].
-     */
-    data class Bitmap(val bitmap: android.graphics.Bitmap) : ImageSource(), Parcelable
-
-    /**
-     * Loads an image from a [Drawable].
-     */
-    data class ReceivedDrawable(val drawable: @RawValue Drawable?) : ImageSource()
+    data class Provided(val provider: @RawValue ImageProvider) : ImageSource()
 
     /**
      * No image to display/load.
      */
-    data object None : ImageSource(), Parcelable
+    data object None : ImageSource()
 }

@@ -1,0 +1,414 @@
+public final class com/mamboa/yearview/compose/ComposeBackgroundStyle {
+	public static final field $stable I
+	public synthetic fun <init> (JLcom/mamboa/yearview/core/BackgroundShape;FLcom/mamboa/yearview/core/ImageSource;ILcom/mamboa/yearview/core/MergeType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JLcom/mamboa/yearview/core/BackgroundShape;FLcom/mamboa/yearview/core/ImageSource;ILcom/mamboa/yearview/core/MergeType;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-0d7_KjU ()J
+	public final fun component2 ()Lcom/mamboa/yearview/core/BackgroundShape;
+	public final fun component3-D9Ej5fM ()F
+	public final fun component4 ()Lcom/mamboa/yearview/core/ImageSource;
+	public final fun component5 ()I
+	public final fun component6 ()Lcom/mamboa/yearview/core/MergeType;
+	public final fun copy-DxzAY5Q (JLcom/mamboa/yearview/core/BackgroundShape;FLcom/mamboa/yearview/core/ImageSource;ILcom/mamboa/yearview/core/MergeType;)Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public static synthetic fun copy-DxzAY5Q$default (Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;JLcom/mamboa/yearview/core/BackgroundShape;FLcom/mamboa/yearview/core/ImageSource;ILcom/mamboa/yearview/core/MergeType;ILjava/lang/Object;)Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColor-0d7_KjU ()J
+	public final fun getImage ()Lcom/mamboa/yearview/core/ImageSource;
+	public final fun getMergeType ()Lcom/mamboa/yearview/core/MergeType;
+	public final fun getOpacity ()I
+	public final fun getSelectionMargin-D9Ej5fM ()F
+	public final fun getShape ()Lcom/mamboa/yearview/core/BackgroundShape;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/DayConfig {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/text/TextStyle;F)V
+	public synthetic fun <init> (Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/text/TextStyle;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun component2 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component3 ()F
+	public final fun copy (Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/text/TextStyle;F)Lcom/mamboa/yearview/compose/DayConfig;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/text/TextStyle;FILjava/lang/Object;)Lcom/mamboa/yearview/compose/DayConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundItemStyle ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun getBackgroundRadius ()F
+	public final fun getTextStyle ()Landroidx/compose/ui/text/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/DayNameEntry {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextLayoutResult;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component3 ()Landroidx/compose/ui/text/TextLayoutResult;
+	public final fun copy (Ljava/lang/String;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextLayoutResult;)Lcom/mamboa/yearview/compose/DayNameEntry;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/compose/DayNameEntry;Ljava/lang/String;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextLayoutResult;ILjava/lang/Object;)Lcom/mamboa/yearview/compose/DayNameEntry;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLayout ()Landroidx/compose/ui/text/TextLayoutResult;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getStyle ()Landroidx/compose/ui/text/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/DayRect {
+	public static final field $stable I
+	public fun <init> (Landroidx/compose/ui/geometry/Rect;IIIFI)V
+	public synthetic fun <init> (Landroidx/compose/ui/geometry/Rect;IIIFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Landroidx/compose/ui/geometry/Rect;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()F
+	public final fun component6 ()I
+	public final fun copy (Landroidx/compose/ui/geometry/Rect;IIIFI)Lcom/mamboa/yearview/compose/DayRect;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/compose/DayRect;Landroidx/compose/ui/geometry/Rect;IIIFIILjava/lang/Object;)Lcom/mamboa/yearview/compose/DayRect;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDay ()I
+	public final fun getMonth ()I
+	public final fun getMonthIndex ()I
+	public final fun getRect ()Landroidx/compose/ui/geometry/Rect;
+	public final fun getTextHeight ()F
+	public final fun getYear ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/DayStyleBundle {
+	public static final field $stable I
+	public fun <init> (Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;)V
+	public synthetic fun <init> (Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMonthBackgroundItemStyle ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun getMonthNameStyle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getMonthPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getMultiSelectionBackgroundItemStyle ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun getMultiSelectionPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getSelectedDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getSelectedDayPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getSimpleDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getSimpleDayPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getTodayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getTodayMonthNameStyle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getTodayPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getWeekendDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getWeekendDayPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public fun hashCode ()I
+	public final fun isInRange ()Lkotlin/jvm/functions/Function2;
+	public final fun isSelectedDay ()Lkotlin/jvm/functions/Function2;
+	public final fun isToday ()Lkotlin/jvm/functions/Function2;
+	public final fun isWeekend ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class com/mamboa/yearview/compose/DayTextKey {
+	public static final field $stable I
+	public fun <init> (ILandroidx/compose/ui/text/TextStyle;)V
+	public final fun component1 ()I
+	public final fun component2 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun copy (ILandroidx/compose/ui/text/TextStyle;)Lcom/mamboa/yearview/compose/DayTextKey;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/compose/DayTextKey;ILandroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lcom/mamboa/yearview/compose/DayTextKey;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDay ()I
+	public final fun getStyle ()Landroidx/compose/ui/text/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/DrawResources {
+	public static final field $stable I
+	public synthetic fun <init> (Landroidx/compose/ui/text/TextMeasurer;Ljava/util/Map;Ljava/util/Map;Landroidx/compose/ui/graphics/Path;Landroidx/compose/ui/graphics/Path;Landroidx/compose/ui/graphics/Path;[FLjava/util/Map;Ljava/util/Map;FFILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Landroidx/compose/ui/text/TextMeasurer;Ljava/util/Map;Ljava/util/Map;Landroidx/compose/ui/graphics/Path;Landroidx/compose/ui/graphics/Path;Landroidx/compose/ui/graphics/Path;[FLjava/util/Map;Ljava/util/Map;FFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Landroidx/compose/ui/text/TextMeasurer;
+	public final fun component10 ()F
+	public final fun component11 ()F
+	public final fun component2 ()Ljava/util/Map;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Landroidx/compose/ui/graphics/Path;
+	public final fun component5 ()Landroidx/compose/ui/graphics/Path;
+	public final fun component6 ()Landroidx/compose/ui/graphics/Path;
+	public final fun component7-sQKQjiQ ()[F
+	public final fun component8 ()Ljava/util/Map;
+	public final fun component9 ()Ljava/util/Map;
+	public final fun copy-fKxkLU8 (Landroidx/compose/ui/text/TextMeasurer;Ljava/util/Map;Ljava/util/Map;Landroidx/compose/ui/graphics/Path;Landroidx/compose/ui/graphics/Path;Landroidx/compose/ui/graphics/Path;[FLjava/util/Map;Ljava/util/Map;FF)Lcom/mamboa/yearview/compose/DrawResources;
+	public static synthetic fun copy-fKxkLU8$default (Lcom/mamboa/yearview/compose/DrawResources;Landroidx/compose/ui/text/TextMeasurer;Ljava/util/Map;Ljava/util/Map;Landroidx/compose/ui/graphics/Path;Landroidx/compose/ui/graphics/Path;Landroidx/compose/ui/graphics/Path;[FLjava/util/Map;Ljava/util/Map;FFILjava/lang/Object;)Lcom/mamboa/yearview/compose/DrawResources;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClipScratchPath ()Landroidx/compose/ui/graphics/Path;
+	public final fun getDayTextLayouts ()Ljava/util/Map;
+	public final fun getDayTouchPaddingPx ()F
+	public final fun getDensity ()F
+	public final fun getDrawablePathCache ()Ljava/util/Map;
+	public final fun getMonthNameLayouts ()Ljava/util/Map;
+	public final fun getResolvedInnerPaddings ()Ljava/util/Map;
+	public final fun getScaleMatrix-sQKQjiQ ()[F
+	public final fun getScaleScratchPath ()Landroidx/compose/ui/graphics/Path;
+	public final fun getScratchPath ()Landroidx/compose/ui/graphics/Path;
+	public final fun getTextMeasurer ()Landroidx/compose/ui/text/TextMeasurer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/MonthConfig {
+	public static final field $stable I
+	public synthetic fun <init> (Lcom/mamboa/yearview/core/TitleGravity;FLcom/mamboa/yearview/compose/ComposeBackgroundStyle;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Ljava/lang/String;Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lcom/mamboa/yearview/core/TitleGravity;FLcom/mamboa/yearview/compose/ComposeBackgroundStyle;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Ljava/lang/String;Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/mamboa/yearview/core/TitleGravity;
+	public final fun component2-D9Ej5fM ()F
+	public final fun component3 ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun component4 ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun component5 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component6 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun component9 ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun copy-RfXq3Jk (Lcom/mamboa/yearview/core/TitleGravity;FLcom/mamboa/yearview/compose/ComposeBackgroundStyle;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Ljava/lang/String;Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;)Lcom/mamboa/yearview/compose/MonthConfig;
+	public static synthetic fun copy-RfXq3Jk$default (Lcom/mamboa/yearview/compose/MonthConfig;Lcom/mamboa/yearview/core/TitleGravity;FLcom/mamboa/yearview/compose/ComposeBackgroundStyle;Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Ljava/lang/String;Lcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;ILjava/lang/Object;)Lcom/mamboa/yearview/compose/MonthConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundItemStyle ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun getMarginBelowMonthName-D9Ej5fM ()F
+	public final fun getNameFormat ()Ljava/lang/String;
+	public final fun getNameStyle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getSelectionBackgroundItemStyle ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun getSimpleDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getTitleGravity ()Lcom/mamboa/yearview/core/TitleGravity;
+	public final fun getTodayNameStyle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getWeekendDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/MonthDrawContext {
+	public static final field $stable I
+	public fun <init> (Lcom/mamboa/yearview/compose/MonthLayoutInfo;Lcom/mamboa/yearview/compose/DayStyleBundle;Lcom/mamboa/yearview/compose/DrawResources;)V
+	public final fun getClipScratchPath ()Landroidx/compose/ui/graphics/Path;
+	public final fun getDateTimeProvider ()Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;
+	public final fun getDayNames ()Ljava/util/List;
+	public final fun getDayTextLayouts ()Ljava/util/Map;
+	public final fun getDayTouchPaddingPx ()F
+	public final fun getDaysInMonth ()I
+	public final fun getDensity ()F
+	public final fun getDrawablePathCache ()Ljava/util/Map;
+	public final fun getFirstDay ()I
+	public final fun getLayout ()Lcom/mamboa/yearview/compose/MonthLayoutInfo;
+	public final fun getLocale ()Ljava/util/Locale;
+	public final fun getMarginBelowMonthNamePx ()F
+	public final fun getMonth ()I
+	public final fun getMonthBackgroundItemStyle ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun getMonthFormat ()Ljava/lang/String;
+	public final fun getMonthNameLayouts ()Ljava/util/Map;
+	public final fun getMonthNameStyle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getMonthPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getMonthRect ()Lcom/mamboa/yearview/compose/MonthRect;
+	public final fun getMonthTitleGravity ()Lcom/mamboa/yearview/core/TitleGravity;
+	public final fun getMultiSelectionBackgroundItemStyle ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun getMultiSelectionPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getResolvedInnerPaddings ()Ljava/util/Map;
+	public final fun getResources ()Lcom/mamboa/yearview/compose/DrawResources;
+	public final fun getScaleMatrix-sQKQjiQ ()[F
+	public final fun getScaleScratchPath ()Landroidx/compose/ui/graphics/Path;
+	public final fun getScratchPath ()Landroidx/compose/ui/graphics/Path;
+	public final fun getSelectedDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getSelectedDayPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getSimpleDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getSimpleDayPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getStyle ()Lcom/mamboa/yearview/compose/DayStyleBundle;
+	public final fun getTextMeasurer ()Landroidx/compose/ui/text/TextMeasurer;
+	public final fun getTodayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getTodayMonthNameStyle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getTodayPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getWeekendDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getWeekendDayPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getYear ()I
+	public final fun isCurrentMonth ()Z
+	public final fun isInRange ()Lkotlin/jvm/functions/Function2;
+	public final fun isRtl ()Z
+	public final fun isSelectedDay ()Lkotlin/jvm/functions/Function2;
+	public final fun isToday ()Lkotlin/jvm/functions/Function2;
+	public final fun isWeekend ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class com/mamboa/yearview/compose/MonthLayoutInfo {
+	public static final field $stable I
+	public fun <init> (Lcom/mamboa/yearview/compose/MonthRect;IIIILcom/mamboa/yearview/core/TitleGravity;FZLjava/util/List;Ljava/lang/String;Ljava/util/Locale;Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;Z)V
+	public synthetic fun <init> (Lcom/mamboa/yearview/compose/MonthRect;IIIILcom/mamboa/yearview/core/TitleGravity;FZLjava/util/List;Ljava/lang/String;Ljava/util/Locale;Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lcom/mamboa/yearview/compose/MonthRect;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Ljava/util/Locale;
+	public final fun component12 ()Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;
+	public final fun component13 ()Z
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun component4 ()I
+	public final fun component5 ()I
+	public final fun component6 ()Lcom/mamboa/yearview/core/TitleGravity;
+	public final fun component7 ()F
+	public final fun component8 ()Z
+	public final fun component9 ()Ljava/util/List;
+	public final fun copy (Lcom/mamboa/yearview/compose/MonthRect;IIIILcom/mamboa/yearview/core/TitleGravity;FZLjava/util/List;Ljava/lang/String;Ljava/util/Locale;Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;Z)Lcom/mamboa/yearview/compose/MonthLayoutInfo;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/compose/MonthLayoutInfo;Lcom/mamboa/yearview/compose/MonthRect;IIIILcom/mamboa/yearview/core/TitleGravity;FZLjava/util/List;Ljava/lang/String;Ljava/util/Locale;Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;ZILjava/lang/Object;)Lcom/mamboa/yearview/compose/MonthLayoutInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDateTimeProvider ()Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;
+	public final fun getDayNames ()Ljava/util/List;
+	public final fun getDaysInMonth ()I
+	public final fun getFirstDay ()I
+	public final fun getLocale ()Ljava/util/Locale;
+	public final fun getMarginBelowMonthNamePx ()F
+	public final fun getMonth ()I
+	public final fun getMonthFormat ()Ljava/lang/String;
+	public final fun getMonthRect ()Lcom/mamboa/yearview/compose/MonthRect;
+	public final fun getMonthTitleGravity ()Lcom/mamboa/yearview/core/TitleGravity;
+	public final fun getYear ()I
+	public fun hashCode ()I
+	public final fun isCurrentMonth ()Z
+	public final fun isRtl ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/MonthNameKey {
+	public static final field $stable I
+	public fun <init> (ILandroidx/compose/ui/text/TextStyle;)V
+	public final fun component1 ()I
+	public final fun component2 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun copy (ILandroidx/compose/ui/text/TextStyle;)Lcom/mamboa/yearview/compose/MonthNameKey;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/compose/MonthNameKey;ILandroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lcom/mamboa/yearview/compose/MonthNameKey;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMonthIndex ()I
+	public final fun getStyle ()Landroidx/compose/ui/text/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/MonthRect {
+	public static final field $stable I
+	public fun <init> (Landroidx/compose/ui/geometry/Rect;IFLandroidx/compose/ui/geometry/Rect;F)V
+	public final fun component1 ()Landroidx/compose/ui/geometry/Rect;
+	public final fun component2 ()I
+	public final fun component3 ()F
+	public final fun component4 ()Landroidx/compose/ui/geometry/Rect;
+	public final fun component5 ()F
+	public final fun copy (Landroidx/compose/ui/geometry/Rect;IFLandroidx/compose/ui/geometry/Rect;F)Lcom/mamboa/yearview/compose/MonthRect;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/compose/MonthRect;Landroidx/compose/ui/geometry/Rect;IFLandroidx/compose/ui/geometry/Rect;FILjava/lang/Object;)Lcom/mamboa/yearview/compose/MonthRect;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLastRowY ()F
+	public final fun getMonth ()I
+	public final fun getRect ()Landroidx/compose/ui/geometry/Rect;
+	public final fun getSelectionMargin ()F
+	public final fun getSelectionRect ()Landroidx/compose/ui/geometry/Rect;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/YearViewKt {
+	public static final fun YearView (Landroidx/compose/ui/Modifier;Lcom/mamboa/yearview/compose/YearViewState;Lcom/mamboa/yearview/compose/YearViewSelectionState;Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
+	public static final fun getLocalYearViewDebug ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+}
+
+public final class com/mamboa/yearview/compose/YearViewSelectionState {
+	public static final field $stable I
+	public static final field Companion Lcom/mamboa/yearview/compose/YearViewSelectionState$Companion;
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun clearAll ()V
+	public final fun clearRange ()V
+	public final fun clearSelection ()V
+	public final fun getHasCompleteRange ()Z
+	public final fun getRangeEnd ()Ljava/lang/String;
+	public final fun getRangeStart ()Ljava/lang/String;
+	public final fun getSelectedDay ()Ljava/lang/String;
+	public final fun setRange (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun setSelectedDay (Ljava/lang/String;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/YearViewSelectionState$Companion {
+	public final fun getSaver ()Landroidx/compose/runtime/saveable/Saver;
+}
+
+public final class com/mamboa/yearview/compose/YearViewSelectionStateKt {
+	public static final fun rememberYearViewSelectionState (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;II)Lcom/mamboa/yearview/compose/YearViewSelectionState;
+	public static final fun selectedDayMillis (Lcom/mamboa/yearview/compose/YearViewSelectionState;Ljava/lang/String;Ljava/util/Locale;Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;)Ljava/lang/Long;
+	public static synthetic fun selectedDayMillis$default (Lcom/mamboa/yearview/compose/YearViewSelectionState;Ljava/lang/String;Ljava/util/Locale;Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;ILjava/lang/Object;)Ljava/lang/Long;
+}
+
+public final class com/mamboa/yearview/compose/YearViewState {
+	public static final field $stable I
+	public static final field Companion Lcom/mamboa/yearview/compose/YearViewState$Companion;
+	public synthetic fun <init> (IIIFFLcom/mamboa/yearview/compose/MonthConfig;ILcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;ZZLandroidx/compose/ui/text/TextStyle;ILjava/lang/String;FLjava/util/Set;ZLcom/mamboa/yearview/compose/ComposeBackgroundStyle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (IIIFFLcom/mamboa/yearview/compose/MonthConfig;ILcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;ZZLandroidx/compose/ui/text/TextStyle;ILjava/lang/String;FLjava/util/Set;ZLcom/mamboa/yearview/compose/ComposeBackgroundStyle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component10 ()Z
+	public final fun component11 ()Z
+	public final fun component12 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component13 ()I
+	public final fun component14 ()Ljava/lang/String;
+	public final fun component15-D9Ej5fM ()F
+	public final fun component16 ()Ljava/util/Set;
+	public final fun component17 ()Z
+	public final fun component18 ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun component19 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component20 ()Ljava/lang/String;
+	public final fun component21 ()Ljava/lang/String;
+	public final fun component3 ()I
+	public final fun component4-D9Ej5fM ()F
+	public final fun component5-D9Ej5fM ()F
+	public final fun component6 ()Lcom/mamboa/yearview/compose/MonthConfig;
+	public final fun component7 ()I
+	public final fun component8 ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun component9 ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun copy-6NV9aKY (IIIFFLcom/mamboa/yearview/compose/MonthConfig;ILcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;ZZLandroidx/compose/ui/text/TextStyle;ILjava/lang/String;FLjava/util/Set;ZLcom/mamboa/yearview/compose/ComposeBackgroundStyle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/mamboa/yearview/compose/YearViewState;
+	public static synthetic fun copy-6NV9aKY$default (Lcom/mamboa/yearview/compose/YearViewState;IIIFFLcom/mamboa/yearview/compose/MonthConfig;ILcom/mamboa/yearview/compose/DayConfig;Lcom/mamboa/yearview/compose/DayConfig;ZZLandroidx/compose/ui/text/TextStyle;ILjava/lang/String;FLjava/util/Set;ZLcom/mamboa/yearview/compose/ComposeBackgroundStyle;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/mamboa/yearview/compose/YearViewState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getColumns ()I
+	public final fun getDayFormat ()Ljava/lang/String;
+	public final fun getDayNameLength ()I
+	public final fun getDayNameStyle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getDayNameTranscendsWeekend ()Z
+	public final fun getDayTouchPadding-D9Ej5fM ()F
+	public final fun getEnableMultiSelection ()Z
+	public final fun getExitMonthActionLabel ()Ljava/lang/String;
+	public final fun getFirstDayOfWeek ()I
+	public final fun getHorizontalSpacing-D9Ej5fM ()F
+	public final fun getMonthConfig ()Lcom/mamboa/yearview/compose/MonthConfig;
+	public final fun getMultiSelectionBackgroundItemStyle ()Lcom/mamboa/yearview/compose/ComposeBackgroundStyle;
+	public final fun getRows ()I
+	public final fun getSelectedDayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getSelectedLabel ()Ljava/lang/String;
+	public final fun getTodayConfig ()Lcom/mamboa/yearview/compose/DayConfig;
+	public final fun getTodayLabel ()Ljava/lang/String;
+	public final fun getVerticalSpacing-D9Ej5fM ()F
+	public final fun getWeekendDays ()Ljava/util/Set;
+	public final fun getYear ()I
+	public fun hashCode ()I
+	public final fun isDaySelectionVisuallySticky ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/YearViewState$Companion {
+	public final fun getSaver ()Landroidx/compose/runtime/saveable/Saver;
+}
+
+public final class com/mamboa/yearview/compose/imageprovider/BitmapImageProvider : com/mamboa/yearview/core/ImageProvider {
+	public static final field $stable I
+	public fun <init> (Landroidx/compose/ui/graphics/ImageBitmap;)V
+	public final fun component1 ()Landroidx/compose/ui/graphics/ImageBitmap;
+	public final fun copy (Landroidx/compose/ui/graphics/ImageBitmap;)Lcom/mamboa/yearview/compose/imageprovider/BitmapImageProvider;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/compose/imageprovider/BitmapImageProvider;Landroidx/compose/ui/graphics/ImageBitmap;ILjava/lang/Object;)Lcom/mamboa/yearview/compose/imageprovider/BitmapImageProvider;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getImageBitmap ()Landroidx/compose/ui/graphics/ImageBitmap;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/compose/pathprovider/ComposePathProvider : com/mamboa/yearview/core/CustomShapeProvider {
+	public static final field $stable I
+	public synthetic fun <init> (Landroidx/compose/ui/graphics/Path;FILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Landroidx/compose/ui/graphics/Path;FLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getInnerPadding-D9Ej5fM ()F
+	public final fun getPath ()Landroidx/compose/ui/graphics/Path;
+}
+

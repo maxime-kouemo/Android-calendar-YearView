@@ -25,6 +25,12 @@ foundationAndroidVersion = "1.8.3"
 uiToolingPreviewAndroid = "1.8.3"
 annotationJvm = "1.9.1"
 core = "1.16.0"
+customview = "1.2.0"
+kotlinxDatetime = "0.6.2"
+uiGraphics = "1.11.4"
+# Guards the published ABI of :core, :legacy and :compose against accidental
+# source/binary-breaking changes. `apiCheck` runs as part of `check`.
+binaryCompatibilityValidator = "0.18.1"
 
 [libraries]
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
@@ -51,6 +57,11 @@ foundation-android = { group = "androidx.compose.foundation", name = "foundation
 androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
 androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotationJvm" }
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
+# Provides ExploreByTouchHelper, used to expose each day cell as an accessibility
+# virtual view so screen readers can navigate the calendar day by day.
+androidx-customview = { group = "androidx.customview", name = "customview", version.ref = "customview" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
@@ -61,3 +72,4 @@ com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devto
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin_parcelize" }
 maven-publish = { id = "maven-publish" }
+binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }

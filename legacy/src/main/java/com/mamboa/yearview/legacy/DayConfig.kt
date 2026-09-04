@@ -8,11 +8,11 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.Px
 import androidx.core.content.ContextCompat
-import com.mamboa.yearview.core.BackgroundItemStyle
 import com.mamboa.yearview.core.BackgroundShape
 import com.mamboa.yearview.core.FontType
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.RawValue
+import kotlin.math.roundToInt
 
 /**
  * Configuration class for day-related styling in Legacy YearView.
@@ -25,9 +25,9 @@ data class DayConfig(
     /**
      * Style for the background of the day.
      */
-    val backgroundItemStyle: BackgroundItemStyle.AndroidXMLStyle = BackgroundItemStyle.AndroidXMLStyle(
+    val backgroundItemStyle: LegacyBackgroundStyle = LegacyBackgroundStyle(
         color = android.graphics.Color.RED,
-        shape = BackgroundShape.Circle(radius = 5.0f)
+        shape = BackgroundShape.Circle(radius = 1.0f)
     ),
 
     /**
@@ -49,14 +49,18 @@ data class DayConfig(
 
     /**
      * Custom typeface for day text.
+     * Not included in parceling — [Typeface] is not [Parcelable].
+     * After configuration change, callers must re-set custom typefaces.
      */
-    val fontTypeFace: @RawValue Typeface? = null,
+    @IgnoredOnParcel
+    val fontTypeFace: Typeface? = null,
 
     /**
-     * Background radius for the day in pixels (used with certain shapes).
+     * Breathing room around the day text, used as a multiplier for the background size.
+     * A value of 1f means the background will fit snugly around the text.
+     * Matches the Compose module's resolution-independent approach.
      */
-    @Px
-    val backgroundRadius: Int = 5
+    val backgroundRadius: Float = 1f
 ) : Parcelable {
     
     companion object {
@@ -72,14 +76,15 @@ data class DayConfig(
          * @param textSizeRes Dimension resource ID (e.g., R.dimen.yearview_today_text_size)
          * @param fontType Font type for the day text
          * @param fontTypeFace Custom typeface for day text
-         * @param backgroundRadiusRes Dimension resource ID for background radius
+         * @param backgroundRadiusRes Dimension resource ID for background radius (pixel value
+         *   that will be converted to a resolution-independent multiplier)
          * @return DayConfig with resolved resource values
          */
         fun fromResources(
             context: Context,
-            backgroundItemStyle: BackgroundItemStyle.AndroidXMLStyle = BackgroundItemStyle.AndroidXMLStyle(
+            backgroundItemStyle: LegacyBackgroundStyle = LegacyBackgroundStyle(
                 color = android.graphics.Color.RED,
-                shape = BackgroundShape.Circle(radius = 5.0f)
+                shape = BackgroundShape.Circle(radius = 1.0f)
             ),
             @ColorRes textColorRes: Int,
             @DimenRes textSizeRes: Int,
@@ -87,14 +92,38 @@ data class DayConfig(
             fontTypeFace: Typeface? = null,
             @DimenRes backgroundRadiusRes: Int
         ): DayConfig {
+            val textSizePx = context.resources.getDimensionPixelSize(textSizeRes)
+            val radiusPx = context.resources.getDimensionPixelSize(backgroundRadiusRes)
             return DayConfig(
                 backgroundItemStyle = backgroundItemStyle,
                 textColor = ContextCompat.getColor(context, textColorRes),
-                textSize = context.resources.getDimensionPixelSize(textSizeRes),
+                textSize = textSizePx,
                 fontType = fontType,
                 fontTypeFace = fontTypeFace,
-                backgroundRadius = context.resources.getDimensionPixelSize(backgroundRadiusRes)
+                backgroundRadius = pixelsToMultiplier(radiusPx, textSizePx)
             )
+        }
+
+        /**
+         * Converts a pixel-based background radius to a resolution-independent multiplier.
+         * The multiplier represents how much larger the background is relative to the text.
+         * A value of 1f means the background fits snugly; larger values add breathing room.
+         */
+        fun pixelsToMultiplier(radiusPx: Int, textSizePx: Int): Float {
+            return if (textSizePx > 0) 1f + (2f * radiusPx) / textSizePx else 1f
+        }
+
+        /**
+         * Converts a multiplier-based background radius back to a pixel margin
+         * for use in legacy Canvas drawing operations.
+         *
+         * Rounds rather than truncates: [pixelsToMultiplier] introduces floating-point
+         * error, so `toInt()` turned values such as `0.99999` into `0` and produced a
+         * margin one pixel smaller than the caller asked for. Rounding makes this an
+         * exact inverse of [pixelsToMultiplier].
+         */
+        fun multiplierToPixelMargin(multiplier: Float, textSizePx: Int): Int {
+            return ((multiplier - 1f) * textSizePx / 2f).roundToInt()
         }
     }
 }

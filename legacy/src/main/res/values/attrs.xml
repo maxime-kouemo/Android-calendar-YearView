@@ -1,56 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Public XML attributes for com.mamboa.yearview.legacy.YearView.
+
+    ## Naming
+
+    Every attribute is prefixed with `yv_`. Attribute names live in a single global
+    namespace shared by the app and all of its libraries, so generic names such as
+    `rows`, `columns`, `debug_mode` or `firstDayOfWeek` collide with any other library
+    that declares the same name — a collision that surfaces as a confusing resource
+    merge failure in the consuming app, not here.
+
+    ## Units
+
+    Anything that is a real length is declared `format="dimension"` so it can be given
+    as `dp`/`sp` and scale with display density. These were previously `format="integer"`
+    and therefore raw pixels, which rendered at wildly different physical sizes across
+    devices.
+
+    ## Enum ordinals
+
+    `<enum>` values are resolved by ordinal against the matching Kotlin enum in
+    `:core`, so the numbers below must stay in sync with the declaration order of
+    TitleGravity / FontType / MergeType. `AttrEnumMappingTest` asserts this.
+-->
 <resources>
     <declare-styleable name="YearView">
-        <attr name="simple_day_text_color" format="color"/>
-        <attr name="weekend_text_color" format="color"/>
-        <attr name="today_text_color" format="color"/>
-        <attr name="today_background_color" format="color"/>
-        <attr name="month_selection_color" format="color"/>
-        <attr name="day_name_text_color" format="color"/>
-        <attr name="month_name_text_color" format="color"/>
-        <attr name="month_background_image" format="reference"/>
-        <attr name="month_background_color" format="color"/>
-        <attr name="today_month_name_text_color" format="color"/>
-        <attr name="selected_day_text_color" format="color"/>
-        <attr name="selected_day_background_color" format="color"/>
-        <attr name="month_background_color_density" format="integer"/>
 
-        <attr name="month_background_rounded_radius" format="float"/>
-        <attr name="month_background_selected_rounded_radius" format="float"/>
-        <attr name="selected_day_rounded_radius" format="float"/>
-        <attr name="today_rounded_radius" format="float"/>
+        <!-- ══════════════════════════════════════════════════════════
+             Grid
+             ══════════════════════════════════════════════════════════ -->
+        <attr name="yv_current_year" format="integer"/>
+        <attr name="yv_rows" format="integer"/>
+        <attr name="yv_columns" format="integer"/>
+        <attr name="yv_vertical_spacing" format="dimension"/>
+        <attr name="yv_horizontal_spacing" format="dimension"/>
 
-        <attr name="simple_day_text_size" format="dimension"/>
-        <attr name="weekend_text_size" format="dimension"/>
-        <attr name="today_text_size" format="dimension"/>
-        <attr name="day_name_text_size" format="dimension"/>
-        <attr name="month_name_text_size" format="dimension"/>
-        <attr name="today_month_name_text_size" format="dimension"/>
-        <attr name="selected_day_text_size" format="dimension"/>
-        <attr name="selected_day_text" format="string"/>
-
-        <attr name="name_week_transcend_weekend" format="boolean"/>
-        <attr name="is_day_selection_visually_sticky" format="boolean"/>
-
-        <attr name="month_selection_margin" format="integer"/>
-        <attr name="vertical_spacing" format="integer"/>
-        <attr name="horizontal_spacing" format="integer"/>
-        <attr name="today_background_radius" format="integer"/>
-        <attr name="selected_day_background_radius" format="integer"/>
-        <attr name="current_year" format="integer"/>
-        <attr name="rows" format="integer"/>
-        <attr name="columns" format="integer"/>
-        <attr name="margin_below_month_name" format="integer"/>
-        <attr name="weekend_days" format="reference"/>
-        <attr name="month_name_font" format="reference"/>
-        <attr name="weekend_font" format="reference"/>
-        <attr name="day_name_font" format="reference"/>
-        <attr name="today_font" format="reference"/>
-        <attr name="simple_day_font" format="reference"/>
-        <attr name="today_month_name_font" format="reference"/>
-        <attr name="selected_day_font" format="reference"/>
-
-        <attr name="firstDayOfWeek">
+        <attr name="yv_first_day_of_week">
             <enum name="monday" value="1"/>
             <enum name="tuesday" value="2"/>
             <enum name="wednesday" value="3"/>
@@ -59,91 +44,224 @@
             <enum name="saturday" value="6"/>
             <enum name="sunday" value="7"/>
         </attr>
-        <attr name="month_title_gravity">
+
+        <attr name="yv_weekend_days" format="reference"/>
+        <attr name="yv_day_pattern" format="string"/>
+
+        <!-- Draws semi-transparent touch-target outlines over day cells. -->
+        <attr name="yv_debug_mode" format="boolean"/>
+
+        <!-- ══════════════════════════════════════════════════════════
+             Month title
+             ══════════════════════════════════════════════════════════ -->
+        <!--
+            Values must match the ordinals of com.mamboa.yearview.core.TitleGravity
+            (CENTER, START, LEFT, RIGHT, END) because the attribute is resolved by index.
+            `left` and `start` were previously swapped, so `left` produced RTL-mirrored
+            gravity and `start` produced a fixed edge.
+        -->
+        <attr name="yv_month_title_gravity">
             <enum name="center" value="0" />
-            <enum name="left" value="1" />
-            <enum name="start" value="2" />
+            <enum name="start" value="1" />
+            <enum name="left" value="2" />
             <enum name="right" value="3" />
             <enum name="end" value="4" />
         </attr>
+        <attr name="yv_margin_below_month_name" format="dimension"/>
 
-        <attr name="today_background_shape">
+        <attr name="yv_month_name_text_color" format="color"/>
+        <attr name="yv_month_name_text_size" format="dimension"/>
+        <attr name="yv_month_name_font" format="reference"/>
+        <attr name="yv_month_name_font_type" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <attr name="yv_today_month_name_text_color" format="color"/>
+        <attr name="yv_today_month_name_text_size" format="dimension"/>
+        <attr name="yv_today_month_name_font" format="reference"/>
+        <attr name="yv_today_month_name_font_type" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+
+        <!-- ══════════════════════════════════════════════════════════
+             Month background
+             ══════════════════════════════════════════════════════════ -->
+        <attr name="yv_month_background_color" format="color"/>
+        <!-- Opacity (0-100) of the fill colour. Multiplies the colour's own alpha. -->
+        <attr name="yv_month_background_color_density" format="integer"/>
+        <attr name="yv_month_background_image" format="reference"/>
+        <!--
+            Opacity (0-100) of the background image, independent of the colour density.
+            A single `opacity` used to cross-fade the two, which meant an image was
+            fully transparent at the default colour density of 100 and never appeared.
+        -->
+        <attr name="yv_month_background_image_opacity" format="integer"/>
+        <attr name="yv_month_background_shape">
             <enum name="circle" value="0" />
             <enum name="square" value="1" />
             <enum name="rounded_square" value="2" />
             <enum name="star" value="3"/>
             <enum name="custom" value="4"/>
         </attr>
-
-        <attr name="selected_day_background_shape">
-            <enum name="circle" value="0" />
-            <enum name="square" value="1" />
-            <enum name="rounded_square" value="2" />
-            <enum name="star" value="3"/>
-            <enum name="custom" value="4"/>
-        </attr>
-
-        <attr name="month_background_shape">
-            <enum name="circle" value="0" />
-            <enum name="square" value="1" />
-            <enum name="rounded_square" value="2" />
-            <enum name="star" value="3"/>
-            <enum name="custom" value="4"/>
-        </attr>
-
-        <attr name="month_background_merge_type">
+        <!-- Corner radius in dp; applies to shape="rounded_square". -->
+        <attr name="yv_month_background_rounded_radius" format="float"/>
+        <!-- Number of star points (3-10); applies to shape="star". -->
+        <attr name="yv_month_background_star_points" format="integer"/>
+        <!-- Inner/outer radius ratio (0-1); applies to shape="star". -->
+        <attr name="yv_month_background_star_inner_radius" format="float"/>
+        <!-- Vector drawable supplying the outline; required by shape="custom". -->
+        <attr name="yv_month_background_custom_shape" format="reference"/>
+        <attr name="yv_month_background_merge_type">
             <enum name="overlay" value="0" />
             <enum name="clip" value="1" />
         </attr>
 
-        <attr name="month_name_font_type">
+        <!-- ══════════════════════════════════════════════════════════
+             Month selection highlight
+             ══════════════════════════════════════════════════════════ -->
+        <attr name="yv_month_selection_color" format="color"/>
+        <attr name="yv_month_selection_color_density" format="integer"/>
+        <attr name="yv_month_selection_image" format="reference"/>
+        <attr name="yv_month_selection_image_opacity" format="integer"/>
+        <attr name="yv_month_selection_margin" format="dimension"/>
+        <attr name="yv_month_selection_shape">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+            <enum name="rounded_square" value="2" />
+            <enum name="star" value="3"/>
+            <enum name="custom" value="4"/>
+        </attr>
+        <attr name="yv_month_selection_rounded_radius" format="float"/>
+        <attr name="yv_month_selection_star_points" format="integer"/>
+        <attr name="yv_month_selection_star_inner_radius" format="float"/>
+        <attr name="yv_month_selection_custom_shape" format="reference"/>
+        <attr name="yv_month_selection_merge_type">
+            <enum name="overlay" value="0" />
+            <enum name="clip" value="1" />
+        </attr>
+
+        <!-- ══════════════════════════════════════════════════════════
+             Today
+             ══════════════════════════════════════════════════════════ -->
+        <attr name="yv_today_text_color" format="color"/>
+        <attr name="yv_today_text_size" format="dimension"/>
+        <attr name="yv_today_font" format="reference"/>
+        <attr name="yv_today_font_type" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+        <attr name="yv_today_background_color" format="color"/>
+        <attr name="yv_today_background_color_density" format="integer"/>
+        <attr name="yv_today_background_image" format="reference"/>
+        <attr name="yv_today_background_image_opacity" format="integer"/>
+        <!-- Breathing room between the day number and its background edge. -->
+        <attr name="yv_today_background_radius" format="dimension"/>
+        <attr name="yv_today_background_shape">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+            <enum name="rounded_square" value="2" />
+            <enum name="star" value="3"/>
+            <enum name="custom" value="4"/>
+        </attr>
+        <attr name="yv_today_rounded_radius" format="float"/>
+        <attr name="yv_today_star_points" format="integer"/>
+        <attr name="yv_today_star_inner_radius" format="float"/>
+        <attr name="yv_today_custom_shape" format="reference"/>
+
+        <!-- ══════════════════════════════════════════════════════════
+             Selected day
+             ══════════════════════════════════════════════════════════ -->
+        <attr name="yv_is_day_selection_visually_sticky" format="boolean"/>
+        <!-- Initially selected day, parsed with yv_day_pattern. -->
+        <attr name="yv_selected_day_text" format="string"/>
+        <attr name="yv_selected_day_text_color" format="color"/>
+        <attr name="yv_selected_day_text_size" format="dimension"/>
+        <attr name="yv_selected_day_font" format="reference"/>
+        <attr name="yv_selected_day_font_type" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+            <enum name="bold_italic" value="3"/>
+        </attr>
+        <attr name="yv_selected_day_background_color" format="color"/>
+        <attr name="yv_selected_day_background_color_density" format="integer"/>
+        <attr name="yv_selected_day_background_image" format="reference"/>
+        <attr name="yv_selected_day_background_image_opacity" format="integer"/>
+        <attr name="yv_selected_day_background_radius" format="dimension"/>
+        <attr name="yv_selected_day_background_shape">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+            <enum name="rounded_square" value="2" />
+            <enum name="star" value="3"/>
+            <enum name="custom" value="4"/>
+        </attr>
+        <attr name="yv_selected_day_rounded_radius" format="float"/>
+        <attr name="yv_selected_day_star_points" format="integer"/>
+        <attr name="yv_selected_day_star_inner_radius" format="float"/>
+        <attr name="yv_selected_day_custom_shape" format="reference"/>
+
+        <!-- ══════════════════════════════════════════════════════════
+             Range (multi) selection
+             ══════════════════════════════════════════════════════════ -->
+        <attr name="yv_enable_multi_selection" format="boolean"/>
+        <attr name="yv_multi_selection_background_color" format="color"/>
+        <attr name="yv_multi_selection_background_color_density" format="integer"/>
+        <!-- Inset between the day number and the range highlight edge. -->
+        <attr name="yv_multi_selection_background_radius" format="dimension"/>
+        <attr name="yv_multi_selection_background_shape">
+            <enum name="circle" value="0" />
+            <enum name="square" value="1" />
+            <enum name="rounded_square" value="2" />
+            <enum name="star" value="3"/>
+            <enum name="custom" value="4"/>
+        </attr>
+        <attr name="yv_multi_selection_rounded_radius" format="float"/>
+        <attr name="yv_multi_selection_star_points" format="integer"/>
+        <attr name="yv_multi_selection_star_inner_radius" format="float"/>
+        <attr name="yv_multi_selection_custom_shape" format="reference"/>
+
+        <!-- ══════════════════════════════════════════════════════════
+             Ordinary days, weekends, day-name header
+             ══════════════════════════════════════════════════════════ -->
+        <attr name="yv_simple_day_text_color" format="color"/>
+        <attr name="yv_simple_day_text_size" format="dimension"/>
+        <attr name="yv_simple_day_font" format="reference"/>
+        <attr name="yv_simple_day_font_type" format="enum">
             <enum name="normal" value="0" />
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
             <enum name="bold_italic" value="3"/>
         </attr>
 
-        <attr name="day_name_font_type">
+        <attr name="yv_weekend_text_color" format="color"/>
+        <attr name="yv_weekend_text_size" format="dimension"/>
+        <attr name="yv_weekend_font" format="reference"/>
+        <attr name="yv_weekend_font_type" format="enum">
             <enum name="normal" value="0" />
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
             <enum name="bold_italic" value="3"/>
         </attr>
 
-        <attr name="today_font_type">
+        <attr name="yv_day_name_text_color" format="color"/>
+        <attr name="yv_day_name_text_size" format="dimension"/>
+        <attr name="yv_day_name_font" format="reference"/>
+        <attr name="yv_day_name_font_type" format="enum">
             <enum name="normal" value="0" />
             <enum name="bold" value="1"/>
             <enum name="italic" value="2"/>
             <enum name="bold_italic" value="3"/>
         </attr>
-
-        <attr name="selected_day_font_type">
-            <enum name="normal" value="0" />
-            <enum name="bold" value="1"/>
-            <enum name="italic" value="2"/>
-            <enum name="bold_italic" value="3"/>
-        </attr>
-
-        <attr name="weekend_font_type">
-            <enum name="normal" value="0" />
-            <enum name="bold" value="1"/>
-            <enum name="italic" value="2"/>
-            <enum name="bold_italic" value="3"/>
-        </attr>
-
-        <attr name="simple_day_font_type">
-            <enum name="normal" value="0" />
-            <enum name="bold" value="1"/>
-            <enum name="italic" value="2"/>
-            <enum name="bold_italic" value="3"/>
-        </attr>
-
-        <attr name="today_month_name_font_type">
-            <enum name="normal" value="0" />
-            <enum name="bold" value="1"/>
-            <enum name="italic" value="2"/>
-            <enum name="bold_italic" value="3"/>
-        </attr>
+        <!-- When true, day-name headers keep their own colour on weekend columns. -->
+        <attr name="yv_name_week_transcend_weekend" format="boolean"/>
 
     </declare-styleable>
 </resources>

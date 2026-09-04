@@ -4,6 +4,13 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <!--
+        Used by the YearView demo layouts. Previously resolved from the :legacy library,
+        which declared generic unprefixed colours that leaked into every consuming app's
+        resource table; the sample now owns its own palette.
+    -->
+    <color name="purple_500">#FF6200EE</color>
+
     <!-- Color variants for YearView demo variety -->
     <color name="demo_day_name_1">#FF4CAF50</color><!-- Green -->
     <color name="demo_day_name_2">#FF2196F3</color><!-- Blue -->

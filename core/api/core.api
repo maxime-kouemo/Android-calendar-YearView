@@ -1,0 +1,312 @@
+public abstract class com/mamboa/yearview/core/BackgroundItemStyle : android/os/Parcelable {
+	public fun <init> (Lcom/mamboa/yearview/core/BackgroundShape;FLcom/mamboa/yearview/core/ImageSource;IILcom/mamboa/yearview/core/MergeType;)V
+	public synthetic fun <init> (Lcom/mamboa/yearview/core/BackgroundShape;FLcom/mamboa/yearview/core/ImageSource;IILcom/mamboa/yearview/core/MergeType;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun getColorOpacity ()I
+	public fun getImage ()Lcom/mamboa/yearview/core/ImageSource;
+	public fun getImageOpacity ()I
+	public fun getMergeType ()Lcom/mamboa/yearview/core/MergeType;
+	public fun getSelectionMargin ()F
+	public fun getShape ()Lcom/mamboa/yearview/core/BackgroundShape;
+}
+
+public abstract class com/mamboa/yearview/core/BackgroundShape : android/os/Parcelable {
+}
+
+public final class com/mamboa/yearview/core/BackgroundShape$Circle : com/mamboa/yearview/core/BackgroundShape {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/mamboa/yearview/core/BackgroundShape$Circle;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/core/BackgroundShape$Circle;FILjava/lang/Object;)Lcom/mamboa/yearview/core/BackgroundShape$Circle;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRadius ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class com/mamboa/yearview/core/BackgroundShape$Custom : com/mamboa/yearview/core/BackgroundShape {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Lcom/mamboa/yearview/core/CustomShapeProvider;)V
+	public final fun component1 ()Lcom/mamboa/yearview/core/CustomShapeProvider;
+	public final fun copy (Lcom/mamboa/yearview/core/CustomShapeProvider;)Lcom/mamboa/yearview/core/BackgroundShape$Custom;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/core/BackgroundShape$Custom;Lcom/mamboa/yearview/core/CustomShapeProvider;ILjava/lang/Object;)Lcom/mamboa/yearview/core/BackgroundShape$Custom;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getProvider ()Lcom/mamboa/yearview/core/CustomShapeProvider;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class com/mamboa/yearview/core/BackgroundShape$RoundedSquare : com/mamboa/yearview/core/BackgroundShape {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (F)V
+	public final fun component1 ()F
+	public final fun copy (F)Lcom/mamboa/yearview/core/BackgroundShape$RoundedSquare;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/core/BackgroundShape$RoundedSquare;FILjava/lang/Object;)Lcom/mamboa/yearview/core/BackgroundShape$RoundedSquare;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCornerRadius ()F
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class com/mamboa/yearview/core/BackgroundShape$Square : com/mamboa/yearview/core/BackgroundShape {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public static final field INSTANCE Lcom/mamboa/yearview/core/BackgroundShape$Square;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class com/mamboa/yearview/core/BackgroundShape$Star : com/mamboa/yearview/core/BackgroundShape {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> ()V
+	public fun <init> (IFI)V
+	public synthetic fun <init> (IFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()F
+	public final fun component3 ()I
+	public final fun copy (IFI)Lcom/mamboa/yearview/core/BackgroundShape$Star;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/core/BackgroundShape$Star;IFIILjava/lang/Object;)Lcom/mamboa/yearview/core/BackgroundShape$Star;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getInnerRadiusRatio ()F
+	public final fun getMaximumNumberOfLegs ()I
+	public final fun getNumberOfLegs ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public abstract interface class com/mamboa/yearview/core/CustomShapeProvider {
+}
+
+public final class com/mamboa/yearview/core/FontType : java/lang/Enum {
+	public static final field BOLD Lcom/mamboa/yearview/core/FontType;
+	public static final field BOLD_ITALIC Lcom/mamboa/yearview/core/FontType;
+	public static final field ITALIC Lcom/mamboa/yearview/core/FontType;
+	public static final field NORMAL Lcom/mamboa/yearview/core/FontType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/mamboa/yearview/core/FontType;
+	public static fun values ()[Lcom/mamboa/yearview/core/FontType;
+}
+
+public abstract interface class com/mamboa/yearview/core/ImageProvider {
+}
+
+public abstract class com/mamboa/yearview/core/ImageSource : android/os/Parcelable {
+}
+
+public final class com/mamboa/yearview/core/ImageSource$None : com/mamboa/yearview/core/ImageSource {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public static final field INSTANCE Lcom/mamboa/yearview/core/ImageSource$None;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class com/mamboa/yearview/core/ImageSource$Provided : com/mamboa/yearview/core/ImageSource {
+	public static final field CREATOR Landroid/os/Parcelable$Creator;
+	public fun <init> (Lcom/mamboa/yearview/core/ImageProvider;)V
+	public final fun component1 ()Lcom/mamboa/yearview/core/ImageProvider;
+	public final fun copy (Lcom/mamboa/yearview/core/ImageProvider;)Lcom/mamboa/yearview/core/ImageSource$Provided;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/core/ImageSource$Provided;Lcom/mamboa/yearview/core/ImageProvider;ILjava/lang/Object;)Lcom/mamboa/yearview/core/ImageSource$Provided;
+	public final fun describeContents ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getProvider ()Lcom/mamboa/yearview/core/ImageProvider;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
+}
+
+public final class com/mamboa/yearview/core/MergeType : java/lang/Enum {
+	public static final field CLIP Lcom/mamboa/yearview/core/MergeType;
+	public static final field OVERLAY Lcom/mamboa/yearview/core/MergeType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/mamboa/yearview/core/MergeType;
+	public static fun values ()[Lcom/mamboa/yearview/core/MergeType;
+}
+
+public final class com/mamboa/yearview/core/TitleGravity : java/lang/Enum {
+	public static final field CENTER Lcom/mamboa/yearview/core/TitleGravity;
+	public static final field END Lcom/mamboa/yearview/core/TitleGravity;
+	public static final field LEFT Lcom/mamboa/yearview/core/TitleGravity;
+	public static final field RIGHT Lcom/mamboa/yearview/core/TitleGravity;
+	public static final field START Lcom/mamboa/yearview/core/TitleGravity;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/mamboa/yearview/core/TitleGravity;
+	public static fun values ()[Lcom/mamboa/yearview/core/TitleGravity;
+}
+
+public final class com/mamboa/yearview/core/datetime/CalendarDate {
+	public fun <init> (III)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (III)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/core/datetime/CalendarDate;IIIILjava/lang/Object;)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDay ()I
+	public final fun getMonth ()I
+	public final fun getYear ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/core/datetime/DayOfWeekConstants {
+	public static final field FRIDAY I
+	public static final field INSTANCE Lcom/mamboa/yearview/core/datetime/DayOfWeekConstants;
+	public static final field MONDAY I
+	public static final field SATURDAY I
+	public static final field SUNDAY I
+	public static final field THURSDAY I
+	public static final field TUESDAY I
+	public static final field WEDNESDAY I
+}
+
+public abstract interface class com/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider {
+	public abstract fun currentYear ()I
+	public abstract fun dateOf (III)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public abstract fun dayOfWeek (III)I
+	public abstract fun dayOfWeek (Lcom/mamboa/yearview/core/datetime/CalendarDate;)I
+	public abstract fun daysInMonth (II)I
+	public abstract fun firstDayOfWeekInMonth (II)I
+	public abstract fun format (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
+	public fun formatAccessibleDate (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Locale;)Ljava/lang/String;
+	public abstract fun formatMonth (IILjava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
+	public abstract fun fromMillis (J)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun isAfter (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isBefore (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isInRange (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public abstract fun isToday (III)Z
+	public abstract fun isToday (Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isWeekendDay (ILjava/util/Set;)Z
+	public abstract fun isWeekendDay (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Set;)Z
+	public abstract fun monthDisplayName (ILjava/util/Locale;)Ljava/lang/String;
+	public abstract fun parse (Ljava/lang/String;Ljava/lang/String;Ljava/util/Locale;)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public abstract fun shortDayOfWeekName (ILjava/util/Locale;)Ljava/lang/String;
+	public abstract fun toMillis (Lcom/mamboa/yearview/core/datetime/CalendarDate;)J
+	public abstract fun today ()Lcom/mamboa/yearview/core/datetime/CalendarDate;
+}
+
+public final class com/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider$DefaultImpls {
+	public static fun formatAccessibleDate (Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Locale;)Ljava/lang/String;
+	public static fun isAfter (Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public static fun isBefore (Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public static fun isInRange (Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public static fun isWeekendDay (Lcom/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider;ILjava/util/Set;)Z
+}
+
+public final class com/mamboa/yearview/core/datetime/timeproviders/JavaTimeProvider : com/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider {
+	public fun <init> ()V
+	public fun currentYear ()I
+	public fun dateOf (III)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun dayOfWeek (III)I
+	public fun dayOfWeek (Lcom/mamboa/yearview/core/datetime/CalendarDate;)I
+	public fun daysInMonth (II)I
+	public fun firstDayOfWeekInMonth (II)I
+	public fun format (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
+	public fun formatAccessibleDate (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Locale;)Ljava/lang/String;
+	public fun formatMonth (IILjava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
+	public fun fromMillis (J)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun isAfter (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isBefore (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isInRange (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isToday (III)Z
+	public fun isToday (Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isWeekendDay (ILjava/util/Set;)Z
+	public fun isWeekendDay (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Set;)Z
+	public fun monthDisplayName (ILjava/util/Locale;)Ljava/lang/String;
+	public fun parse (Ljava/lang/String;Ljava/lang/String;Ljava/util/Locale;)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun shortDayOfWeekName (ILjava/util/Locale;)Ljava/lang/String;
+	public fun toMillis (Lcom/mamboa/yearview/core/datetime/CalendarDate;)J
+	public fun today ()Lcom/mamboa/yearview/core/datetime/CalendarDate;
+}
+
+public final class com/mamboa/yearview/core/datetime/timeproviders/JodaTimeProvider : com/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider {
+	public fun <init> ()V
+	public fun currentYear ()I
+	public fun dateOf (III)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun dayOfWeek (III)I
+	public fun dayOfWeek (Lcom/mamboa/yearview/core/datetime/CalendarDate;)I
+	public fun daysInMonth (II)I
+	public fun firstDayOfWeekInMonth (II)I
+	public fun format (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
+	public fun formatAccessibleDate (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Locale;)Ljava/lang/String;
+	public fun formatMonth (IILjava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
+	public fun fromMillis (J)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun isAfter (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isBefore (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isInRange (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isToday (III)Z
+	public fun isToday (Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isWeekendDay (ILjava/util/Set;)Z
+	public fun isWeekendDay (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Set;)Z
+	public fun monthDisplayName (ILjava/util/Locale;)Ljava/lang/String;
+	public fun parse (Ljava/lang/String;Ljava/lang/String;Ljava/util/Locale;)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun shortDayOfWeekName (ILjava/util/Locale;)Ljava/lang/String;
+	public fun toMillis (Lcom/mamboa/yearview/core/datetime/CalendarDate;)J
+	public fun today ()Lcom/mamboa/yearview/core/datetime/CalendarDate;
+}
+
+public final class com/mamboa/yearview/core/datetime/timeproviders/KotlinxTimeProvider : com/mamboa/yearview/core/datetime/timeproviders/ICalendarDateTimeProvider {
+	public fun <init> ()V
+	public fun currentYear ()I
+	public fun dateOf (III)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun dayOfWeek (III)I
+	public fun dayOfWeek (Lcom/mamboa/yearview/core/datetime/CalendarDate;)I
+	public fun daysInMonth (II)I
+	public fun firstDayOfWeekInMonth (II)I
+	public fun format (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
+	public fun formatAccessibleDate (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Locale;)Ljava/lang/String;
+	public fun formatMonth (IILjava/lang/String;Ljava/util/Locale;)Ljava/lang/String;
+	public fun fromMillis (J)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun isAfter (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isBefore (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isInRange (Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isToday (III)Z
+	public fun isToday (Lcom/mamboa/yearview/core/datetime/CalendarDate;)Z
+	public fun isWeekendDay (ILjava/util/Set;)Z
+	public fun isWeekendDay (Lcom/mamboa/yearview/core/datetime/CalendarDate;Ljava/util/Set;)Z
+	public fun monthDisplayName (ILjava/util/Locale;)Ljava/lang/String;
+	public fun parse (Ljava/lang/String;Ljava/lang/String;Ljava/util/Locale;)Lcom/mamboa/yearview/core/datetime/CalendarDate;
+	public fun shortDayOfWeekName (ILjava/util/Locale;)Ljava/lang/String;
+	public fun toMillis (Lcom/mamboa/yearview/core/datetime/CalendarDate;)J
+	public fun today ()Lcom/mamboa/yearview/core/datetime/CalendarDate;
+}
+
+public final class com/mamboa/yearview/core/imageprovider/ResourceImageProvider : com/mamboa/yearview/core/ImageProvider {
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lcom/mamboa/yearview/core/imageprovider/ResourceImageProvider;
+	public static synthetic fun copy$default (Lcom/mamboa/yearview/core/imageprovider/ResourceImageProvider;IILjava/lang/Object;)Lcom/mamboa/yearview/core/imageprovider/ResourceImageProvider;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getResId ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mamboa/yearview/core/pathprovider/ResourcePathProvider : com/mamboa/yearview/core/CustomShapeProvider {
+	public fun <init> (II)V
+	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getDrawableRes ()I
+	public final fun getInnerPadding ()I
+}
+
+public class com/mamboa/yearview/core/utils/Utils {
+	public fun <init> ()V
+	public static fun drawableToBitmap (Landroid/graphics/drawable/Drawable;)Landroid/graphics/Bitmap;
+	public static fun fromIntToColor (I)Landroid/graphics/Color;
+	public static fun getCurrentLocale (Landroid/content/Context;)Ljava/util/Locale;
+	public static fun getRandomColor ()I
+	public static fun getRandomTitleGravity ()Lcom/mamboa/yearview/core/TitleGravity;
+}
+
