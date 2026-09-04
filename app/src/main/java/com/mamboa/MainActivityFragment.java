@@ -12,7 +12,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import org.joda.time.DateTime;
+import com.mamboa.yearview.core.datetime.timeproviders.ICalendarDateTimeProvider;
+import com.mamboa.yearview.core.datetime.timeproviders.KotlinxTimeProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +99,8 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void selectFirstDisplayedYear() {
-        int defaultYear = new DateTime().getYear();
+        ICalendarDateTimeProvider dateTimeProvider = new KotlinxTimeProvider();
+        int defaultYear = dateTimeProvider.currentYear();
         int desiredYearPosition = adapter.getYearPosition(defaultYear);
         if (desiredYearPosition > -1) {
             currentPosition = desiredYearPosition;

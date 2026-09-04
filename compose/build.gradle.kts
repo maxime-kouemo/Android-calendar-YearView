@@ -4,7 +4,19 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.maven.publish)
+    alias(libs.plugins.binary.compatibility.validator)
 }
+
+// Records the public ABI in `api/compose.api`; `apiCheck` runs as part of `check`.
+apiValidation {}
+
+val currentGroupId = "com.mamboa.yearview"
+val currentVersion = "1.0.0"
+
+// Required so Gradle can map the `api(project(":core"))` dependency below onto real
+// Maven coordinates when generating this module's POM.
+group = currentGroupId
+version = currentVersion
 
 android {
     namespace = "com.mamboa.yearview.compose"
@@ -31,6 +43,38 @@ android {
         singleVariant("release") {}
     }
 
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+
+        // Scoped rather than full lint, deliberately.
+        //
+        // The lint checks shipped inside the Compose BOM (2025.04) are compiled against
+        // a newer Kotlin Analysis API than the lint bundled with AGP 8.7.3, so detectors
+        // such as RememberInCompositionDetector and FrequentlyChangingValueDetector abort
+        // the entire analysis with IncompatibleClassChangeError / NoSuchMethodError.
+        // Disabling them one by one is whack-a-mole; restricting the run to the issues we
+        // actually want to enforce skips the broken third-party detectors outright while
+        // still failing the build on the defects this project has shipped before.
+        //
+        // Drop `checkOnly` and go back to a full run once AGP and the Compose BOM agree
+        // on a lint API version.
+        checkOnly += listOf(
+            // A library manifest must never declare an <application> block: it merges
+            // into every consuming app and silently overrides its backup policy.
+            "AllowBackup",
+            "StringFormatMatches",
+            "StringFormatInvalid",
+            "StringFormatCount"
+        )
+        error += listOf(
+            "AllowBackup",
+            "StringFormatMatches",
+            "StringFormatInvalid",
+            "StringFormatCount"
+        )
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -45,20 +89,34 @@ android {
     }
 }
 
+composeCompiler {
+    // `core` is compiled without the Compose compiler, so its types (BackgroundShape,
+    // ImageSource, TitleGravity, ICalendarDateTimeProvider, …) are inferred as unstable,
+    // which in turn makes YearViewState unstable and YearView non-skippable.
+    // Declaring them stable here lets Compose skip recomposition when nothing changed.
+    stabilityConfigurationFiles.add(
+        layout.projectDirectory.file("compose_stability_config.conf")
+    )
+}
+
 dependencies {
-    implementation(project(":core"))
-    implementation(libs.joda.time)
-    implementation(libs.androidx.ui.text.android)
-    implementation(libs.androidx.ui.android)
-    implementation(libs.foundation.android)
-    implementation(libs.androidx.ui.tooling.preview.android)
+    // `api` (not `implementation`) for everything that leaks into the public surface of
+    // this library: YearView / YearViewState / MonthConfig / DayConfig / ComposeBackgroundStyle
+    // expose ICalendarDateTimeProvider, BackgroundShape, ImageSource, TitleGravity,
+    // TextStyle, Dp, Color and Modifier. With `implementation` these land in the published
+    // POM as runtime-scoped only, and consumers cannot compile against the library at all.
+    api(project(":core"))
+    api(libs.androidx.ui.text.android)
+    api(libs.androidx.ui.android)
+    api(libs.foundation.android)
+    api(libs.androidx.compose.ui.graphics)
+    // Preview tooling is only needed by the @Preview harness in src/debug, which is never
+    // published (see `publishing { singleVariant("release") }`).
+    debugImplementation(libs.androidx.ui.tooling.preview.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
-
-val currentGroupId = "com.mamboa.yearview"
-val currentVersion = "1.0.0"
 
 // Publishing configuration
 afterEvaluate { // Using afterEvaluate is common for publishing Android components
@@ -91,3 +149,7 @@ afterEvaluate { // Using afterEvaluate is common for publishing Android componen
         }
     }
 }
+
+// Asserts the generated POM declares `com.mamboa.yearview:core` at compile scope, and
+// hooks that assertion into `check`. See the script for why this needs guarding.
+apply(from = rootProject.file("gradle/verify-published-pom.gradle.kts"))

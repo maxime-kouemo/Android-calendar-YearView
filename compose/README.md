@@ -1,427 +1,809 @@
-# YearView for Jetpack Compose - User Guide
+<div align="center">
 
-Welcome to the comprehensive guide for using the `YearView` composable in Jetpack Compose. This highly customizable component from the `com.mamboa.yearview.compose` package allows you to display a yearly calendar view with extensive styling options for months and days, various layout configurations, and user interaction capabilities. This tutorial will walk you through integrating `YearView` into your Android app and utilizing its powerful features.
+# YearView — Jetpack Compose
 
-## Table of Contents
-- [Overview](#overview)
-- [Setup](#setup)
-- [Basic Usage](#basic-usage)
-- [Customization Options](#customization-options)
-  - [Layout Configuration](#layout-configuration)
-  - [Month Styling with MonthConfig](#month-styling-with-monthconfig)
-  - [Day Styling](#day-styling)
-  - [Background Styling](#background-styling)
-  - [Interaction and Callbacks](#interaction-and-callbacks)
-  - [Multi-Selection Mode](#multi-selection-mode)
-- [Example Implementation](#example-implementation)
-- [Year Pager Navigation](#year-pager-navigation)
-- [Property Reference](#property-reference)
-- [Conclusion](#conclusion)
+**A full-year, twelve-month calendar composable.**
 
-## Overview
+One `@Composable`, one immutable state object, one observable selection holder.
+Declarative styling in `Dp` / `Color` / `TextStyle`, ranges, TalkBack support and
+`rememberSaveable` persistence out of the box.
 
-`YearView` is a flexible Jetpack Compose component designed to display a full-year calendar. It supports customizable grid layouts, month and day styling, interactive click and long-press events, multi-selection for date ranges, background images, custom shapes, and accessibility features. Whether you need a simple year-at-a-glance view or a complex date picker, `YearView` offers the tools to tailor the calendar to your app's needs.
+[![Platform](https://img.shields.io/badge/platform-Android-3DDC84.svg)](https://developer.android.com)
+[![API](https://img.shields.io/badge/API-26%2B-brightgreen.svg)](https://developer.android.com/about/versions/oreo)
+[![Compose](https://img.shields.io/badge/Jetpack-Compose-4285F4.svg)](https://developer.android.com/jetpack/compose)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSE)
 
-## Setup
+</div>
 
-Before using `YearView`, ensure that the library or module containing `YearView.kt` is included in your project. If you're using a custom library like `com.mamboa.yearview`, add it to your `build.gradle`:
+<!--
+  Add your screenshots / GIFs here. Suggested layout:
 
-```gradle
-dependencies {
-    implementation project(":yearview")
-}
-```
+  <p align="center">
+    <img src="../demo_files/big_demo.gif" width="320" alt="YearView demo"/>
+  </p>
+-->
 
-Make sure your project is set up to use Jetpack Compose by enabling it in your `build.gradle`:
+<p align="center">
+  <img src="../demo_files/big_demo.gif" width="320" alt="YearView Compose demo"/>
+</p>
 
-```gradle
-buildFeatures {
-    compose true
-}
-composeOptions {
-    kotlinCompilerExtensionVersion "1.5.0"
-}
-dependencies {
-    implementation "androidx.compose.ui:ui:1.5.0"
-    implementation "androidx.compose.material3:material3:1.1.1"
-    implementation "androidx.compose.runtime:runtime:1.5.0"
-}
-```
+---
 
-## Basic Usage
+## Table of contents
 
-To display a simple yearly calendar, use `YearView` with minimal parameters. Here's a basic example:
+- [Why YearView](#why-yearview)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Quick start](#quick-start)
+- [The two state objects](#the-two-state-objects)
+- [Handling interactions](#handling-interactions)
+- [Styling](#styling)
+  - [Layout](#layout)
+  - [Month titles](#month-titles)
+  - [Days, weekends, today and the selected day](#days-weekends-today-and-the-selected-day)
+  - [The weekday header row](#the-weekday-header-row)
+  - [Backgrounds, shapes and opacity](#backgrounds-shapes-and-opacity)
+  - [Background images](#background-images)
+  - [Custom fonts](#custom-fonts)
+- [Selection](#selection)
+  - [Sticky single-day selection](#sticky-single-day-selection)
+  - [Range selection](#range-selection)
+  - [Driving selection from a ViewModel](#driving-selection-from-a-viewmodel)
+- [A year pager](#a-year-pager)
+- [Persisting state](#persisting-state)
+- [Localisation and date libraries](#localisation-and-date-libraries)
+- [Accessibility](#accessibility)
+- [Debug mode](#debug-mode)
+- [Complete example](#complete-example)
+- [API reference](#api-reference)
+- [Using the View system instead](#using-the-view-system-instead)
+- [License](#license)
+
+---
+
+## Why YearView
+
+Compose gives you a date picker for one month. `YearView` gives you the whole year — the
+twelve-months-on-one-screen view you know from the Samsung calendar.
+
+All twelve months are drawn onto a **single `Canvas`**: no nested `LazyGrid`s, no 366 composables.
+Text layout, geometry and calendar metadata are measured once and cached, and the composable is
+skippable, so it stays cheap inside a `HorizontalPager`.
+
+## Features
+
+- 📅 **All twelve months at once**, in a grid you choose (`4 × 3`, `3 × 4`, `2 × 6`, …)
+- 🎨 **Idiomatic Compose styling** — `TextStyle`, `Color`, `Dp` everywhere
+- 🧊 **Immutable configuration** in a single `@Immutable data class`, safe to hoist into a ViewModel
+- 👀 **Observable selection** — read, write, or clear the selection from anywhere; the calendar
+  redraws automatically
+- 🔷 **Five background shapes** — circle, square, rounded square, star, vector drawable, or any
+  Compose `Path`
+- 🖼️ **Background images** with `overlay` / `clip` merge modes
+- 👆 **Taps and long-presses** on days and months, with a month-selection flash
+- 🗓️ **Range selection** by tap-to-tap *or* drag
+- 🌍 **Localised** month and weekday names, **RTL mirroring**, configurable first day of week and
+  weekend days
+- ♿ **Two-level TalkBack traversal** — swipe between months, enter one, then move day by day
+- 💾 **`rememberSaveable` support** via `YearViewState.Saver` and `YearViewSelectionState.Saver`
+- 🧩 **Pluggable date engine** — `kotlinx-datetime` (default), `java.time`, or Joda-Time
+- 🔍 **Debug mode** that paints every touch target
+
+## Requirements
+
+| | |
+|---|---|
+| **minSdk** | 26 |
+| **compileSdk** | 35 |
+| **Java / Kotlin target** | 17 |
+| **Compose** | Any recent BOM; `ui`, `ui-text`, `ui-graphics` and `foundation` arrive transitively |
+
+## Installation
+
+Add JitPack to your repositories:
 
 ```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven(url = "https://jitpack.io")
+    }
+}
+```
+
+Then add the module:
+
+```kotlin
+// app/build.gradle.kts
+android {
+    buildFeatures { compose = true }
+}
+
+dependencies {
+    implementation(platform("androidx.compose:compose-bom:<your-bom>"))
+    implementation("com.github.maxime-kouemo.Android-calendar-YearView:compose:1.0.0")
+}
+```
+
+> **Note**
+> The artifacts are published with the Maven group `com.mamboa.yearview`. If you resolve them
+> from `mavenLocal()` or your own Maven repository rather than JitPack, use
+> `com.mamboa.yearview:compose:1.0.0` instead.
+
+You do **not** need to declare `:core` — `:compose` exposes it with `api`, so `BackgroundShape`,
+`ImageSource`, `MergeType`, `TitleGravity`, `CalendarDate`, `DayOfWeekConstants` and the time
+providers all come along automatically.
+
+## Quick start
+
+```kotlin
+import com.mamboa.yearview.compose.YearView
+
 @Composable
-fun SimpleYearView() {
-    val currentYear = DateTime().year().get()
+fun YearScreen() {
     YearView(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        year = currentYear
+            .padding(16.dp)
     )
 }
 ```
 
-This will render a calendar for the current year with default styling and a 4x3 grid layout (4 rows, 3 columns).
+That renders the current year in a 4 × 3 grid, fully localised and fully accessible.
 
-## Customization Options
-
-`YearView` provides a wide range of parameters to customize its appearance and behavior.
-
-### Layout Configuration
-
-Adjust the grid layout of the calendar by setting the number of rows and columns, spacing, and the first day of the week.
-
-- **Rows and Columns**: Set `rows` and `columns` to configure the grid. Ensure `rows * columns >= 12` to display all months.
-- **Spacing**: Use `verticalSpacing` and `horizontalSpacing` to control gaps between months.
-- **First Day of Week**: Set `firstDayOfWeek` to define the starting day (1 for Monday, 7 for Sunday).
-
-```kotlin
-YearView(
-    year = 2023,
-    rows = 4,
-    columns = 3,
-    verticalSpacing = 16.dp,
-    horizontalSpacing = 16.dp,
-    firstDayOfWeek = 7 // Sunday as the first day
-)
-```
-
-### Month Styling with MonthConfig
-
-The `MonthConfig` data class groups settings for month appearance, including title alignment, margins, and background styles.
-
-- **Title Gravity**: Set `titleGravity` to align the month name (`CENTER`, `START`, `LEFT`, `RIGHT`, `END`).
-- **Margin Below Month Name**: Use `marginBelowMonthName` to adjust spacing below the title.
-- **Name Styles**: Define text styles with `nameStyle` for regular months and `todayNameStyle` for the current month.
-- **Name Format**: Use `nameFormat` to set the month name format (e.g., "MMMM" for full name, "MMM" for abbreviated).
-
-```kotlin
-YearView(
-    year = 2023,
-    monthConfig = MonthConfig(
-        titleGravity = TitleGravity.CENTER,
-        marginBelowMonthName = 8.dp,
-        nameStyle = TextStyle(
-            color = Color.Black,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        ),
-        todayNameStyle = TextStyle(
-            color = Color.Blue,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold
-        ),
-        nameFormat = "MMMM"
-    )
-)
-```
-
-### Day Styling
-
-Style individual days with text and background configurations for normal days, weekends, today's date, and selected days.
-
-- **Day Text Styles**: Customize text with `simpleDayStyle`, `weekendDayStyle`, `todayStyle`, and `selectedDayStyle`.
-- **Day Name Style**: Style day-of-week headers with `dayNameStyle`.
-
-```kotlin
-YearView(
-    year = 2023,
-    simpleDayStyle = TextStyle(color = Color.Black, fontSize = 10.sp),
-    weekendDayStyle = TextStyle(color = Color.Red, fontSize = 10.sp),
-    todayStyle = TextStyle(color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold),
-    selectedDayStyle = TextStyle(color = Color.White, fontSize = 10.sp),
-    dayNameStyle = TextStyle(color = Color.DarkGray, fontSize = 10.sp)
-)
-```
-
-### Background Styling
-
-Customize backgrounds for months, today's date, and selected days using `BackgroundItemStyle`.
-
-- **Month Backgrounds**: Set via `MonthConfig` with `backgroundItemStyle` and `selectionBackgroundItemStyle`.
-- **Day Backgrounds**: Use `todayBackgroundItemStyle` for today, `selectedDayBackgroundItemStyle` for selected days, and `multiSelectionBackgroundItemStyle` for ranges.
-- **Background Properties**: Include `color`, `shape` (e.g., `RoundedSquare`, `Circle`, `Square`), `density` (opacity over images), `image` (optional drawable or bitmap), and `selectionMargin`.
-
-```kotlin
-YearView(
-    year = 2023,
-    monthConfig = MonthConfig(
-        backgroundItemStyle = BackgroundItemStyle(
-            color = Color(0xFFE3F2FD),
-            shape = BackgroundShape.RoundedSquare(cornerRadius = 8f),
-            density = 70,
-            image = ImageSource.DrawableRes(R.drawable.my_background_image)
-        ),
-        selectionBackgroundItemStyle = BackgroundItemStyle(
-            color = Color(0xFF1976D2),
-            shape = BackgroundShape.RoundedSquare(cornerRadius = 8f),
-            density = 30
-        )
-    ),
-    todayBackgroundItemStyle = BackgroundItemStyle(
-        color = Color(0xFF1976D2),
-        shape = BackgroundShape.Circle(radius = 5.0f)
-    ),
-    selectedDayBackgroundItemStyle = BackgroundItemStyle(
-        color = Color(0xFF4CAF50),
-        shape = BackgroundShape.RoundedSquare(cornerRadius = 8f)
-    )
-)
-```
-
-### Interaction and Callbacks
-
-`YearView` supports click and long-press events for days and months to handle user interactions.
-
-- **Day Events**: Use `onDayClick` and `onDayLongClick` for day interactions.
-- **Month Events**: Use `onMonthClick` and `onMonthLongClick` for month interactions.
-- **Sticky Selection**: Enable `isDaySelectionVisuallySticky` to keep selections highlighted until a new selection is made.
-
-```kotlin
-YearView(
-    year = 2023,
-    isDaySelectionVisuallySticky = true,
-    onDayClick = { timestamp ->
-        val dateTime = DateTime(timestamp)
-        Log.d("YearView", "Day clicked: ${dateTime.toString("yyyy-MM-dd")}")
-    },
-    onDayLongClick = { timestamp ->
-        val dateTime = DateTime(timestamp)
-        Log.d("YearView", "Day long-pressed: ${dateTime.toString("yyyy-MM-dd")}")
-    },
-    onMonthClick = { timestamp ->
-        val dateTime = DateTime(timestamp)
-        Log.d("YearView", "Month clicked: ${dateTime.toString("MMMM yyyy")}")
-    },
-    onMonthLongClick = { timestamp ->
-        val dateTime = DateTime(timestamp)
-        Log.d("YearView", "Month long-pressed: ${dateTime.toString("MMMM yyyy")}")
-    }
-)
-```
-
-### Multi-Selection Mode
-
-Enable range selection for selecting multiple days, ideal for date range pickers.
-
-- **Enable Multi-Selection**: Set `enableMultiSelection` to `true`.
-- **Range Callback**: Use `onRangeSelected` to receive start and end timestamps of the selected range.
-- **Range Background**: Customize with `multiSelectionBackgroundItemStyle`.
-
-```kotlin
-YearView(
-    year = 2023,
-    enableMultiSelection = true,
-    multiSelectionBackgroundItemStyle = BackgroundItemStyle(
-        color = Color.Cyan.copy(alpha = 0.3f),
-        shape = BackgroundShape.Square,
-        selectionMargin = 5.0f
-    ),
-    onRangeSelected = { startTimestamp, endTimestamp ->
-        val start = DateTime(startTimestamp)
-        val end = DateTime(endTimestamp)
-        Log.d("YearView", "Range selected: ${start.toString("yyyy-MM-dd")} to ${end.toString("yyyy-MM-dd")}")
-    }
-)
-```
-
-## Example Implementation
-
-Here's a comprehensive example integrating various customization options:
+Add a year and a click handler:
 
 ```kotlin
 @Composable
-fun CustomYearView() {
-    val currentYear = DateTime().year().get()
-    val context = LocalContext.current
-    MaterialTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = Color(0xFFF0F0F0)
-        ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Box(modifier = Modifier.fillMaxHeight(1f).padding(8.dp)) {
-                    YearView(
-                        modifier = Modifier.fillMaxSize(),
-                        year = currentYear,
-                        rows = 4,
-                        columns = 3,
-                        firstDayOfWeek = 7,
-                        verticalSpacing = 12.dp,
-                        horizontalSpacing = 12.dp,
-                        isDaySelectionVisuallySticky = true,
-                        enableMultiSelection = false,
-                        monthConfig = MonthConfig(
-                            titleGravity = TitleGravity.CENTER,
-                            marginBelowMonthName = 8.dp,
-                            nameStyle = TextStyle(
-                                color = Color.Black,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            todayNameStyle = TextStyle(
-                                color = Color(0xFF1976D2),
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            nameFormat = "MMMM",
-                            backgroundItemStyle = BackgroundItemStyle(
-                                color = Color.White,
-                                shape = BackgroundShape.RoundedSquare(cornerRadius = 8f),
-                                density = 80
-                            ),
-                            selectionBackgroundItemStyle = BackgroundItemStyle(
-                                color = Color(0xFF1976D2).copy(alpha = 0.2f),
-                                shape = BackgroundShape.RoundedSquare(cornerRadius = 10f),
-                                density = 40
-                            )
-                        ),
-                        dayNameStyle = TextStyle(color = Color.DarkGray, fontSize = 9.sp),
-                        simpleDayStyle = TextStyle(color = Color.Black, fontSize = 9.sp),
-                        weekendDayStyle = TextStyle(color = Color(0xFFD32F2F), fontSize = 9.sp),
-                        todayStyle = TextStyle(color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold),
-                        selectedDayStyle = TextStyle(color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold),
-                        todayBackgroundItemStyle = BackgroundItemStyle(
-                            color = Color(0xFF1976D2),
-                            shape = BackgroundShape.RoundedSquare(cornerRadius = 6f)
-                        ),
-                        selectedDayBackgroundItemStyle = BackgroundItemStyle(
-                            color = Color(0xFF4CAF50),
-                            shape = BackgroundShape.Circle(radius = 0f),
-                            density = 100
-                        ),
-                        onDayClick = { timestamp ->
-                            val dateTime = DateTime(timestamp)
-                            val dayString = dateTime.toString("EEEE, dd MMMM yyyy")
-                            Toast.makeText(context, "Selected: $dayString", Toast.LENGTH_LONG).show()
-                        },
-                        onMonthClick = { timestamp ->
-                            val dateTime = DateTime(timestamp)
-                            val monthYearString = dateTime.toString("MMMM yyyy")
-                            Toast.makeText(context, "Month Focus: $monthYearString", Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                }
-            }
+fun YearScreen(year: Int) {
+    val state = remember(year) { YearViewState(year = year) }
+    val provider = remember { KotlinxTimeProvider() }
+
+    YearView(
+        modifier = Modifier.fillMaxSize(),
+        state = state,
+        onDayClick = { millis ->
+            val date = provider.fromMillis(millis)
+            Log.d("YearView", provider.format(date, "yyyy-MM-dd", Locale.getDefault()))
         }
-    }
+    )
 }
 ```
 
-## Year Pager Navigation
+## The two state objects
 
-Create a navigable year pager to switch between years easily:
+`YearView` deliberately splits **configuration** from **selection**, so each has exactly one owner.
+
+| | `YearViewState` | `YearViewSelectionState` |
+|---|---|---|
+| What it holds | How the calendar looks and behaves | What the user has selected |
+| Kind | `@Immutable data class` | `@Stable` class backed by snapshot state |
+| Changed by | You, via `copy(...)` | Taps *and* your code |
+| Persisted with | `YearViewState.Saver` | `YearViewSelectionState.Saver` |
 
 ```kotlin
-val MIN_YEAR = 1945
-val MAX_YEAR = 2045
-val currentYear = DateTime().year().get()
+val state = rememberSaveable(saver = YearViewState.Saver) {
+    YearViewState(year = 2026, rows = 4, columns = 3)
+}
+val selection = rememberYearViewSelectionState(selectedDay = "2026-01-10")
 
-Column(modifier = Modifier.fillMaxSize()) {
-    val pagerState = rememberPagerState(pageCount = { MAX_YEAR - MIN_YEAR + 1 })
-    val years = (MIN_YEAR..MAX_YEAR).toList()
-    val coroutineScope = rememberCoroutineScope()
-    
-    // Year tabs
-    ScrollableTabRow(
-        selectedTabIndex = pagerState.currentPage,
-        edgePadding = 0.dp
-    ) {
-        years.forEachIndexed { index, year ->
-            Tab(
-                selected = pagerState.currentPage == index,
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
-                    }
-                },
-                text = { Text(text = year.toString()) }
-            )
-        }
+YearView(state = state, selection = selection)
+```
+
+> **Important**
+> `rows × columns` **must equal 12**. `YearViewState` throws in its `init` block otherwise, so a
+> typo fails loudly instead of silently dropping months.
+
+Callbacks are *not* part of `YearViewState` — lambdas are not state and are not serialisable, so
+they stay as separate parameters on the composable.
+
+## Handling interactions
+
+Every callback receives **epoch millis**:
+
+```kotlin
+YearView(
+    state = state,
+    selection = selection,
+
+    onDayClick        = { millis -> /* tapped day */ },
+    onDayLongClick    = { millis -> /* long-pressed day */ },
+    onMonthClick      = { millis -> /* 1st of the tapped month */ },
+    onMonthLongClick  = { millis -> /* … */ },
+
+    // Sticky selection only. Receives -1L when the selection is cleared.
+    onSelectedDayChange = { millis -> /* … */ },
+    // Complements the above with the deselected day's own timestamp.
+    onDayDeselected     = { millis -> /* … */ },
+
+    // Multi-selection only. Fires once a range is complete; start <= end.
+    onRangeSelected = { startMillis, endMillis -> /* … */ },
+)
+```
+
+Convert them with the date-time provider:
+
+```kotlin
+val date = provider.fromMillis(millis)
+val text = provider.format(date, "EEEE d MMMM yyyy", Locale.getDefault())
+```
+
+## Styling
+
+Everything below is a field on `YearViewState` (or on the `MonthConfig` it holds), so you change
+it the Compose way — by producing a new state:
+
+```kotlin
+val state = remember { YearViewState() }
+val redState = remember(state) {
+    state.copy(todayConfig = state.todayConfig.copy(textStyle = TextStyle(color = Color.Red)))
+}
+```
+
+### Layout
+
+```kotlin
+YearViewState(
+    year = 2026,
+    rows = 4,
+    columns = 3,                                  // rows * columns must be 12
+    verticalSpacing = 12.dp,
+    horizontalSpacing = 12.dp,
+    firstDayOfWeek = DayOfWeekConstants.SUNDAY,   // 1 = Monday … 7 = Sunday
+    weekendDays = setOf(DayOfWeekConstants.SATURDAY, DayOfWeekConstants.SUNDAY),
+    dayTouchPadding = 4.dp,                       // size of each day's touch target
+)
+```
+
+### Month titles
+
+```kotlin
+MonthConfig(
+    titleGravity = TitleGravity.CENTER,   // CENTER, START, LEFT, RIGHT, END
+    marginBelowMonthName = 8.dp,
+    nameFormat = "MMMM",                  // "MMM" for abbreviated
+    nameStyle = TextStyle(
+        color = Color.Black,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+    ),
+    todayNameStyle = TextStyle(
+        color = Color(0xFFD00606),
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+    ),
+)
+```
+
+`START` / `END` mirror in RTL layouts; `LEFT` / `RIGHT` do not.
+
+### Days, weekends, today and the selected day
+
+Ordinary and weekend days are nested inside `MonthConfig`; today and the selected day live on
+`YearViewState`:
+
+```kotlin
+YearViewState(
+    monthConfig = MonthConfig(
+        simpleDayConfig = DayConfig(
+            textStyle = TextStyle(color = Color.Black, fontSize = 9.sp)
+        ),
+        weekendDayConfig = DayConfig(
+            textStyle = TextStyle(color = Color(0xFFD32F2F), fontSize = 9.sp)
+        ),
+    ),
+    todayConfig = DayConfig(
+        backgroundItemStyle = ComposeBackgroundStyle(
+            color = Color(0xFFD10606),
+            shape = BackgroundShape.Circle(radius = 1.0f),
+        ),
+        textStyle = TextStyle(color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold),
+    ),
+    selectedDayConfig = DayConfig(
+        backgroundItemStyle = ComposeBackgroundStyle(
+            color = Color(0xFF4CAF50),
+            shape = BackgroundShape.Circle(radius = 1.0f),
+        ),
+        textStyle = TextStyle(color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold),
+    ),
+)
+```
+
+`DayConfig.backgroundRadius` is a **multiplier** (default `1f`) that adds breathing room between
+the day number and its background edge — it is resolution-independent, so it looks the same on
+every density.
+
+### The weekday header row
+
+```kotlin
+YearViewState(
+    dayNameStyle = TextStyle(color = Color.DarkGray, fontSize = 9.sp),
+    dayNameLength = 1,               // "M T W T F S S"
+    dayNameTranscendsWeekend = false,
+)
+```
+
+> **Tip**
+> `dayNameLength = 1` gives the compact single-letter look, but one letter is ambiguous in
+> English (T/T, S/S) and meaningless in several scripts. Set `2` or `3` for those locales, or
+> **`0` to use the locale's full short name** unmodified.
+
+By default weekend **columns** in the header take the weekend text style. Set
+`dayNameTranscendsWeekend = true` to keep `dayNameStyle` everywhere.
+
+### Backgrounds, shapes and opacity
+
+`ComposeBackgroundStyle` describes every background in the library:
+
+```kotlin
+ComposeBackgroundStyle(
+    color = Color(0xFF1976D2),
+    shape = BackgroundShape.RoundedSquare(cornerRadius = 8f),  // cornerRadius is in dp
+    selectionMargin = 4.dp,
+    image = ImageSource.None,
+    opacity = 100,                 // 0..100
+    mergeType = MergeType.OVERLAY,
+)
+```
+
+Available shapes (all from `:core`):
+
+| Shape | Constructor |
+|---|---|
+| Circle | `BackgroundShape.Circle(radius = 1.0f)` |
+| Square | `BackgroundShape.Square` |
+| Rounded square | `BackgroundShape.RoundedSquare(cornerRadius = 8f)` |
+| Star | `BackgroundShape.Star(numberOfLegs = 6, innerRadiusRatio = 0.45f)` — 3–10 legs |
+| Vector drawable | `BackgroundShape.Custom(ResourcePathProvider(R.drawable.heart, R.dimen.inner_radius))` |
+| Any Compose `Path` | `BackgroundShape.Custom(ComposePathProvider(myPath, innerPadding = 2.dp))` |
+
+> **Important**
+> Transparency comes from `opacity`, **not** from the colour's alpha channel:
+>
+> ```kotlin
+> ComposeBackgroundStyle(color = Color.Cyan.copy(alpha = 0.3f))  // ❌ renders fully opaque
+> ComposeBackgroundStyle(color = Color.Cyan, opacity = 30)       // ✅
+> ```
+
+### Background images
+
+```kotlin
+ComposeBackgroundStyle(
+    color = Color(0xFF4CAF50),
+    shape = BackgroundShape.Custom(
+        provider = ResourcePathProvider(
+            drawableRes = R.drawable.heart,
+            innerPadding = R.dimen.inner_radius,
+        )
+    ),
+    image = ImageSource.Provided(ResourceImageProvider(R.drawable.shopping)),
+    mergeType = MergeType.CLIP,   // clip the image to the heart outline
+    opacity = 30,
+)
+```
+
+- **`MergeType.OVERLAY`** — the colour is painted on top of the image.
+- **`MergeType.CLIP`** — the image is clipped to the shape's outline.
+
+Images can come from a drawable resource (`ResourceImageProvider`) or an `ImageBitmap`
+(`BitmapImageProvider`).
+
+### Custom fonts
+
+There is no separate `fontFamily` parameter — `TextStyle` already has one:
+
+```kotlin
+val teddyBears = FontFamily(Font(R.font.teddy_bears))
+
+MonthConfig(
+    nameStyle = TextStyle(
+        fontFamily = teddyBears,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.Black,
+    )
+)
+```
+
+> **Note**
+> `TextStyle.fontFamily` is **not** preserved by `YearViewState.Saver` — arbitrary `FontFamily`
+> instances cannot be serialised. Re-supply custom fonts after restoration.
+
+## Selection
+
+### Sticky single-day selection
+
+```kotlin
+val state = remember { YearViewState(isDaySelectionVisuallySticky = true) }
+val selection = rememberYearViewSelectionState(selectedDay = "2026-01-10")
+
+YearView(state = state, selection = selection)
+
+Text("Selected: ${selection.selectedDay.ifBlank { "none" }}")
+```
+
+With sticky selection on, a tapped day keeps its highlight until another day is tapped; tapping
+the same day again clears it. With it off, a tap simply fires `onDayClick`.
+
+Day strings use the pattern in `YearViewState.dayFormat` (default `yyyy-MM-dd`). To get millis:
+
+```kotlin
+val millis: Long? = selection.selectedDayMillis(dayFormat = state.dayFormat)
+```
+
+### Range selection
+
+```kotlin
+val state = remember {
+    YearViewState(
+        enableMultiSelection = true,
+        multiSelectionBackgroundItemStyle = ComposeBackgroundStyle(
+            color = Color.Cyan,
+            shape = BackgroundShape.Square,
+            selectionMargin = 5.dp,
+            opacity = 30,
+        ),
+    )
+}
+val selection = rememberYearViewSelectionState()
+
+YearView(
+    state = state,
+    selection = selection,
+    onRangeSelected = { start, end -> viewModel.onRangeChosen(start, end) },
+)
+
+if (selection.hasCompleteRange) {
+    Text("${selection.rangeStart} → ${selection.rangeEnd}")
+    Button(onClick = { selection.clearRange() }) { Text("Clear") }
+}
+```
+
+A range is built either by **tapping the two endpoints** or by **pressing and dragging** across
+days. Endpoints are normalised so `start <= end`.
+
+### Driving selection from a ViewModel
+
+Because `YearViewSelectionState` is snapshot state, you can observe it declaratively instead of
+plumbing callbacks:
+
+```kotlin
+val selection = rememberYearViewSelectionState()
+
+YearView(state = state, selection = selection)
+
+LaunchedEffect(selection.rangeStart, selection.rangeEnd) {
+    viewModel.onRangeChanged(selection.rangeStart, selection.rangeEnd)
+}
+
+// …and write to it from anywhere:
+Button(onClick = { selection.setRange("2026-03-01", "2026-03-15") }) { Text("March") }
+Button(onClick = { selection.clearAll() }) { Text("Reset") }
+```
+
+| Member | Purpose |
+|---|---|
+| `selectedDay: String` | The sticky selection, `""` when empty. Read **and** write |
+| `rangeStart` / `rangeEnd: String?` | Range endpoints; read-only — write via `setRange` |
+| `hasCompleteRange: Boolean` | Both ends set |
+| `setRange(start, end)` | Writes both ends in one snapshot, so observers never see a half-updated range |
+| `clearSelection()` / `clearRange()` / `clearAll()` | |
+
+## A year pager
+
+```kotlin
+private const val MIN_YEAR = 1945
+private const val MAX_YEAR = 2045
+
+@Composable
+fun YearPager() {
+    val years = remember { (MIN_YEAR..MAX_YEAR).toList() }
+    val pagerState = rememberPagerState(pageCount = { years.size })
+    val currentYear = remember { KotlinxTimeProvider().currentYear() }
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState, currentYear) {
+        pagerState.scrollToPage((currentYear - MIN_YEAR).coerceIn(years.indices))
     }
-    
-    // Year pager
-    HorizontalPager(state = pagerState) { page ->
-        val year = MIN_YEAR + page
-        Box(modifier = Modifier.fillMaxSize()) {
+
+    Column(Modifier.fillMaxSize()) {
+        ScrollableTabRow(selectedTabIndex = pagerState.currentPage, edgePadding = 0.dp) {
+            years.forEachIndexed { index, year ->
+                Tab(
+                    selected = pagerState.currentPage == index,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+                    text = { Text(year.toString()) },
+                )
+            }
+        }
+
+        HorizontalPager(state = pagerState, beyondViewportPageCount = 1) { page ->
+            val year = years[page]
+            val state = remember(year) { YearViewState(year = year) }
             YearView(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                year = year
-                // Add your customization here
+                modifier = Modifier.fillMaxSize().padding(16.dp),
+                state = state,
             )
-        }
-    }
-    
-    // Scroll to current year on first launch
-    LaunchedEffect(Unit) {
-        val initialPage = currentYear - MIN_YEAR
-        if (initialPage >= 0 && initialPage < pagerState.pageCount) {
-            pagerState.scrollToPage(initialPage)
         }
     }
 }
 ```
 
-## Property Reference
+## Persisting state
 
-### YearView Properties
+Both state objects ship a `Saver`:
 
-| Property | Description | Default |
-|----------|-------------|---------|
-| `year` | Year to display | 2023 |
-| `rows` | Number of rows for months | 4 |
-| `columns` | Number of columns for months | 3 |
-| `verticalSpacing` | Space between month rows | 8.dp |
-| `horizontalSpacing` | Space between month columns | 8.dp |
-| `monthConfig` | Month appearance configuration | MonthConfig() |
-| `firstDayOfWeek` | Starting day of week (1=Mon, 7=Sun) | 1 |
-| `todayBackgroundItemStyle` | Background style for current day | BackgroundItemStyle |
-| `selectedDayBackgroundItemStyle` | Background style for selected days | BackgroundItemStyle |
-| `dayNameTranscendsWeekend` | Apply day name style to weekend labels | false |
-| `isDaySelectionVisuallySticky` | Keep selection visible until next selection | false |
-| `simpleDayStyle` | Style for regular days | TextStyle |
-| `weekendDayStyle` | Style for weekend days | TextStyle |
-| `todayStyle` | Style for current day | TextStyle |
-| `dayNameStyle` | Style for day-of-week labels | TextStyle |
-| `selectedDayStyle` | Style for selected days | TextStyle |
-| `monthNameFormat` | Format for month names | "MMMM" |
-| `dayFormat` | Format for identifying days | "yyyy-MM-dd" |
-| `onMonthClick` | Called when month clicked | (timestamp) -> Unit |
-| `onMonthLongClick` | Called when month long-pressed | (timestamp) -> Unit |
-| `onDayClick` | Called when day clicked | (timestamp) -> Unit |
-| `onDayLongClick` | Called when day long-pressed | (timestamp) -> Unit |
-| `enableMultiSelection` | Enable date range selection | false |
-| `multiSelectionBackgroundItemStyle` | Style for selected range | BackgroundItemStyle |
-| `onRangeSelected` | Called when date range selected | (startTime, endTime) -> Unit |
+```kotlin
+val state = rememberSaveable(saver = YearViewState.Saver) { YearViewState(year = 2026) }
+val selection = rememberYearViewSelectionState()   // already uses rememberSaveable internally
+```
 
-### BackgroundItemStyle Properties
+`YearViewState.Saver` decomposes every field into Bundle-safe primitives and reads them back with
+checked casts and per-field fallbacks — a bundle written by an older build of your app degrades to
+defaults instead of crashing on resume.
 
-| Property | Description | Default |
-|----------|-------------|---------|
-| `color` | Background color | Color |
-| `shape` | Shape (Circle, Square, RoundedSquare) | BackgroundShape |
-| `selectionMargin` | Margin around the item | 2.0f |
-| `image` | Background image | ImageSource.None |
-| `density` | Color opacity over image (0-100) | 100 |
+> **Note**
+> Two things are not restored: `TextStyle.fontFamily`, and non-serialisable custom shape / image
+> providers (a `ComposePathProvider` falls back to `Square`). Re-supply them after restoration.
 
-### MonthConfig Properties
+## Localisation and date libraries
 
-| Property | Description | Default |
-|----------|-------------|---------|
-| `titleGravity` | Month name alignment | TitleGravity.CENTER |
-| `marginBelowMonthName` | Space below month name | 8.dp |
-| `selectionBackgroundItemStyle` | Style when month selected | BackgroundItemStyle |
-| `backgroundItemStyle` | Month background style | BackgroundItemStyle |
-| `nameStyle` | Month name text style | TextStyle |
-| `todayNameStyle` | Current month name style | TextStyle |
-| `nameFormat` | Month name format | "MMMM" |
+Month names and weekday abbreviations follow the device locale. RTL locales mirror the month grid,
+the weekday columns and `START` / `END` title gravity.
 
-## Conclusion
+```kotlin
+YearView(
+    state = state,
+    dateTimeProvider = remember { JavaTimeProvider() },   // or JodaTimeProvider(), KotlinxTimeProvider()
+)
+```
 
-The `YearView` composable in Jetpack Compose offers a powerful and flexible way to display and interact with a yearly calendar. With extensive customization options for layout, styling, and user interactions, you can create a calendar that perfectly fits your app's design and functionality requirements. Experiment with the parameters and integrate callbacks to enhance user experience. For further assistance or to dive deeper, refer to the source code or reach out for support.
+You can implement `ICalendarDateTimeProvider` yourself for a non-Gregorian calendar.
+
+## Accessibility
+
+An invisible semantics overlay gives TalkBack **two-level traversal**:
+
+1. Swipes move between the twelve **months**.
+2. Activating a month switches to **day-level** navigation, which continues chronologically across
+   month boundaries.
+3. A custom action returns to month navigation.
+
+The three spoken labels are plain strings on `YearViewState`, so resolve them from your own
+resources for non-English locales:
+
+```kotlin
+YearViewState(
+    todayLabel = stringResource(R.string.a11y_today),
+    selectedLabel = stringResource(R.string.a11y_selected),
+    exitMonthActionLabel = stringResource(R.string.a11y_exit_month),
+)
+```
+
+> **Note**
+> At twelve months on a phone screen, day touch targets are naturally smaller than the 48 dp
+> Material recommendation. Increase `dayTouchPadding` or the day text size when the calendar is
+> the primary interactive surface of a screen.
+
+## Debug mode
+
+Debug visualisation is a `CompositionLocal`, not a parameter, so you can flip it for a whole
+subtree:
+
+```kotlin
+CompositionLocalProvider(LocalYearViewDebug provides BuildConfig.DEBUG) {
+    YearView(state = state)
+}
+```
+
+It paints a translucent red rectangle around every day's touch target.
+
+## Complete example
+
+```kotlin
+@Composable
+fun CustomYearView(year: Int) {
+    val context = LocalContext.current
+    val provider = remember { KotlinxTimeProvider() }
+    val teddyBears = remember { FontFamily(Font(R.font.teddy_bears)) }
+
+    val state = remember(year, teddyBears) {
+        YearViewState(
+            year = year,
+            rows = 4,
+            columns = 3,
+            verticalSpacing = 12.dp,
+            horizontalSpacing = 12.dp,
+            firstDayOfWeek = DayOfWeekConstants.SUNDAY,
+            isDaySelectionVisuallySticky = true,
+            enableMultiSelection = false,
+            dayNameStyle = TextStyle(color = Color.DarkGray, fontSize = 9.sp),
+            monthConfig = MonthConfig(
+                titleGravity = TitleGravity.CENTER,
+                marginBelowMonthName = 4.dp,
+                nameFormat = "MMMM",
+                nameStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = teddyBears,
+                ),
+                todayNameStyle = TextStyle(
+                    color = Color(0xFFD00606),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+                backgroundItemStyle = ComposeBackgroundStyle(
+                    color = Color(0xFF4CAF50),
+                    shape = BackgroundShape.Custom(
+                        provider = ResourcePathProvider(
+                            drawableRes = R.drawable.heart,
+                            innerPadding = R.dimen.inner_radius,
+                        )
+                    ),
+                    image = ImageSource.Provided(ResourceImageProvider(R.drawable.shopping)),
+                    mergeType = MergeType.CLIP,
+                    opacity = 30,
+                ),
+                selectionBackgroundItemStyle = ComposeBackgroundStyle(
+                    color = Color(0xFF1976D2),
+                    shape = BackgroundShape.RoundedSquare(cornerRadius = 8f),
+                    opacity = 30,
+                ),
+                simpleDayConfig = DayConfig(
+                    textStyle = TextStyle(color = Color.Black, fontSize = 8.sp)
+                ),
+                weekendDayConfig = DayConfig(
+                    textStyle = TextStyle(color = Color(0xFFD32F2F), fontSize = 9.sp)
+                ),
+            ),
+            todayConfig = DayConfig(
+                backgroundItemStyle = ComposeBackgroundStyle(
+                    color = Color(0xFFD10606),
+                    shape = BackgroundShape.Circle(radius = 1.0f),
+                ),
+                textStyle = TextStyle(
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+            ),
+            selectedDayConfig = DayConfig(
+                backgroundItemStyle = ComposeBackgroundStyle(
+                    color = Color(0xFF4CAF50),
+                    shape = BackgroundShape.Circle(radius = 1.0f),
+                ),
+                textStyle = TextStyle(
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+            ),
+        )
+    }
+
+    val selection = rememberYearViewSelectionState(selectedDay = "2026-01-10")
+
+    YearView(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        state = state,
+        selection = selection,
+        dateTimeProvider = provider,
+        onDayClick = { millis ->
+            val date = provider.fromMillis(millis)
+            val text = provider.format(date, "yyyy-MM-dd", Locale.getDefault())
+            Toast.makeText(context, "Day: $text", Toast.LENGTH_SHORT).show()
+        },
+        onMonthClick = { millis ->
+            val date = provider.fromMillis(millis)
+            val text = provider.format(date, "MMMM yyyy", Locale.getDefault())
+            Toast.makeText(context, "Month: $text", Toast.LENGTH_SHORT).show()
+        },
+    )
+}
+```
+
+## API reference
+
+### `YearView`
+
+| Parameter | Type | Default |
+|---|---|---|
+| `modifier` | `Modifier` | `Modifier` |
+| `state` | `YearViewState` | `YearViewState()` |
+| `selection` | `YearViewSelectionState` | `rememberYearViewSelectionState()` |
+| `dateTimeProvider` | `ICalendarDateTimeProvider` | `KotlinxTimeProvider()` |
+| `onMonthClick` | `(Long) -> Unit` | `{}` |
+| `onMonthLongClick` | `(Long) -> Unit` | `{}` |
+| `onDayClick` | `(Long) -> Unit` | `{}` |
+| `onDayLongClick` | `(Long) -> Unit` | `{}` |
+| `onSelectedDayChange` | `(Long) -> Unit` | `{}` — `-1L` when cleared |
+| `onDayDeselected` | `(Long) -> Unit` | `{}` |
+| `onRangeSelected` | `(Long, Long) -> Unit` | `{ _, _ -> }` |
+
+### `YearViewState`
+
+| Property | Type | Default |
+|---|---|---|
+| `year` | `Int` | current year |
+| `rows` | `Int` | `4` |
+| `columns` | `Int` | `3` |
+| `verticalSpacing` | `Dp` | `8.dp` |
+| `horizontalSpacing` | `Dp` | `8.dp` |
+| `monthConfig` | `MonthConfig` | `MonthConfig()` |
+| `firstDayOfWeek` | `Int` | `MONDAY` (1) |
+| `todayConfig` | `DayConfig` | `DayConfig()` |
+| `selectedDayConfig` | `DayConfig` | blue square, white text |
+| `dayNameTranscendsWeekend` | `Boolean` | `false` |
+| `isDaySelectionVisuallySticky` | `Boolean` | `false` |
+| `dayNameStyle` | `TextStyle` | blue, `10.sp`, centred |
+| `dayNameLength` | `Int` | `1` — `0` for the locale's full short name |
+| `dayFormat` | `String` | `"yyyy-MM-dd"` |
+| `dayTouchPadding` | `Dp` | `2.dp` |
+| `weekendDays` | `Set<Int>` | `{SATURDAY, SUNDAY}` |
+| `enableMultiSelection` | `Boolean` | `false` |
+| `multiSelectionBackgroundItemStyle` | `ComposeBackgroundStyle` | cyan square, `opacity = 30` |
+| `todayLabel` | `String` | `"today"` |
+| `selectedLabel` | `String` | `"selected"` |
+| `exitMonthActionLabel` | `String` | `"Exit month"` |
+
+*Companion:* `YearViewState.Saver`.
+*Invariant:* `rows * columns == 12`.
+
+### `MonthConfig`
+
+| Property | Type | Default |
+|---|---|---|
+| `titleGravity` | `TitleGravity` | `CENTER` |
+| `marginBelowMonthName` | `Dp` | `8.dp` |
+| `selectionBackgroundItemStyle` | `ComposeBackgroundStyle` | blue rounded square, `opacity = 30` |
+| `backgroundItemStyle` | `ComposeBackgroundStyle` | transparent rounded square |
+| `nameStyle` | `TextStyle` | black, `12.sp`, bold |
+| `todayNameStyle` | `TextStyle` | black, `12.sp`, bold |
+| `nameFormat` | `String` | `"MMMM"` |
+| `simpleDayConfig` | `DayConfig` | black, `10.sp` |
+| `weekendDayConfig` | `DayConfig` | gray, `10.sp` |
+
+### `DayConfig`
+
+| Property | Type | Default |
+|---|---|---|
+| `backgroundItemStyle` | `ComposeBackgroundStyle` | transparent circle |
+| `textStyle` | `TextStyle` | black, `10.sp`, centred |
+| `backgroundRadius` | `Float` | `1f` — multiplier, not pixels |
+
+### `ComposeBackgroundStyle`
+
+| Property | Type | Default |
+|---|---|---|
+| `color` | `Color` | `Color.Transparent` |
+| `shape` | `BackgroundShape` | `Square` |
+| `selectionMargin` | `Dp` | `2.dp` |
+| `image` | `ImageSource` | `None` |
+| `opacity` | `Int` | `100` (0–100) |
+| `mergeType` | `MergeType` | `OVERLAY` |
+
+### Other public API
+
+| Symbol | Purpose |
+|---|---|
+| `rememberYearViewSelectionState(selectedDay, rangeStart, rangeEnd)` | Creates a saveable selection holder |
+| `YearViewSelectionState.selectedDayMillis(dayFormat, locale, provider)` | Parses `selectedDay` into epoch millis, or `null` |
+| `LocalYearViewDebug` | `CompositionLocal<Boolean>` enabling touch-target visualisation |
+| `ComposePathProvider(path, innerPadding)` | Uses an arbitrary Compose `Path` as a shape |
+| `BitmapImageProvider(imageBitmap)` | Uses an `ImageBitmap` as a background image |
+
+## Using the View system instead
+
+If your screen is XML-based, use the **`:legacy`** module — the same calendar as an
+`android.view.View` with `yv_*` XML attributes, `Drawable` backgrounds and keyboard navigation.
+
+See [`legacy/README.md`](../legacy/README.md), and
+[`FEATURE_COMPARISON.md`](../FEATURE_COMPARISON.md) for a side-by-side of the two.
+
+## License
+
+MIT — see [LICENSE](../LICENSE).

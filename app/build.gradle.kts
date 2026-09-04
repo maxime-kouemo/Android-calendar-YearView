@@ -50,7 +50,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.support.appcompat.v7)
     implementation(libs.support.constraint.layout)
-    implementation(libs.joda.time)
     implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.appcompat)

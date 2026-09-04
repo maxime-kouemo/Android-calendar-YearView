@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!--
+    Library manifest.
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"/>
-
-</manifest>
+    Intentionally empty: an <application> element declared here is merged into every
+    consuming app, so attributes such as android:icon, android:roundIcon and
+    android:allowBackup would silently override (or conflict with) the app's own.
+    A view library has nothing to contribute to the merged manifest.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

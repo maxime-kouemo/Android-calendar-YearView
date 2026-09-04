@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Default YearView palette.
+
+    Library colours are merged into the consuming app's resource table, so every name
+    is prefixed with `yearview_`. Generic names (colorPrimary, black, white, purple_500,
+    demo_*) previously declared here overrode the app's own values on merge and have
+    been removed; the sample app declares its own copies.
+-->
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="yearview_today_text">#FFFFFFFF</color>
+    <color name="yearview_today_background">#FFFF0000</color>
+    <color name="yearview_selected_text">#FFFFFFFF</color>
+    <color name="yearview_selected_background">#FF2196F3</color>
+    <color name="yearview_simple_day_text">#FF000000</color>
+    <color name="yearview_weekend_text">#FFFF5722</color>
+    <color name="yearview_day_name_text">#FF757575</color>
+    <color name="yearview_month_name_text">#FF212121</color>
+    <color name="yearview_month_selection">#4D2196F3</color>
+    <color name="yearview_month_background">#00000000</color>
 </resources>

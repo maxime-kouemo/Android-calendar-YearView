@@ -1,7 +1,7 @@
 package com.mamboa
 
 import android.os.Bundle
-import android.util.Log // For performance logging
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,9 +19,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -35,21 +34,25 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.res.ResourcesCompat // For loading fonts efficiently
 import androidx.fragment.app.Fragment
-import com.mamboa.yearview.core.BackgroundItemStyle
+import com.mamboa.yearview.compose.ComposeBackgroundStyle
+import com.mamboa.yearview.compose.DayConfig
+import com.mamboa.yearview.compose.LocalYearViewDebug
+import com.mamboa.yearview.compose.MonthConfig
+import com.mamboa.yearview.compose.YearView
+import com.mamboa.yearview.compose.YearViewState
+import com.mamboa.yearview.compose.rememberYearViewSelectionState
 import com.mamboa.yearview.core.BackgroundShape
 import com.mamboa.yearview.core.ImageSource
 import com.mamboa.yearview.core.MergeType
 import com.mamboa.yearview.core.TitleGravity
-import com.mamboa.yearview.compose.DayConfig
-import com.mamboa.yearview.compose.MonthConfig
-import com.mamboa.yearview.compose.YearView
+import com.mamboa.yearview.core.datetime.DayOfWeekConstants
+import com.mamboa.yearview.core.datetime.timeproviders.ICalendarDateTimeProvider
+import com.mamboa.yearview.core.datetime.timeproviders.KotlinxTimeProvider
+import com.mamboa.yearview.core.imageprovider.ResourceImageProvider
+import com.mamboa.yearview.core.pathprovider.ResourcePathProvider
 import kotlinx.coroutines.launch
-import org.joda.time.DateTime
-import java.time.DayOfWeek
 import java.util.Random
-import kotlin.system.measureTimeMillis
 
 class MainActivity2Fragment : Fragment() {
     private val MIN_YEAR = 1945
@@ -95,7 +98,8 @@ class MainActivity2Fragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                val currentYear = remember { DateTime().year().get() } // Remember to avoid recalculation
+                val dateTimeProvider: ICalendarDateTimeProvider = remember { KotlinxTimeProvider() }
+                val currentYear = remember { dateTimeProvider.currentYear() }
 
                 MaterialTheme { // Ensure MaterialTheme is correctly set up if using its components
                     Surface(
@@ -135,25 +139,20 @@ class MainActivity2Fragment : Fragment() {
 
                             HorizontalPager(
                                 state = pagerState,
+                                beyondViewportPageCount = 3,
                                 // key = { page -> years[page] } // Add a stable key if page content identity relies on the year
                             ) { page ->
                                 val year = years[page] // More direct access
 
-                                val compositionTime = measureTimeMillis {
-                                    YearViewPage(
-                                        year = year,
-                                        heartPath = heartPath,
-                                        teddyBearsFont = teddyBearsFontFamily,
-                                        callingHeartFont = callingHeartFontFamily,
-                                        pinchMyRideFont = pinchMyRideFontFamily,
-                                        titleGravityProvider = { getRandomTitleGravity() },
-                                        monthNameColorProvider = { Color(getRandomColor()) },
-                                        weekendDayColorProvider = { Color(getRandomColor()) }
-                                    )
-                                }
-                                Log.d(
-                                    "Performance",
-                                    "YearViewPage for $year composed in $compositionTime ms"
+                                YearViewPage(
+                                    year = year,
+                                    shapePath = heartPath,
+                                    teddyBearsFont = teddyBearsFontFamily,
+                                    callingHeartFont = callingHeartFontFamily,
+                                    pinchMyRideFont = pinchMyRideFontFamily,
+                                    titleGravityProvider = { getRandomTitleGravity() },
+                                    monthNameColorProvider = { Color(getRandomColor()) },
+                                    weekendDayColorProvider = { Color(getRandomColor()) }
                                 )
                             }
                         }
@@ -180,7 +179,7 @@ class MainActivity2Fragment : Fragment() {
 @Composable
 fun YearViewPage(
     year: Int,
-    heartPath: Path,
+    shapePath: Path,
     teddyBearsFont: FontFamily?,
     callingHeartFont: FontFamily?,
     pinchMyRideFont: FontFamily?,
@@ -188,24 +187,25 @@ fun YearViewPage(
     monthNameColorProvider: () -> Color,
     weekendDayColorProvider: () -> Color
 ) {
-
-    val monthConfig = remember(year, teddyBearsFont, callingHeartFont) { // Add keys that affect this config
+    val monthConfig = remember(year, teddyBearsFont, callingHeartFont, pinchMyRideFont) {
         MonthConfig(
-            titleGravity = titleGravityProvider(), // Call the provider
-            marginBelowMonthName = 0.dp,
-            selectionBackgroundItemStyle = BackgroundItemStyle.ComposeStyle(
-                color = Color(0xFF1976D2), // Consider defining in theme
+            titleGravity = titleGravityProvider(),
+            marginBelowMonthName = 4.dp,
+            selectionBackgroundItemStyle = ComposeBackgroundStyle(
+                color = Color(0xFF1976D2),
                 shape = BackgroundShape.RoundedSquare(cornerRadius = 8f),
                 opacity = 30
             ),
-            backgroundItemStyle = BackgroundItemStyle.ComposeStyle(
-                color = Color(0xFF4CAF50), // Consider defining in theme
-                shape = BackgroundShape.ComposeCustom(
-                    composePath = heartPath, // Use the passed path
-                    innerPadding = 32.dp
+            backgroundItemStyle = ComposeBackgroundStyle(
+                color = Color(0xFF4CAF50),
+                shape = BackgroundShape.Custom(
+                    provider = ResourcePathProvider(
+                        drawableRes = R.drawable.heart,
+                        innerPadding = R.dimen.inner_radius
+                    )
                 ),
                 opacity = 30,
-                image = ImageSource.DrawableRes(com.mamboa.yearview.R.drawable.shopping),
+                image = ImageSource.Provided(provider = ResourceImageProvider(R.drawable.shopping)),
                 mergeType = MergeType.CLIP
             ),
             nameStyle = TextStyle(
@@ -216,42 +216,40 @@ fun YearViewPage(
             ),
             todayNameStyle = TextStyle(
                 color = Color(0xffd00606),
-                fontSize = 14.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = callingHeartFont
             ),
-            nameFormat = "MMMM"
+            nameFormat = "MMMM",
+            simpleDayConfig = DayConfig(
+                textStyle = TextStyle(
+                    color = Color.Black,
+                    fontSize = 8.sp,
+                )
+            ),
+            weekendDayConfig = DayConfig(
+                textStyle = TextStyle(
+                    color = weekendDayColorProvider(),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = pinchMyRideFont
+                )
+            )
         )
     }
 
     val dayNameStyle = remember {
         TextStyle(
-            color = Color.Black,
+            color = weekendDayColorProvider(),
             fontSize = 8.sp
-        )
-    }
-
-    val simpleDayStyle = remember {
-        TextStyle(
-            color = Color.Black,
-            fontSize = 8.sp,
-        )
-    }
-
-    val weekendDayStyle = remember(year, pinchMyRideFont) { // Add keys that affect this config
-        TextStyle(
-            color = weekendDayColorProvider(), // Call the provider
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Normal,
-            fontFamily = pinchMyRideFont // Use pre-loaded font
         )
     }
 
     val todayConfig = remember {
         DayConfig(
-            backgroundItemStyle = BackgroundItemStyle.ComposeStyle(
+            backgroundItemStyle = ComposeBackgroundStyle(
                 color = Color(0xFFd10606), // Consider defining in theme
-                shape = BackgroundShape.Circle(radius = 8f),
+                shape = BackgroundShape.Circle(radius = 1.0f),
             ),
             textStyle = TextStyle(
                 color = Color.White,
@@ -263,9 +261,9 @@ fun YearViewPage(
 
     val selectedDayConfig = remember {
         DayConfig(
-            backgroundItemStyle = BackgroundItemStyle.ComposeStyle(
+            backgroundItemStyle = ComposeBackgroundStyle(
                 color = Color(0xFF4CAF50), // Consider defining in theme
-                shape = BackgroundShape.Circle(radius = 8f),
+                shape = BackgroundShape.Circle(radius = 1.0f),
             ),
             textStyle = TextStyle(
                 color = Color.White,
@@ -276,50 +274,62 @@ fun YearViewPage(
     }
 
     val context = LocalContext.current // For Toasts
+    val dateTimeProvider: ICalendarDateTimeProvider = remember { KotlinxTimeProvider() }
 
-    // Our page content
-    Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxHeight(1f)) {
-            YearView(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                year = year,
-                rows = 4, // Consider if these can be dynamic or are fixed
-                columns = 3,
-                arbitrarySelectedDay = "01-10-2025", // If this changes often, it will cause recomposition
-                firstDayOfWeek = DayOfWeek.SUNDAY.value,
-                verticalSpacing = 16.dp,
-                horizontalSpacing = 16.dp,
-                isDaySelectionVisuallySticky = true,
-                enableMultiSelection = false,
-                monthConfig = monthConfig, // Use remembered config
-                dayNameStyle = dayNameStyle, // Use remembered style
-                simpleDayStyle = simpleDayStyle, // Use remembered style
-                weekendDayStyle = weekendDayStyle, // Use remembered style
-                todayConfig = todayConfig, // Use remembered config
-                selectedDayConfig = selectedDayConfig, // Use remembered config
-                onDayClick = { timestamp ->
-                    val dateTime = DateTime(timestamp)
-                    val dayString = dateTime.toString("yyyy-MM-dd")
-                    Log.d("Interaction", "Day clicked: $dayString (Year: $year)")
-                    Toast.makeText(
-                        context, // Use context from LocalContext.current
-                        "Day clicked: $dayString",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                },
-                onMonthClick = { timestamp ->
-                    val dateTime = DateTime(timestamp)
-                    val monthYearString = dateTime.toString("MMMM yyyy")
-                    Log.d("Interaction", "Month clicked: $monthYearString (Year: $year)")
-                    Toast.makeText(
-                        context, // Use context from LocalContext.current
-                        "Month clicked: $monthYearString",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            )
+    val yearViewState = remember(year, monthConfig, dayNameStyle, todayConfig, selectedDayConfig) {
+        YearViewState(
+            year = year,
+            rows = 4,
+            columns = 3,
+            firstDayOfWeek = DayOfWeekConstants.SUNDAY,
+            isDaySelectionVisuallySticky = true,
+            enableMultiSelection = false,
+            monthConfig = monthConfig,
+            dayNameStyle = dayNameStyle,
+            todayConfig = todayConfig,
+            selectedDayConfig = selectedDayConfig,
+        )
+    }
+
+    // Selection is owned by an observable holder, so it survives configuration changes
+    // and can be read or cleared from anywhere in this composable.
+    val selection = rememberYearViewSelectionState(selectedDay = "2026-01-10")
+
+    // Single YearView with debug touch-areas enabled via CompositionLocal
+    CompositionLocalProvider(LocalYearViewDebug provides true) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxHeight(1f)) {
+                YearView(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    dateTimeProvider = dateTimeProvider,
+                    state = yearViewState,
+                    selection = selection,
+                    onDayClick = { timestamp ->
+                        val date = dateTimeProvider.fromMillis(timestamp)
+                        val dayString =
+                            dateTimeProvider.format(date, "yyyy-MM-dd", java.util.Locale.ROOT)
+                        Log.d("Interaction", "Day clicked: $dayString (Year: $year)")
+                        Toast.makeText(
+                            context,
+                            "Day clicked: $dayString",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    },
+                    onMonthClick = { timestamp ->
+                        val date = dateTimeProvider.fromMillis(timestamp)
+                        val monthYearString =
+                            dateTimeProvider.format(date, "MMMM yyyy", java.util.Locale.ROOT)
+                        Log.d("Interaction", "Month clicked: $monthYearString (Year: $year)")
+                        Toast.makeText(
+                            context,
+                            "Month clicked: $monthYearString",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    },
+                )
+            }
         }
     }
 }

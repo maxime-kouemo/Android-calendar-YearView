@@ -1,3 +1,32 @@
 <resources>
-    <string name="app_name">yearview</string>
+
+    <!--
+        Accessibility strings for YearView.
+
+        Every name is prefixed with `yearview_` because library resources are merged
+        into the consuming app's resource table and an unprefixed name (such as the
+        `app_name` that used to live here) silently overrides the app's own value.
+
+        Placeholders are always `%n$s`, never `%n$d`: `%d` applies the locale's number
+        grouping, so a year renders as "2 026" in fr and is read out that way by a
+        screen reader. Dates are formatted by the date-time provider before they reach
+        these strings.
+    -->
+    <string name="yearview_a11y_calendar">Year calendar, %1$s</string>
+    <string name="yearview_a11y_selected_day">Selected: %1$s</string>
+    <string name="yearview_a11y_deselected">Selection cleared</string>
+    <string name="yearview_a11y_range">Range selected: %1$s to %2$s</string>
+
+    <!--
+        Spoken label of a single day cell, exposed as an accessibility virtual view.
+        %1$s is the fully formatted date, so screen readers announce "12 January 2026"
+        rather than a bare "12".
+    -->
+    <string name="yearview_a11y_day">%1$s</string>
+
+    <!-- Appended to a day's label when that day is the current date. -->
+    <string name="yearview_a11y_day_today">%1$s, today</string>
+
+    <!-- Appended to a day's label when that day is part of the current selection. -->
+    <string name="yearview_a11y_day_selected">%1$s, selected</string>
 </resources>
