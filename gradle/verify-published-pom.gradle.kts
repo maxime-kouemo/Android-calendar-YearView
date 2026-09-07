@@ -9,8 +9,13 @@
 //
 // Wired into `check`, so `./gradlew check` in CI fails on a regression.
 
-/** Maven coordinates the published POM must declare at `compile` scope. */
-val requiredGroupId = "com.mamboa.yearview"
+/**
+ * Maven coordinates the published POM must declare at `compile` scope.
+ *
+ * Read from `GROUP_ID` in `gradle.properties` so this assertion cannot drift away from
+ * the coordinates the modules actually publish under.
+ */
+val requiredGroupId = providers.gradleProperty("GROUP_ID").get()
 val requiredArtifactId = "core"
 
 val verifyPomDeclaresCore = tasks.register("verifyPomDeclaresCore") {

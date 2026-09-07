@@ -10,8 +10,15 @@ plugins {
 // Records the public ABI in `api/compose.api`; `apiCheck` runs as part of `check`.
 apiValidation {}
 
-val currentGroupId = "com.mamboa.yearview"
-val currentVersion = "1.0.0"
+// Published Maven coordinates, single-sourced in `gradle.properties`. See the comments
+// there for why the group has to be the JitPack serving coordinate.
+//
+// A `-Pversion=` on the command line takes precedence, because that is how JitPack
+// injects the tag being built; `VERSION_NAME` is the fallback for local builds.
+val currentGroupId = providers.gradleProperty("GROUP_ID").get()
+val currentVersion = project.version.toString()
+    .takeUnless { it.isBlank() || it == "unspecified" }
+    ?: providers.gradleProperty("VERSION_NAME").get()
 
 // Required so Gradle can map the `api(project(":core"))` dependency below onto real
 // Maven coordinates when generating this module's POM.
@@ -31,7 +38,15 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            // Libraries must not be minified — same reasoning as :legacy.
+            //
+            // This module was shipping with minification on, so R8 ran over the
+            // published AAR with an empty `consumer-rules.pro` and no keep rules for the
+            // public surface: it renamed `YearView`, `YearViewState`, `MonthConfig`,
+            // `DayConfig` and the `Saver` objects, and a consumer cannot un-obfuscate an
+            // AAR. Shrinking is the consuming application's job; a library only ships
+            // the keep rules that application needs.
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

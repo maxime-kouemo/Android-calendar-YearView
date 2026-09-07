@@ -14,7 +14,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        // AndroidX runner, matching the androidx.test dependencies below. The old
+        // `android.support.test` runner is not on the classpath at all.
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -31,11 +33,30 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.9.0"
+    // The sample app is not published, so a lint crash here must never be able to fail a
+    // release build. `lintVitalAnalyzeRelease` (which runs as part of `assembleRelease`
+    // for application modules) currently dies inside androidx.lifecycle's
+    // NonNullableMutableLiveDataDetector, whose lint jar is compiled against a newer
+    // Kotlin Analysis API than the lint bundled with AGP 8.7.3. The detector arrives
+    // transitively via hilt-navigation-compose and crashes while its jar is being
+    // migrated, so it cannot be avoided by changing this module's sources.
+    //
+    // `jitpack.yml` already keeps `:app` out of release builds; this is the second line
+    // of defence for any other CI that runs `assemble` at the root.
+    lint {
+        checkReleaseBuilds = false
+        disable += "NullSafeMutableLiveData"
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    // Matches the 17 used by :core, :legacy and :compose. At 1.8 the Kotlin compiler
+    // refuses to inline the libraries' Java 17 bytecode into this module.
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
@@ -44,9 +65,19 @@ dependencies {
     implementation(composeBom)
 
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
+    // Project dependencies, not published coordinates.
+    //
+    // This module briefly depended on
+    // `com.github.maxime-kouemo.Android-calendar-YearView:{legacy,compose}:1.0.1`,
+    // which made the release circular: JitPack builds this repository, and the sample
+    // app then tried to download the very artifacts that build was producing. It also
+    // meant a fresh clone could not build the demo until a release already existed.
+    //
+    // `:core` is not declared here — both front-ends expose it with `api`, so it
+    // arrives transitively, exactly as it does for a real consumer.
     implementation(project(":legacy"))
     implementation(project(":compose"))
-    implementation(project(":core"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.support.appcompat.v7)
     implementation(libs.support.constraint.layout)
@@ -54,7 +85,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.ui.tooling.preview.android)
-    implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.compose.ui)

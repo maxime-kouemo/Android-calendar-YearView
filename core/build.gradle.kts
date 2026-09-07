@@ -11,8 +11,15 @@ plugins {
 // ABI lives in `api/core.api`; `apiCheck` runs as part of `check`.
 apiValidation {}
 
-val currentGroupId = "com.mamboa.yearview"
-val currentVersion = "1.0.0"
+// Published Maven coordinates, single-sourced in `gradle.properties`. See the comments
+// there for why the group has to be the JitPack serving coordinate.
+//
+// A `-Pversion=` on the command line takes precedence, because that is how JitPack
+// injects the tag being built; `VERSION_NAME` is the fallback for local builds.
+val currentGroupId = providers.gradleProperty("GROUP_ID").get()
+val currentVersion = project.version.toString()
+    .takeUnless { it.isBlank() || it == "unspecified" }
+    ?: providers.gradleProperty("VERSION_NAME").get()
 
 // `core` is an `api` dependency of both :legacy and :compose, so it appears in their
 // published POMs. It must therefore be published under resolvable coordinates, and the
@@ -64,6 +71,25 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs += listOf(
+            // Compile interface methods with bodies as real Java default methods —
+            // the same flag, and the same reason, as :legacy.
+            //
+            // `ICalendarDateTimeProvider` is this library's public extension point and
+            // deliberately gives some members bodies (`isWeekendDay(Int, Set<Int>)`,
+            // for example) so an implementor only has to override what it cares about.
+            // Kotlin 2.1 still defaults to `-Xjvm-default=disable`, which emits those
+            // bodies into a synthetic `DefaultImpls` class and leaves the interface
+            // method abstract in the JVM signature — so a Java consumer implementing
+            // the provider would be forced to override every single member.
+            //
+            // The recorded ABI in `api/core.api` already describes them as non-abstract,
+            // because the module was until now being compiled by a stray Kotlin 2.2.0-RC
+            // that the parcelize plugin dragged onto the build classpath, and 2.2 turns
+            // JVM default methods on by default. Setting the flag explicitly makes the
+            // published ABI independent of the compiler version.
+            "-Xjvm-default=all"
+        )
     }
 }
 

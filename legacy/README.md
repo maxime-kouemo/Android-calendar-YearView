@@ -114,14 +114,14 @@ Then add the module:
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.maxime-kouemo.Android-calendar-YearView:legacy:1.0.0")
+    implementation("com.github.maxime-kouemo.Android-calendar-YearView:legacy:1.0.2")
 }
 ```
 
 > **Note**
 > The artifacts are published with the Maven group `com.mamboa.yearview`. If you resolve them
 > from `mavenLocal()` or your own Maven repository rather than JitPack, use
-> `com.mamboa.yearview:legacy:1.0.0` instead.
+> `com.mamboa.yearview:legacy:1.0.2` instead.
 
 You do **not** need to declare `:core` yourself — `:legacy` exposes it with `api`, so
 `CalendarDate`, `BackgroundShape`, `TitleGravity`, `FontType` and the time providers all come
