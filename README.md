@@ -12,7 +12,7 @@ engine and one styling vocabulary.
 [![API](https://img.shields.io/badge/API-26%2B-brightgreen.svg)](https://developer.android.com/about/versions/oreo)
 [![Language](https://img.shields.io/badge/kotlin-100%25-7F52FF.svg)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/Jetpack-Compose-4285F4.svg)](https://developer.android.com/jetpack/compose)
-[![JitPack](https://img.shields.io/badge/JitPack-1.0.0-blue.svg)](https://jitpack.io/#maxime-kouemo/Android-calendar-YearView)
+[![JitPack](https://img.shields.io/badge/JitPack-1.0.2-blue.svg)](https://jitpack.io/#maxime-kouemo/Android-calendar-YearView)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 </div>
@@ -56,9 +56,12 @@ inside a `ViewPager2` or a `HorizontalPager`.
 
 | Module | Maven coordinate | What it is |
 |---|---|---|
-| **`:compose`** | `com.mamboa.yearview:compose` | The Jetpack Compose composable. Styling in `Color` / `Dp` / `TextStyle`. |
-| **`:legacy`** | `com.mamboa.yearview:legacy` | The Android `View`. Styling with `yv_*` XML attributes or setters. |
-| **`:core`** | `com.mamboa.yearview:core` | Shared calendar model, shapes, image sources and date providers. |
+| **`:compose`** | `…Android-calendar-YearView:compose` | The Jetpack Compose composable. Styling in `Color` / `Dp` / `TextStyle`. |
+| **`:legacy`** | `…Android-calendar-YearView:legacy` | The Android `View`. Styling with `yv_*` XML attributes or setters. |
+| **`:core`** | `…Android-calendar-YearView:core` | Shared calendar model, shapes, image sources and date providers. |
+
+The group is `com.github.maxime-kouemo.Android-calendar-YearView` in full; it is elided
+above for width.
 
 You never declare `:core` yourself — both front-ends expose it with `api`, so
 `BackgroundShape`, `ImageSource`, `MergeType`, `TitleGravity`, `FontType`, `CalendarDate`,
@@ -110,17 +113,18 @@ Then add the front-end you need:
 // app/build.gradle.kts
 dependencies {
     // Jetpack Compose
-    implementation("com.github.maxime-kouemo.Android-calendar-YearView:compose:1.0.0")
+    implementation("com.github.maxime-kouemo.Android-calendar-YearView:compose:1.0.2")
 
     // …or the View system
-    implementation("com.github.maxime-kouemo.Android-calendar-YearView:legacy:1.0.0")
+    implementation("com.github.maxime-kouemo.Android-calendar-YearView:legacy:1.0.2")
 }
 ```
 
 > **Note**
-> The artifacts are published with the Maven group `com.mamboa.yearview`. If you resolve
-> them from `mavenLocal()` or your own Maven repository rather than JitPack, use
-> `com.mamboa.yearview:compose:1.0.0` / `com.mamboa.yearview:legacy:1.0.0` instead.
+> `:core` arrives transitively — both front-ends expose it with `api`, so you never
+> declare it yourself. The artifacts are published under the Maven group
+> `com.github.maxime-kouemo.Android-calendar-YearView`, the same coordinate JitPack
+> serves, so `mavenLocal()` and JitPack resolve identically.
 
 ## Quick start
 

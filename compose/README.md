@@ -124,14 +124,14 @@ android {
 
 dependencies {
     implementation(platform("androidx.compose:compose-bom:<your-bom>"))
-    implementation("com.github.maxime-kouemo.Android-calendar-YearView:compose:1.0.0")
+    implementation("com.github.maxime-kouemo.Android-calendar-YearView:compose:1.0.2")
 }
 ```
 
 > **Note**
 > The artifacts are published with the Maven group `com.mamboa.yearview`. If you resolve them
 > from `mavenLocal()` or your own Maven repository rather than JitPack, use
-> `com.mamboa.yearview:compose:1.0.0` instead.
+> `com.mamboa.yearview:compose:1.0.2` instead.
 
 You do **not** need to declare `:core` — `:compose` exposes it with `api`, so `BackgroundShape`,
 `ImageSource`, `MergeType`, `TitleGravity`, `CalendarDate`, `DayOfWeekConstants` and the time

@@ -1,7 +1,6 @@
 [versions]
 agp = "8.7.3"
 kotlin = "2.1.0"
-kotlin_parcelize = "2.2.0-RC"
 hilt = "2.51"
 devtoolsKsp = "2.1.20-2.0.0"
 androidxComposeBom = "2025.04.01"
@@ -70,6 +69,10 @@ org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.re
 com-google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtoolsKsp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin_parcelize" }
+# Must track `kotlin`. Pinned to 2.2.0-RC while the Kotlin plugin was 2.1.0, it pulled a
+# second Kotlin version onto the build classpath — the cause of both the ten
+# "ksp-2.1.20-2.0.0 is too old for kotlin-2.2.0-RC" warnings and the
+# "Kotlin Gradle plugin was loaded multiple times in different subprojects" warning.
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 maven-publish = { id = "maven-publish" }
 binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompatibilityValidator" }

@@ -1,7 +1,10 @@
 plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.org.jetbrains.kotlin.android)
-    alias(libs.plugins.com.google.devtools.ksp)
+    // KSP is deliberately not applied: this module has no annotation processors (there
+    // is not a single `ksp(...)`/`kapt(...)` dependency anywhere in the project). It was
+    // applied here unused, and because ksp 2.1.20-2.0.0 does not match Kotlin 2.1.0 it
+    // emitted a compatibility warning on every configuration pass.
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.binary.compatibility.validator)
@@ -16,8 +19,15 @@ apiValidation {
     ignoredPackages.add("com.mamboa.yearview.legacy.test")
 }
 
-val currentGroupId = "com.mamboa.yearview"
-val currentVersion = "1.0.0"
+// Published Maven coordinates, single-sourced in `gradle.properties`. See the comments
+// there for why the group has to be the JitPack serving coordinate.
+//
+// A `-Pversion=` on the command line takes precedence, because that is how JitPack
+// injects the tag being built; `VERSION_NAME` is the fallback for local builds.
+val currentGroupId = providers.gradleProperty("GROUP_ID").get()
+val currentVersion = project.version.toString()
+    .takeUnless { it.isBlank() || it == "unspecified" }
+    ?: providers.gradleProperty("VERSION_NAME").get()
 
 // Set on the project (not just on the MavenPublication) so that Gradle can map
 // `project(":core")` onto real Maven coordinates when generating this module's POM.
